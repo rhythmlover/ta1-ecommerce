@@ -75,11 +75,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-
-const openSection = ref<string | null>(null)
-
-const toggleSection = (section: string) => {
-    openSection.value = openSection.value === section ? null : section
-}
+useSeoMeta({
+    title: "FAQ - Together as One Store",
+});
 </script>

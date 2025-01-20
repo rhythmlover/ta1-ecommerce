@@ -20,7 +20,7 @@
         <div class="text-center flex flex-col gap-2">
             <UiParagraph class="uppercase tracking-wider"> Best Sellers </UiParagraph>
 
-            <UiHeading> Winter '24 </UiHeading>
+            <UiHeading> {{ new Date().toLocaleString('default', { month: 'short' }) }} '25 </UiHeading>
         </div>
 
         <div class="grid place-content-center sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -45,6 +45,6 @@ onMounted(async () => {
 });
 
 useSeoMeta({
-    title: "Home - Together As One",
+    title: "Home - Together As One Store",
 });
 </script>

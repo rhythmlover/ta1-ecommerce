@@ -94,4 +94,9 @@ async function login() {
         errorMessage.value = 'Login failed';
     }
 }
+
+useSeoMeta({
+    title: 'Login - Together as One Store',
+    description: 'Login to your account',
+});
 </script>

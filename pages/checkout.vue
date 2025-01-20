@@ -243,4 +243,8 @@ async function confirmPayment() {
         loading.value = false;
     }
 }
+
+useSeoMeta({
+    title: 'Checkout Cart - Together as One Store',
+});
 </script>

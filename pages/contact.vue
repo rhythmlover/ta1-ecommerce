@@ -70,4 +70,8 @@ async function sendEmail() {
     const res = await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
     console.log(res);
 }
+
+useSeoMeta({
+    title: "Contact Us - Together as One Store",
+});
 </script>

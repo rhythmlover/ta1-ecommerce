@@ -16,7 +16,7 @@ const route = useRoute();
 const { data } = await usePage(route.params.page as string);
 
 useSeoMeta({
-    title: () => `${data.value?.pageByHandle.title} - Acme Store`,
+    title: () => `${data.value?.pageByHandle.title} - Together as One Store`,
     description: () => data.value?.pageByHandle.bodySummary,
 });
 </script>

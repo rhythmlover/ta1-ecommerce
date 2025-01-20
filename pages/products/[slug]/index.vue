@@ -160,12 +160,16 @@ async function addItemToCart() {
     }
 }
 
-// useSeoMeta({
-//     title: () => {
-//         const title = data.value?.product.seo.title ?? data.value?.product.title;
+useSeoMeta({
+    title: () => {
+        const title = product.value?.name ?? '';
 
-//         return `${title} - Acme Store`;
-//     },
-//     description: () => data.value?.product.description,
-// });
+        return `${title} - Together As One Store`;
+    },
+    description: () => {
+        const description = product.value?.description ?? '';
+
+        return description;
+    },
+});
 </script>

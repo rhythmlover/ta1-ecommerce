@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
     <div class="flex flex-col items-start gap-4">
         <NuxtLink :to="`/collections/${modelValue.handle}`">
             <img
@@ -23,4 +23,4 @@ import type { CollectionModel } from "~/types/shopify";
 defineProps<{
     modelValue: CollectionModel;
 }>();
-</script> -->
+</script>

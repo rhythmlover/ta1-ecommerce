@@ -128,4 +128,9 @@ async function signUp() {
         errorMessage.value = 'An error occurred. Please try again.';
     }
 }
+
+useSeoMeta({
+    title: "Sign Up - Together As One Store",
+    description: "Create a new account to start shopping at Together As One Store.",
+});
 </script>
