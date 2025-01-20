@@ -1,0 +1,113 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Product {
+    id           String      @id @default(cuid())
+    handle       String
+    name         String
+    description  String?
+    price        Float
+    imageUrl     String
+    createdAt    DateTime    @default(now())
+    updatedAt    DateTime    @updatedAt
+    options      Option[]
+    Collection   Collection? @relation(fields: [collectionId], references: [id])
+    collectionId String?
+    CartItem     CartItem[]
+    OrderItem    OrderItem[]
+}
+
+model Collection {
+    id          String    @id @default(cuid())
+    handle      String
+    title       String
+    description String?
+    imageUrl    String
+    products    Product[]
+}
+
+model Option {
+    id        String      @id @default(cuid())
+    name      String
+    quantity  Int
+    imageUrl  String
+    product   Product     @relation(fields: [productId], references: [id])
+    productId String
+    CartItem  CartItem[]
+    OrderItem OrderItem[]
+}
+
+model Cart {
+    id        String     @id @default(cuid())
+    user      User       @relation(fields: [userId], references: [id])
+    userId    String     @unique
+    items     CartItem[]
+    totalCost Float
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+    id        String  @id @default(cuid())
+    quantity  Int
+    option    Option  @relation(fields: [optionId], references: [id])
+    optionId  String  @unique
+    product   Product @relation(fields: [productId], references: [id])
+    productId String
+    cart      Cart    @relation(fields: [cartId], references: [id])
+    cartId    String
+}
+
+model User {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    password  String
+    name      String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Cart      Cart[]
+    Orders    Order[]
+}
+
+model Order {
+    id             String      @id @default(cuid())
+    paymentId      String      @unique
+    user           User        @relation(fields: [userId], references: [id])
+    userId         String
+    name           String
+    email          String
+    address        String
+    postalCode     String
+    phone          String
+    items          OrderItem[]
+    totalCost      Float
+    orderFulfilled Boolean     @default(false)
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+}
+
+model OrderItem {
+    id        String  @id @default(cuid())
+    quantity  Int
+    option    Option  @relation(fields: [optionId], references: [id])
+    optionId  String
+    product   Product @relation(fields: [productId], references: [id])
+    productId String
+    order     Order   @relation(fields: [orderId], references: [id])
+    orderId   String
+}
+
+model ForgetPassword {
+    id        String   @id @default(cuid())
+    email     String
+    validated Boolean  @default(false)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
