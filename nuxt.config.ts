@@ -39,6 +39,7 @@ export default defineNuxtConfig({
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         public: {
             API_URL: process.env.API_URL,
+            WEB_URL: process.env.WEB_URL,
             STRIPE_KEY: process.env.STRIPE_KEY,
         },
     },
