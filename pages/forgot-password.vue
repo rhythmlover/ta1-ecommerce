@@ -7,7 +7,7 @@
                     <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Forgot password?</h1>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Remember your password?
-                        <UiLink class="text-indigo-600 decoration-2 font-medium" to="/login">
+                        <UiLink class="text-indigo-600 decoration-2 font-medium ml-2" to="/login">
                             Login here
                         </UiLink>
                     </p>
