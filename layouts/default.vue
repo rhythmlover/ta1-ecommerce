@@ -112,6 +112,6 @@ async function checkIfUserIsLoggedIn() {
 async function logout() {
     cartStore.clearCartQty();
     userStore.clearUserId();
-    await navigateTo("/");
+    navigateTo("/");
 }
 </script>

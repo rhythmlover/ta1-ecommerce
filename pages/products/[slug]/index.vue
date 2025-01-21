@@ -57,6 +57,9 @@
                     {{ "Add to cart" }}
                 </UiButton>
 
+                <div v-if="errorMessage" class="text-red-600 mx-auto">{{ errorMessage }}</div>
+                <div v-if="successMessage" class="text-green-600 mx-auto">{{ successMessage }}</div>
+
                 <!-- <UiButton
                     :loading="isLoading"
                     :disabled="!currentVariant || outOfStock"
@@ -81,6 +84,8 @@ const selectedOptions = reactive<{ [key: string]: string }>({});
 const quantity_selected = ref(1);
 const currentImageUrl = ref('');
 const formattedDescription = computed(() => product.value?.description ?? '');
+const errorMessage = ref('');
+const successMessage = ref('');
 
 onMounted(async () => {
     const id = route.query.id as string;
@@ -127,6 +132,9 @@ function changeQuantity(amount: number) {
 }
 
 async function addItemToCart() {
+    errorMessage.value = '';
+    successMessage.value = '';
+
     const userId = userStore.getUserId;
 
     if (userId === '') {
@@ -140,15 +148,15 @@ async function addItemToCart() {
         })[0];
 
         if (!optionId) {
+            errorMessage.value = 'Please select an option.';
             console.error('No option selected.');
             return;
         }
 
         const cart = await getUserCart(userId);
 
-        // if option is already added to cart previously, dont add again
         if (cart && cart.items.some(item => item.option.id === optionId)) {
-            console.log('Item already in cart');
+            errorMessage.value = 'Item already in cart.';
             return;
         }
 
@@ -156,7 +164,8 @@ async function addItemToCart() {
             await addItemToUserCart(cart.id, product.value.id, optionId, quantity_selected.value);
             cartStore.incrementCartQty();
         }
-        console.log("Added to cart");
+        
+        successMessage.value = 'Item added to cart.';
     }
 }
 

@@ -129,6 +129,7 @@ import type { Cart, Order, OrderItem } from '~/types/types';
 
 const route = useRoute();
 const userStore = useUserStore();
+const cartStore = useCartStore();
 const cartData = ref<Cart | null>(null);
 const pid = route.query.payment_intent as string;
 const name = route.query.name as string;
@@ -173,6 +174,9 @@ onMounted(async () => {
 
         orderId.value = await getOrderId(pid).then((res) => res.id).then((id) => id.slice(0, 13));
         orderTime.value = await getOrderTimestamp(pid).then((res) => res.createdAt);
+
+        await clearCart(cartData.value.id);
+        cartStore.setCartQty(0);
     } else {
         console.log('Cart is empty');
     }

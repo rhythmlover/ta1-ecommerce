@@ -37,7 +37,7 @@
                         </strong>
                     </div>
 
-                    <UiButton class="text-lg" :disabled="isEmpty" :to="checkoutUrl">
+                    <UiButton @click="goToCheckout" class="text-lg" :disabled="isEmpty">
                         Checkout
                     </UiButton>
                 </div>
@@ -54,7 +54,6 @@ const cartStore = useCartStore();
 const userStore = useUserStore();
 const cartData = ref<Cart | null>(null);
 const isEmpty = computed(() => !cartData.value || cartData.value.items.length === 0);
-const checkoutUrl = `/checkout`;
 
 onMounted(async () => {
     const userId = userStore.getUserId;
@@ -84,6 +83,10 @@ function calculateTotal() {
         return modifiedCost;
     }
     return 0;
+}
+
+function goToCheckout() {
+    navigateTo("/checkout");
 }
 
 useSeoMeta({
