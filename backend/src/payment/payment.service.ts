@@ -55,7 +55,7 @@ export class PaymentService {
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log(paymentIntent);
-            const order = await this.orderService.getOrder("pi_3QhZ0DKfHG7YK88c0VmmdNXd");
+            const order = await this.orderService.getOrder(paymentIntent.id);
             console.log(order);
             const receiptData: ReceiptData = {
                 name: order.name,
