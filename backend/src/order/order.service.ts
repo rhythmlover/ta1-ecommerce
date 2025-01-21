@@ -20,7 +20,7 @@ export class OrderService {
                     postalCode: dto.postalCode,
                     phone: dto.phone,
                     items: {
-                        create: dto.items.map(item => ({
+                        create: dto.items.map((item) => ({
                             optionId: item.optionId,
                             productId: item.productId,
                             quantity: item.quantity,
@@ -39,32 +39,37 @@ export class OrderService {
         }
     }
 
-    async getOrder(paymentId: string) {
-        const order = await this.prisma.order.findUnique({
-            where: {
-                paymentId: paymentId,
-            },
-            select: {
-                id: true,
-                totalCost: true,
-                userId: true,
-                name: true,
-                email: true,
-                phone: true,
-                address: true,
-                postalCode: true,
-                items: {
-                    select: {
-                        quantity: true,
-                        productId: true,
-                        optionId: true,
-                    },
+    async getOrder(paymentId: string, retries: number = 0, delay: number = 0) {
+        for (let i = 0; i < retries; i++) {
+            const order = await this.prisma.order.findUnique({
+                where: {
+                    paymentId: paymentId,
                 },
-                createdAt: true,
-            },
-        });
-
-        return order;
+                select: {
+                    id: true,
+                    totalCost: true,
+                    userId: true,
+                    name: true,
+                    email: true,
+                    phone: true,
+                    address: true,
+                    postalCode: true,
+                    items: {
+                        select: {
+                            quantity: true,
+                            productId: true,
+                            optionId: true,
+                        },
+                    },
+                    createdAt: true,
+                },
+            });
+            if (order) {
+                return order;
+            }
+            await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+        return null;
     }
 
     async getOrderId(paymentId: string) {

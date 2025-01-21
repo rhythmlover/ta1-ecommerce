@@ -55,7 +55,7 @@ export class PaymentService {
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log(paymentIntent);
-            const order = await this.orderService.getOrder(paymentIntent.id);
+            const order = await this.orderService.getOrder(paymentIntent.id, 10, 5000);
             console.log(order);
             const receiptData: ReceiptData = {
                 name: order.name,
@@ -129,7 +129,7 @@ export class PaymentService {
         transporter.sendMail(
             {
                 from: emailUser,
-                to: emailUser,
+                to: emailToSend,
                 subject: "TA1 E-Receipt",
                 html: htmlTemplate,
             } as nodemailer.SendMailOptions,

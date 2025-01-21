@@ -121,6 +121,7 @@ const subtotalAmount = computed(() => cartData.value?.totalCost || 0);
 const totalAmount = computed(() => cartData.value?.totalCost ? cartData.value?.totalCost + shippingAmount.value : 0);
 
 const cartData = ref<Cart | null>(null);
+const userId = userStore.getUserId;
 
 const paymentIntentCS = ref('');
 const paymentIntentId = ref('');
@@ -145,8 +146,6 @@ const postalCodeError = ref(false);
 const phoneNumberError = ref(false);
 
 onMounted(async () => {
-    const userId = userStore.getUserId;
-
     if (userId) {
         cartData.value = await getUserCart(userId);
     }
