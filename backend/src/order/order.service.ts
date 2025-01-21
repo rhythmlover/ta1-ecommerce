@@ -39,8 +39,9 @@ export class OrderService {
         }
     }
 
-    async getOrder(paymentId: string, retries: number = 0, delay: number = 0) {
+    async getOrder(paymentId: string, retries: number = 1, delay: number = 0) {
         for (let i = 0; i < retries; i++) {
+            console.log("Retrying order retrieval " + i);
             const order = await this.prisma.order.findUnique({
                 where: {
                     paymentId: paymentId,

@@ -25,7 +25,6 @@ export class PaymentService {
         this.stripe = new Stripe(stripeSecretKey, {
             apiVersion: "2023-10-16; custom_checkout_beta=v1" as any,
         });
-        console.log("Stripe secret key:", stripeSecretKey)
     }
 
     async createPayment(amountPaid: number): Promise<Stripe.PaymentIntent> {
@@ -54,9 +53,9 @@ export class PaymentService {
 
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            console.log(paymentIntent);
+            console.log("Payment Intent: ", paymentIntent);
             const order = await this.orderService.getOrder(paymentIntent.id, 10, 5000);
-            console.log(order);
+            console.log("Order: ", order);
             const receiptData: ReceiptData = {
                 name: order.name,
                 email: order.email,
@@ -79,7 +78,7 @@ export class PaymentService {
                     quantity: item.quantity,
                 }))),
             };
-            console.log(receiptData);
+            console.log("Receipt Data: ", receiptData);
             this.sendEmailReceipt(order.email, receiptData);
             console.log("PaymentIntent was successful:", paymentIntent.id);
         } else if (event.type === "payment_intent.payment_failed") {
