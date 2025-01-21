@@ -88,6 +88,7 @@ export class AuthService {
     sendForgetPasswordEmail(email: string, id: string) {
         const emailUser = this.configService.get<string>("EMAIL_USER");
         const emailPassword = this.configService.get<string>("EMAIL_PASSWORD");
+        const webUrl = this.configService.get<string>("WEB_URL");
         const transporter = nodemailer.createTransport({
             service: "gmail",
             port: 465,
@@ -103,7 +104,7 @@ export class AuthService {
                 from: emailUser,
                 to: email,
                 subject: "TA1 Forget Password Request",
-                html: `<a href="http://localhost:3000/reset-password?id=${id}&email=${email}">Click here to reset password</a>`,
+                html: `<a href="${webUrl}/reset-password?id=${id}&email=${email}">Click here to reset password</a>`,
             } as nodemailer.SendMailOptions,
             (err, info) => {
                 if (err) {

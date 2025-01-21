@@ -113,7 +113,7 @@ import type { StripeElements, Stripe } from '@stripe/stripe-js';
 const config = useRuntimeConfig();
 const userStore = useUserStore();
 const stripe = ref<Stripe | null>(null);
-const successUrl = "http://localhost:3000/success";
+const successUrl = `${config.public.API_URL}/success`;
 const loading = ref(false);
 
 const shippingAmount = ref(0.00);
