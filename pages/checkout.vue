@@ -9,11 +9,20 @@
                     <div class="space-y-4">
                         <h2 class="text-2xl font-semibold">Contact</h2>
                         <div class="space-y-2">
-                            <input type="email" placeholder="Email"
+                            <label for="hs-leading-icon" class="block text-sm font-medium mb-2 dark:text-white">Email
+                                address</label>
+                            <div class="relative">
+                                <input type="email" placeholder="johndoe@email.com"
+                                    :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', emailError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']"
+                                    v-model="email" />
+                                <label class="block pt-2 text-sm font-medium text-gray-700">A receipt will be sent to
+                                    the email</label>
+                            </div>
+                            <!-- <input type="email" placeholder="Email"
                                 :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', emailError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']"
                                 v-model="email" />
                             <label class="block pt-2 text-sm font-medium text-gray-700">A receipt will be sent to the
-                                email</label>
+                                email</label> -->
                         </div>
                     </div>
 
@@ -22,33 +31,50 @@
                         <h2 class="text-2xl font-semibold">Delivery</h2>
                         <div class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
-                                <input placeholder="First name" v-model="firstName"
-                                    :class="['bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', firstNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
-                                <input placeholder="Last name" v-model="lastName"
-                                    :class="['bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', lastNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                <div>
+                                    <label for="first-name" class="block text-sm font-medium mb-2 dark:text-white">First
+                                        name</label>
+                                    <input id="first-name" placeholder="John" v-model="firstName"
+                                        :class="['bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', firstNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                </div>
+                                <div>
+                                    <label for="last-name" class="block text-sm font-medium mb-2 dark:text-white">Last
+                                        name</label>
+                                    <input id="last-name" placeholder="Doe" v-model="lastName"
+                                        :class="['bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', lastNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="address"
+                                    class="block text-sm font-medium mb-2 dark:text-white">Address</label>
+                                <input id="address" placeholder="Blk 111 Hougang St 1" v-model="address"
+                                    :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', addressError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                            </div>
+                            <div>
+                                <label for="apartment"
+                                    class="block text-sm font-medium mb-2 dark:text-white">Unit No.</label>
+                                <input id="apartment" placeholder="#01-111" v-model="apartment"
+                                    :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', addressError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                            </div>
+                            <div>
+                                <label for="postal-code" class="block text-sm font-medium mb-2 dark:text-white">Postal
+                                    Code</label>
+                                <input id="postal-code" placeholder="111111" v-model="postalCode"
+                                    :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', postalCodeError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
                             </div>
 
-                            <div class="relative">
-                                <input placeholder="Address" v-model="address"
-                                    :class="['w-full bg-white px-3 py-2 pr-10 rounded-md border focus:outline-none focus:ring-2', addressError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
-                                <IconSearch class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-                            </div>
-
-                            <input placeholder="Unit no." v-model="apartment"
-                                :class="['w-full bg-white px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2', apartmentError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
-
-                            <input placeholder="Postal code" v-model="postalCode"
-                                :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', postalCodeError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
-
-                            <div class="relative flex">
-                                <select v-model="phoneCountryCode"
-                                    class="bg-white px-2 py-2 rounded-l-md border border-r-0 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="+65">+65</option>
-                                    <option value="+60">+60</option>
-                                    <option value="+62">+62</option>
-                                </select>
-                                <input placeholder="Phone" v-model="phoneNumber"
-                                    :class="['flex-grow bg-white px-3 py-2 rounded-r-md border focus:outline-none focus:ring-2', phoneNumberError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                            <div>
+                                <label for="phone" class="block text-sm font-medium mb-2 dark:text-white">Phone</label>
+                                <div class="relative flex">
+                                    <select v-model="phoneCountryCode"
+                                        class="bg-white px-2 py-2 rounded-l-md border border-r-0 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="+65">+65</option>
+                                        <option value="+60">+60</option>
+                                        <option value="+62">+62</option>
+                                    </select>
+                                    <input id="phone" placeholder="91234567" v-model="phoneNumber"
+                                        :class="['flex-grow bg-white px-3 py-2 rounded-r-md border focus:outline-none focus:ring-2', phoneNumberError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -56,9 +82,34 @@
                     <!-- Shipping Method Section -->
                     <div class="space-y-4">
                         <h2 class="text-2xl font-semibold">Shipping method</h2>
-                        <p class="text-gray-600 text-sm">
-                            Enter your shipping address to view available shipping methods.
-                        </p>
+                        <div class="grid gap-4">
+                            <label v-for="option in deliveryOptions" :key="option.id" :for="option.id" :class="[
+                                'relative flex items-start p-4 cursor-pointer rounded-lg border',
+                                'transition-colors duration-200 hover:bg-gray-50',
+                                selected === option.id ? 'border-indigo-600 border-2' : 'border-gray-200'
+                            ]">
+                                <input type="radio" :id="option.id" name="delivery" :value="option.id"
+                                    v-model="selected" class="sr-only" />
+                                <div class="grid gap-1.5 w-full">
+                                    <div class="flex items-center justify-between">
+                                        <div class="font-medium text-gray-900">{{ option.title }}</div>
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-900">
+                                                {{ (option.price !== 0.00 ? '$' : '') }}{{ (option.price !== 0.00 ?
+                                                    option.price.toFixed(2) : 'Free') }}
+                                            </span>
+                                            <div class="h-5 w-5 flex items-center justify-center rounded-full">
+                                                <IconCheck v-if="selected === option.id"
+                                                    class="h-4 w-4 text-indigo-600" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        {{ option.description }}
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Payment Section -->
@@ -105,7 +156,7 @@
 
 <script lang="ts" setup>
 import { loadStripe } from '@stripe/stripe-js';
-import { IconSearch } from '@tabler/icons-vue';
+import { IconCheck, IconSearch } from '@tabler/icons-vue';
 import Loading from '~/assets/loading.svg';
 import type { Cart } from '~/types/types';
 import type { StripeElements, Stripe } from '@stripe/stripe-js';
@@ -115,6 +166,22 @@ const userStore = useUserStore();
 const stripe = ref<Stripe | null>(null);
 const successUrl = `${config.public.WEB_URL}/success`;
 const loading = ref(false);
+const deliveryOptions = [
+    {
+        id: "standard",
+        title: "Standard",
+        description: "2–3 business days",
+        price: 0.00
+    },
+    //   {
+    //     id: "express",
+    //     title: "Express",
+    //     description: "2–5 business days",
+    //     price: 16.00
+    //   }
+]
+
+const selected = ref("standard")
 
 const shippingAmount = ref(0.00);
 const subtotalAmount = computed(() => cartData.value?.totalCost || 0);

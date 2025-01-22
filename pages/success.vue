@@ -31,19 +31,19 @@
                         <h2 class="font-semibold text-lg mb-4">Billing address</h2>
                         <div class="space-y-2">
                             <div>
-                                <span class="font-medium">Name</span>
+                                <span class="font-light">Name</span>
                                 <p>{{ name }}</p>
                             </div>
                             <div>
-                                <span class="font-medium">Address</span>
-                                <p>{{ address }},<br />S{{ postalCode }}, Singapore</p>
+                                <span class="font-light">Address</span>
+                                <p>{{ address }} #{{ apartment }},<br />S{{ postalCode }}, Singapore</p>
                             </div>
                             <div>
-                                <span class="font-medium">Phone</span>
+                                <span class="font-light">Phone</span>
                                 <p>+{{ phoneCountryCode }} {{ phone }}</p>
                             </div>
                             <div>
-                                <span class="font-medium">Email</span>
+                                <span class="font-light">Email</span>
                                 <p>{{ email }}</p>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                     <div class="flex justify-between gap-4 text-sm mb-5">
                         <div>
                             <span class="text-gray-600">Date</span>
-                            <p v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) }}</p>
+                            <p v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', { timeZone: "Asia/Singapore", day: 'numeric', month: 'short', year: 'numeric' }) }}</p>
                             <p v-else>...</p>
                         </div>
                         <div>
@@ -142,14 +142,15 @@ const postalCode = route.query.postal_code as string;
 const shippingCost = 0;
 const orderId = ref<string | null>(null);
 const orderTime = ref<string | null>(null);
+const userId = userStore.getUserId;
 
 onMounted(async () => {
-    const userId = userStore.getUserId;
     if (userId) {
         cartData.value = await getUserCart(userId);
     }
 
     if (cartData.value) {
+        console.log("hello")
         const orderItems: OrderItem[] = cartData.value.items.map((item) => {
             return {
                 productId: item.product.id,

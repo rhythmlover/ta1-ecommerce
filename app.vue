@@ -34,6 +34,13 @@ h1 {
     line-height: 2.5rem;
 }
 
+h2 {
+    font-family: 'Assistant', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
 summary {
     font-family: 'Assistant', sans-serif;
     font-weight: 600;

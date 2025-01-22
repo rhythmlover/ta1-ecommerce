@@ -1,11 +1,19 @@
 import { Injectable, ForbiddenException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
+import { ConfigService } from "@nestjs/config";
+import { ProductService } from "../products/product.service";
 import { OrderDto } from "./dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import * as nodemailer from "nodemailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
 @Injectable()
 export class OrderService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        private configService: ConfigService,
+        private productService: ProductService
+    ) {}
 
     async createOrder(dto: OrderDto) {
         try {
@@ -28,6 +36,7 @@ export class OrderService {
                     },
                 },
             });
+            await this.sendOrderToInHouseEmail(dto.paymentId);
             return order;
         } catch (error) {
             console.log(error);
@@ -36,6 +45,75 @@ export class OrderService {
                     throw new ForbiddenException("Payment Intent has previously been used");
                 }
             }
+        }
+    }
+
+    async sendOrderToInHouseEmail(paymentId: string) {
+        const order = await this.getOrder(paymentId);
+        const emailUser = this.configService.get<string>("EMAIL_USER");
+        const emailPassword = this.configService.get<string>("EMAIL_PASSWORD");
+        try {
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                port: 465,
+                secure: true,
+                auth: {
+                    user: emailUser,
+                    pass: emailPassword,
+                },
+            } as SMTPTransport.Options);
+
+            const orderHTML = `
+            <h1>Order #${order.id.toUpperCase()}</h1>
+            <h2>Order Details</h2>
+            <p>Name: ${order.name}</p>
+            <p>Email: ${order.email}</p>
+            <p>Phone: +${order.phone}</p>
+            <p>Address: ${order.address}</p>
+            <p>Postal Code: ${order.postalCode}</p>
+            <h2>Items</h2>
+            <ul>
+            ${(
+                await Promise.all(
+                    order.items.map(async (item) => {
+                        const product = await this.productService.getProduct(item.productId);
+                        const option = product.options.find(
+                            (option) => option.id === item.optionId
+                        );
+                        return `
+                            <li>
+                                <p>Name: ${product.name}</p>
+                                <p>Option: ${option ? option.name : "N/A"}</p>
+                                <p>Quantity: ${item.quantity}</p>
+                                <p>Price: $${product.price * item.quantity}</p>
+                            </li>
+                        `;
+                    })
+                )
+            ).join("")}
+            </ul>
+            <h2>Total Cost</h2>
+            <p>$${(order.totalCost).toFixed(2)}</p>
+        `;
+            console.log("Order HTML: ", orderHTML);
+
+            transporter.sendMail(
+                {
+                    from: emailUser,
+                    to: emailUser,
+                    subject: "Order Placed, ID: " + order.id,
+                    html: orderHTML,
+                } as nodemailer.SendMailOptions,
+                (err, info) => {
+                    if (err) {
+                        console.error(err);
+                    }
+                    console.log("Email sent successfully", info.response);
+                }
+            );
+            return { message: "Email sent successfully" };
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -74,6 +152,7 @@ export class OrderService {
     }
 
     async getOrderId(paymentId: string) {
+        console.log("Getting order id for payment id: ", paymentId);
         const order = await this.prisma.order.findUnique({
             where: {
                 paymentId: paymentId,
@@ -87,6 +166,7 @@ export class OrderService {
     }
 
     async getOrderTimestamp(paymentId: string) {
+        console.log("Getting order timestamp for payment id: ", paymentId);
         const order = await this.prisma.order.findUnique({
             where: {
                 paymentId: paymentId,

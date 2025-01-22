@@ -6,7 +6,7 @@ import { ConfigService } from "@nestjs/config";
 import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import type { ReceiptData } from "../types";
-import { Request } from "express";
+import { Request, Response } from "express";
 import Stripe from "stripe";
 import * as fs from "fs";
 
@@ -44,29 +44,35 @@ export class PaymentService {
         }
     }
 
-    async handleStripeWebhook(signature: string, req: RawBodyRequest<Request>): Promise<void> {
+    async handleStripeWebhook(signature: string, req: RawBodyRequest<Request>, res: Response): Promise<void> {
         const endpointSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET");
+        const webUrl = this.configService.get<string>("WEB_URL");
         if (!endpointSecret) {
             throw new Error("STRIPE_WEBHOOK_SECRET is not defined in the environment variables");
         }
         const event = this.stripe.webhooks.constructEvent(req.rawBody, signature, endpointSecret);
 
+        console.log("Received event:", event.type);
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            console.log("Payment Intent: ", paymentIntent);
+            // console.log("Payment Intent: ", paymentIntent);
             const order = await this.orderService.getOrder(paymentIntent.id, 10, 5000);
-            console.log("Order: ", order);
+            // console.log("Order: ", order);
+            if (!order) {
+                console.error("Order not found");
+            }
             const receiptData: ReceiptData = {
                 name: order.name,
                 email: order.email,
                 address: order.address,
                 phone: order.phone,
                 postalCode: order.postalCode,
-                purchaseDate: new Date(order.createdAt).toLocaleString("en-SG", {
+                purchaseDate: new Date().toLocaleString("en-SG", {
+                    timeZone: "Asia/Singapore",
                     year: "numeric",
                     month: "short",
-                    day: "2-digit",
-                    hour: "2-digit",
+                    day: "numeric",
+                    hour: "numeric",
                     minute: "2-digit",
                     hour12: true,
                 }),
@@ -83,6 +89,7 @@ export class PaymentService {
             console.log("PaymentIntent was successful:", paymentIntent.id);
         } else if (event.type === "payment_intent.payment_failed") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
+            res.redirect(`${webUrl}/payment-failed?pid=${paymentIntent.id}`);
             console.log("PaymentIntent failed:", paymentIntent.id);
         } else {
             console.warn("Unhandled event type:", event.type);
@@ -90,6 +97,7 @@ export class PaymentService {
     }
 
     sendEmailReceipt(emailToSend: string, receiptData: ReceiptData): void {
+        console.log("WHY IS THIS NOT WORKING");
         const emailUser = this.configService.get<string>("EMAIL_USER");
         const emailPassword = this.configService.get<string>("EMAIL_PASSWORD");
         const transporter = nodemailer.createTransport({
@@ -112,7 +120,7 @@ export class PaymentService {
             .replace(/{{postal_code}}/g, receiptData.postalCode)
             .replace(/{{name}}/g, receiptData.name)
             .replace(/{{purchase_date}}/g, receiptData.purchaseDate)
-            .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13))
+            .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
