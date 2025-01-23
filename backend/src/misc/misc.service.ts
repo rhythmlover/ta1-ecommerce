@@ -48,8 +48,8 @@ export class MiscService {
 
         transporter.sendMail(
             {
-                from: emailUser,
-                to: dto.email,
+                from: dto.email,
+                to: emailUser,
                 subject: "Inquiry Email from " + dto.name + ", Order No.: " + dto.orderNo,
                 html: dto.message,
             } as nodemailer.SendMailOptions,

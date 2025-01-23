@@ -67,7 +67,7 @@ async function sendEmail() {
         return;
     }
 
-    const res = await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
+    await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
 }
 
 useSeoMeta({
