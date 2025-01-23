@@ -6,10 +6,22 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import * as argon from "argon2";
+import { Auth } from "googleapis";
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService, private configService: ConfigService) {}
+    private oAuth2Client: Auth.OAuth2Client;
+
+    constructor(private prisma: PrismaService, private configService: ConfigService) {
+        this.oAuth2Client = new Auth.OAuth2Client({
+            clientId: this.configService.get<string>("CLIENT_ID"),
+            clientSecret: this.configService.get<string>("CLIENT_SECRET"),
+            redirectUri: this.configService.get<string>("REDIRECT_URI"),
+        });
+        this.oAuth2Client.setCredentials({
+            refresh_token: this.configService.get<string>("REFRESH_TOKEN"),
+        });
+    }
 
     async signUp(dto: AuthDto) {
         const hash = await argon.hash(dto.password);
@@ -78,24 +90,32 @@ export class AuthService {
             select: {
                 id: true,
                 email: true,
-            }
-        })
-            
+            },
+        });
+
         this.sendForgetPasswordEmail(emailObj.email, emailObj.id);
         return { message: "Email sent successfully" };
     }
 
-    sendForgetPasswordEmail(email: string, id: string) {
+    async sendForgetPasswordEmail(email: string, id: string) {
         const emailUser = this.configService.get<string>("EMAIL_USER");
-        const emailPassword = this.configService.get<string>("EMAIL_PASSWORD");
+        const emailClientID = this.configService.get<string>("CLIENT_ID");
+        const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
+        const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
         const webUrl = this.configService.get<string>("WEB_URL");
+        const accessToken = await this.oAuth2Client.getAccessToken();
         const transporter = nodemailer.createTransport({
             service: "gmail",
-            port: 465,
-            secure: true,
             auth: {
+                type: "OAuth2",
                 user: emailUser,
-                pass: emailPassword,
+                clientId: emailClientID,
+                clientSecret: emailClientSecret,
+                refreshToken: refreshToken,
+                accessToken: accessToken.token as string,
+            },
+            tls: {
+                rejectUnauthorized: true,
             },
         } as SMTPTransport.Options);
 

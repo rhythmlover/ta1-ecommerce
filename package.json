@@ -28,6 +28,7 @@
         "@stripe/stripe-js": "^5.4.0",
         "axios": "^1.7.9",
         "dotenv": "^16.4.7",
+        "googleapis": "^144.0.0",
         "pinia-plugin-persistedstate": "^4.2.0",
         "ts-node": "^10.9.2"
     }

@@ -9,10 +9,12 @@ import type { ReceiptData } from "../types";
 import { Request, Response } from "express";
 import Stripe from "stripe";
 import * as fs from "fs";
+import { Auth } from "googleapis";
 
 @Injectable()
 export class PaymentService {
     private stripe: Stripe;
+    private oAuth2Client: Auth.OAuth2Client;
 
     constructor(private prisma: PrismaService, 
                 private configService: ConfigService, 
@@ -24,6 +26,14 @@ export class PaymentService {
         }
         this.stripe = new Stripe(stripeSecretKey, {
             apiVersion: "2023-10-16; custom_checkout_beta=v1" as any,
+        });
+        this.oAuth2Client = new Auth.OAuth2Client({
+            clientId: this.configService.get<string>("CLIENT_ID"),
+            clientSecret: this.configService.get<string>("CLIENT_SECRET"),
+            redirectUri: this.configService.get<string>("REDIRECT_URI"),
+        });
+        this.oAuth2Client.setCredentials({
+            refresh_token: this.configService.get<string>("REFRESH_TOKEN"),
         });
     }
 
@@ -96,18 +106,25 @@ export class PaymentService {
         }
     }
 
-    sendEmailReceipt(emailToSend: string, receiptData: ReceiptData): void {
-        console.log("WHY IS THIS NOT WORKING");
+    async sendEmailReceipt(emailToSend: string, receiptData: ReceiptData): Promise<void> {
         const emailUser = this.configService.get<string>("EMAIL_USER");
-        const emailPassword = this.configService.get<string>("EMAIL_PASSWORD");
+        const emailClientID = this.configService.get<string>("CLIENT_ID");
+        const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
+        const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
+        const accessToken = await this.oAuth2Client.getAccessToken();
         const transporter = nodemailer.createTransport({
             service: "gmail",
-            port: 465,
-            secure: true,
             auth: {
+                type: "OAuth2",
                 user: emailUser,
-                pass: emailPassword,
+                clientId: emailClientID,
+                clientSecret: emailClientSecret,
+                refreshToken: refreshToken,
+                accessToken: accessToken.token as string,
             },
+            tls: {
+                rejectUnauthorized: true,
+            }
         } as SMTPTransport.Options);
 
         const templatePath = "src/payment/receipt-template.html";

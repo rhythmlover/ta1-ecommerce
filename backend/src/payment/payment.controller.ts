@@ -19,8 +19,8 @@ export class PaymentController {
         return { received: true };
     }
 
-    // @Post('send-email-after-payment')
-    // async sendEmailAfterPayment(@Body() body: { email: string, receiptData: ReceiptData }) {
-    //     this.paymentService.sendEmailReceipt(body.email, body.receiptData);
-    // }
+    @Post('send-email-after-payment')
+    async sendEmailAfterPayment(@Body() body: { email: string, receiptData: ReceiptData }) {
+        this.paymentService.sendEmailReceipt(body.email, body.receiptData);
+    }
 }

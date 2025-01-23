@@ -6,14 +6,26 @@ import { OrderDto } from "./dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
+import { Auth } from "googleapis";
 
 @Injectable()
 export class OrderService {
+    private oAuth2Client: Auth.OAuth2Client;
+
     constructor(
         private prisma: PrismaService,
         private configService: ConfigService,
         private productService: ProductService
-    ) {}
+    ) {
+        this.oAuth2Client = new Auth.OAuth2Client({
+            clientId: this.configService.get<string>("CLIENT_ID"),
+            clientSecret: this.configService.get<string>("CLIENT_SECRET"),
+            redirectUri: this.configService.get<string>("REDIRECT_URI"),
+        });
+        this.oAuth2Client.setCredentials({
+            refresh_token: this.configService.get<string>("REFRESH_TOKEN"),
+        });
+    }
 
     async createOrder(dto: OrderDto) {
         try {
@@ -51,19 +63,27 @@ export class OrderService {
     async sendOrderToInHouseEmail(paymentId: string) {
         const order = await this.getOrder(paymentId);
         const emailUser = this.configService.get<string>("EMAIL_USER");
-        const emailPassword = this.configService.get<string>("EMAIL_PASSWORD");
-        try {
-            const transporter = nodemailer.createTransport({
-                service: "gmail",
-                port: 465,
-                secure: true,
-                auth: {
-                    user: emailUser,
-                    pass: emailPassword,
-                },
-            } as SMTPTransport.Options);
+        const ordersEmailUser = this.configService.get<string>("ORDERS_EMAIL_USER");
+        const emailClientID = this.configService.get<string>("CLIENT_ID");
+        const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
+        const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
+        const accessToken = await this.oAuth2Client.getAccessToken();
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                type: "OAuth2",
+                user: emailUser,
+                clientId: emailClientID,
+                clientSecret: emailClientSecret,
+                refreshToken: refreshToken,
+                accessToken: accessToken.token as string,
+            },
+            tls: {
+                rejectUnauthorized: true,
+            },
+        } as SMTPTransport.Options);
 
-            const orderHTML = `
+        const orderHTML = `
             <h1>Order #${order.id.toUpperCase()}</h1>
             <h2>Order Details</h2>
             <p>Name: ${order.name}</p>
@@ -93,28 +113,25 @@ export class OrderService {
             ).join("")}
             </ul>
             <h2>Total Cost</h2>
-            <p>$${(order.totalCost).toFixed(2)}</p>
+            <p>$${order.totalCost.toFixed(2)}</p>
         `;
-            console.log("Order HTML: ", orderHTML);
+        console.log("Order HTML: ", orderHTML);
 
-            transporter.sendMail(
-                {
-                    from: emailUser,
-                    to: emailUser,
-                    subject: "Order Placed, ID: " + order.id,
-                    html: orderHTML,
-                } as nodemailer.SendMailOptions,
-                (err, info) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                    console.log("Email sent successfully", info.response);
+        transporter.sendMail(
+            {
+                from: ordersEmailUser,
+                to: ordersEmailUser,
+                subject: "Order Placed, ID: " + order.id,
+                html: orderHTML,
+            } as nodemailer.SendMailOptions,
+            (err, info) => {
+                if (err) {
+                    console.error(err);
                 }
-            );
-            return { message: "Email sent successfully" };
-        } catch (error) {
-            console.error(error);
-        }
+                console.log("Email sent successfully", info.response);
+            }
+        );
+        return { message: "Email sent successfully" };
     }
 
     async getOrder(paymentId: string, retries: number = 1, delay: number = 0) {
