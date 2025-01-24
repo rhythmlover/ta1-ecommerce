@@ -25,4 +25,9 @@ export class OrderController {
     getOrderTimestamp(@Param("paymentId") paymentId: string) {
         return this.orderService.getOrderTimestamp(paymentId);
     }
+
+    @Post('send-order-to-inhouse-email/:paymentId')
+    sendToInhouseEmail(@Param("paymentId") paymentId: string) {
+        return this.orderService.sendOrderToInHouseEmail(paymentId);
+    }
 }

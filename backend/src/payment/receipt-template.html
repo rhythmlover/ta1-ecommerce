@@ -6,11 +6,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="color-scheme" content="light dark" />
         <meta name="supported-color-schemes" content="light dark" />
-        <title></title>
+        <title>TA1 Order Receipt</title>
         <style type="text/css" rel="stylesheet" media="all">
             /* Base ------------------------------ */
 
-            @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,700&display=swap");
+            @import url("https://fonts.googleapis.com/css?family=Assistant:400,700&display=swap");
             body {
                 width: 100% !important;
                 height: 100%;
@@ -313,7 +313,7 @@
                 -premailer-width: 100%;
                 -premailer-cellpadding: 0;
                 -premailer-cellspacing: 0;
-                background-color: #f2f4f6;
+                background-color: #ffffff;
             }
 
             .email-content {
@@ -405,7 +405,7 @@
                 }
             }
 
-            @media (prefers-color-scheme: dark) {
+            /* @media (prefers-color-scheme: dark) {
                 body,
                 .email-body,
                 .email-body_inner,
@@ -434,7 +434,7 @@
                 .email-masthead_name {
                     text-shadow: none !important;
                 }
-            }
+            } */
 
             :root {
                 color-scheme: light dark;
@@ -626,7 +626,8 @@
                                                                         width="80%"
                                                                         class="shipping_details"
                                                                     >
-                                                                        <span class="f-fallback shipping_details_right"
+                                                                        <span
+                                                                            class="f-fallback shipping_details_right"
                                                                             >{{address}}
                                                                             S{{postal_code}}</span
                                                                         >
@@ -646,7 +647,9 @@
                                                                         width="80%"
                                                                         class="shipping_details"
                                                                     >
-                                                                        <span class="f-fallback shipping_details_right">+{{phone}}</span
+                                                                        <span
+                                                                            class="f-fallback shipping_details_right"
+                                                                            >+{{phone}}</span
                                                                         >
                                                                     </td>
                                                                 </tr>
@@ -664,7 +667,8 @@
                                                                         width="80%"
                                                                         class="shipping_details"
                                                                     >
-                                                                        <span class="f-fallback shipping_details_right"
+                                                                        <span
+                                                                            class="f-fallback shipping_details_right"
                                                                             >Standard</span
                                                                         >
                                                                     </td>
@@ -674,8 +678,12 @@
                                                     </tr>
                                                 </table>
                                                 <p>
-                                                    If you have any inquiries, simply reply to this email or reach out to our
-                                                    <a href="https://www.ta1-shop.com/contact">contacts</a> with this receipt as reference.
+                                                    If you have any inquiries, simply reply to this
+                                                    email or reach out to our
+                                                    <a href="https://www.ta1-shop.com/contact"
+                                                        >contacts</a
+                                                    >
+                                                    with this receipt as reference.
                                                 </p>
                                                 <p>Cheers, <br />Together As One</p>
                                             </div>

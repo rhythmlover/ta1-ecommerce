@@ -46,12 +46,19 @@ export class MiscService {
             dto.orderNo = "N/A";
         }
 
+        const inquiryHtml = `
+            <h1>Inquiry Email from ${dto.name}</h1>
+            <p>Order No.: ${dto.orderNo}</p>
+            <p>Email: ${dto.email}</p><br>
+            <p>Message: ${dto.message}</p>
+        `;
+
         transporter.sendMail(
             {
-                from: dto.email,
+                from: emailUser,
                 to: emailUser,
                 subject: "Inquiry Email from " + dto.name + ", Order No.: " + dto.orderNo,
-                html: dto.message,
+                html: inquiryHtml,
             } as nodemailer.SendMailOptions,
             (err, info) => {
                 if (err) {

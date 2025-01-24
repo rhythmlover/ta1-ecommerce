@@ -42,6 +42,7 @@
                     <UiButton @click="sendEmail" class="w-25"> Send </UiButton>
                     <p class="ml-5 text-center text-sm/6 text-gray-500">
                     <div v-if="errorMessage" class="text-red-600">{{ errorMessage }}</div>
+                    <div v-if="successMessage" class="text-green-600">{{ successMessage }}</div>
                     </p>
                 </div>
             </div>
@@ -55,6 +56,7 @@ const email = ref('');
 const orderNo = ref('');
 const message = ref('');
 const errorMessage = ref('');
+const successMessage = ref('');
 
 async function sendEmail() {
     if (!name.value || !email.value || !message.value) {
@@ -67,7 +69,17 @@ async function sendEmail() {
         return;
     }
 
-    await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
+    const res = await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
+
+    if (res.message === 'Email sent successfully') {
+        successMessage.value = 'Your inquiry has been sent successfully!';
+        name.value = '';
+        email.value = '';
+        orderNo.value = '';
+        message.value = '';
+    } else {
+        errorMessage.value = 'An error occurred. Please try again later.';
+    }
 }
 
 useSeoMeta({

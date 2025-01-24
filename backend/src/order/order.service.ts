@@ -7,6 +7,8 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import { Auth } from "googleapis";
+import * as fs from "fs";
+import type { ReceiptData } from "../types";
 
 @Injectable()
 export class OrderService {
@@ -62,6 +64,36 @@ export class OrderService {
 
     async sendOrderToInHouseEmail(paymentId: string) {
         const order = await this.getOrder(paymentId);
+        const receiptData: ReceiptData = {
+            name: order.name,
+            email: order.email,
+            address: order.address,
+            phone: order.phone,
+            postalCode: order.postalCode,
+            purchaseDate: new Date().toLocaleString("en-SG", {
+                timeZone: "Asia/Singapore",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            }),
+            receiptId: order.id.toUpperCase(),
+            totalCost: order.totalCost,
+            receiptItems: await Promise.all(
+                order.items.map(async (item) => ({
+                    price:
+                        (await this.productService.getProduct(item.productId)).price *
+                        item.quantity,
+                    description:
+                        (await this.productService.getProduct(item.productId)).name +
+                        "【" +
+                        (
+                            await this.productService.getProduct(item.productId)
+                        ).options.find((option) => option.id === item.optionId).name +
+                        "】",
+                    quantity: item.quantity,
+                }))
+            ),
+        };
         const emailUser = this.configService.get<string>("EMAIL_USER");
         const ordersEmailUser = this.configService.get<string>("ORDERS_EMAIL_USER");
         const emailClientID = this.configService.get<string>("CLIENT_ID");
@@ -83,46 +115,44 @@ export class OrderService {
             },
         } as SMTPTransport.Options);
 
-        const orderHTML = `
-            <h1>Order #${order.id.toUpperCase()}</h1>
-            <h2>Order Details</h2>
-            <p>Name: ${order.name}</p>
-            <p>Email: ${order.email}</p>
-            <p>Phone: +${order.phone}</p>
-            <p>Address: ${order.address}</p>
-            <p>Postal Code: ${order.postalCode}</p>
-            <h2>Items</h2>
-            <ul>
-            ${(
-                await Promise.all(
-                    order.items.map(async (item) => {
-                        const product = await this.productService.getProduct(item.productId);
-                        const option = product.options.find(
-                            (option) => option.id === item.optionId
-                        );
-                        return `
-                            <li>
-                                <p>Name: ${product.name}</p>
-                                <p>Option: ${option ? option.name : "N/A"}</p>
-                                <p>Quantity: ${item.quantity}</p>
-                                <p>Price: $${product.price * item.quantity}</p>
-                            </li>
-                        `;
+        const templatePath = "src/order/order-template.html";
+        let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+        const mailBy = new Date(receiptData.purchaseDate);
+        mailBy.setDate(mailBy.getDate() + 3);
+
+        htmlTemplate = htmlTemplate
+            .replace(/{{orderId}}/g, receiptData.receiptId)
+            .replace(/{{email}}/g, receiptData.email)
+            .replace(/{{address}}/g, receiptData.address)
+            .replace(/{{phone}}/g, receiptData.phone)
+            .replace(/{{postal_code}}/g, receiptData.postalCode)
+            .replace(/{{name}}/g, receiptData.name)
+            .replace(/{{purchase_date}}/g, receiptData.purchaseDate)
+            .replace(/{{mail_by}}/g, mailBy.toLocaleString("en-SG", {
+                timeZone: "Asia/Singapore",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            }))
+            .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
+            .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
+            .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
+                return receiptData.receiptItems
+                    .map((detail: any) => {
+                        return content
+                            .replace(/{{description}}/g, detail.description)
+                            .replace(/{{quantity}}/g, detail.quantity)
+                            .replace(/{{price}}/g, detail.price.toFixed(2));
                     })
-                )
-            ).join("")}
-            </ul>
-            <h2>Total Cost</h2>
-            <p>$${order.totalCost.toFixed(2)}</p>
-        `;
-        console.log("Order HTML: ", orderHTML);
+                    .join("");
+            });
 
         transporter.sendMail(
             {
                 from: ordersEmailUser,
                 to: ordersEmailUser,
-                subject: "Order Placed, ID: " + order.id,
-                html: orderHTML,
+                subject: "Order Placed, ID: " + receiptData.receiptId,
+                html: htmlTemplate,
             } as nodemailer.SendMailOptions,
             (err, info) => {
                 if (err) {

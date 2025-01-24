@@ -241,7 +241,7 @@ export async function resetPassword(dto: { email: string, password: string }, id
     return await response.json();
 }
 
-export async function sendInquiryEmail(name: string, email: string, message: string, orderNo: string): Promise<Response> {
+export async function sendInquiryEmail(name: string, email: string, message: string, orderNo: string): Promise<{ message: string }> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/misc/send-inquiry-email`, {
         method: "POST",
