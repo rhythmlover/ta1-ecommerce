@@ -42,15 +42,15 @@ export class MiscService {
             },
         } as SMTPTransport.Options);
 
-        if (dto.orderNo === undefined) {
+        if (dto.orderNo === '') {
             dto.orderNo = "N/A";
         }
 
         const inquiryHtml = `
-            <h1>Inquiry Email from ${dto.name}</h1>
-            <p>Order No.: ${dto.orderNo}</p>
-            <p>Email: ${dto.email}</p><br>
-            <p>Message: ${dto.message}</p>
+            <h2>Inquiry Email from ${dto.name}</h2>
+            <p><b>Order No.:</b> ${dto.orderNo}</p>
+            <p><b>Email:</b> ${dto.email}</p><br>
+            <p>${dto.message}</p>
         `;
 
         transporter.sendMail(

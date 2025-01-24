@@ -65,9 +65,9 @@ export class PaymentService {
         console.log("Received event:", event.type);
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            // console.log("Payment Intent: ", paymentIntent);
+            console.log("Payment Intent: ", paymentIntent);
             const order = await this.orderService.getOrder(paymentIntent.id, 10, 5000);
-            // console.log("Order: ", order);
+            console.log("Order: ", order);
             if (!order) {
                 console.error("Order not found");
             }
