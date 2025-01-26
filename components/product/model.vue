@@ -17,7 +17,7 @@
             </UiLink>
 
             <div>
-                <h3>{{ productValue.price }}</h3>
+                <h3>${{ productValue.price }}</h3>
             </div>
         </div>
     </div>

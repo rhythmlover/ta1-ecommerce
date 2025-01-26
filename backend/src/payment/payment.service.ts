@@ -57,11 +57,7 @@ export class PaymentService {
     async handleStripeWebhook(signature: string, req: RawBodyRequest<Request>, res: Response): Promise<void> {
         const endpointSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET");
         const webUrl = this.configService.get<string>("WEB_URL");
-        if (!endpointSecret) {
-            throw new Error("STRIPE_WEBHOOK_SECRET is not defined in the environment variables");
-        }
         const event = this.stripe.webhooks.constructEvent(req.rawBody, signature, endpointSecret);
-
         console.log("Received event:", event.type);
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
@@ -70,6 +66,11 @@ export class PaymentService {
             console.log("Order: ", order);
             if (!order) {
                 console.error("Order not found");
+            }
+            if (!order.email || !order.address || !order.phone || !order.postalCode) {
+                this.sendErrorEmail("Missing Order Information for Order ID: " + paymentIntent.id + ". Please contact Nigel to check with the Stripe Dashboard in case of a need for a refund.");
+                console.error("Missing Order Information for Order ID: " + paymentIntent.id + ". Please contact Nigel to check with the Stripe Dashboard in case of a need for a refund.");
+                return;
             }
             const receiptData: ReceiptData = {
                 name: order.name,
@@ -104,6 +105,40 @@ export class PaymentService {
         } else {
             console.warn("Unhandled event type:", event.type);
         }
+    }
+
+    async sendErrorEmail(error: string): Promise<void> {
+        const emailUser = this.configService.get<string>("EMAIL_USER");
+        const emailClientID = this.configService.get<string>("CLIENT_ID");
+        const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
+        const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
+        const accessToken = await this.oAuth2Client.getAccessToken();
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                type: "OAuth2",
+                user: emailUser,
+                clientId: emailClientID,
+                clientSecret: emailClientSecret,
+                refreshToken: refreshToken,
+                accessToken: accessToken.token as string,
+            },
+            tls: {
+                rejectUnauthorized: true,
+            }
+        } as SMTPTransport.Options);
+
+        transporter.sendMail({
+            from: emailUser,
+            to: emailUser,
+            subject: "TA1 Error: Missing Order Information",
+            text: `Error: ${error}`,
+        } as nodemailer.SendMailOptions, (err, info) => {
+            if (err) {
+                console.error(err);
+            }
+            console.log("Error email sent successfully", info.response);
+        });
     }
 
     async sendEmailReceipt(emailToSend: string, receiptData: ReceiptData): Promise<void> {

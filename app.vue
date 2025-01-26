@@ -4,17 +4,6 @@
     </NuxtLayout>
 </template>
 
-<script setup lang="ts">
-// const cookie = useCartCookie();
-// const { mutate, onDone } = useCreateCart();
-
-// if (!cookie.value) {
-//     mutate();
-// }
-
-// onDone((response) => (cookie.value = response.data?.cartCreate.cart.id));
-</script>
-
 <style>
 svg {
     stroke-width: 1.5;
@@ -37,8 +26,22 @@ h1 {
 h2 {
     font-family: 'Assistant', sans-serif;
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 2rem;
+}
+
+h3 {
+    font-family: 'Assistant', sans-serif;
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+label {
+    font-family: 'Assistant', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.5rem;
 }
 
 summary {
@@ -46,5 +49,12 @@ summary {
     font-weight: 600;
     font-size: 1.125rem;
     line-height: 1.75rem;
+}
+
+a {
+    font-family: 'Assistant', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5rem;
 }
 </style>

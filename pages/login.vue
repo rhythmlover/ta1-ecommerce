@@ -1,14 +1,14 @@
 <template>
     <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img class="mx-auto h-20 w-auto" src="https://i.ibb.co/4Ybpkxt/TA1.png" alt="Your Company" />
+            <img class="mx-auto h-30 w-auto" src="/TA1.svg" alt="TA1 Logo" />
             <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div class="space-y-6">
                 <div>
-                    <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
+                    <label for="email" class="block text-sm/6 text-gray-900">Email address</label>
                     <div class="mt-2">
                         <UiInput v-model="email" type="email" name="email" id="email" autocomplete="email" />
                     </div>
@@ -16,9 +16,9 @@
 
                 <div>
                     <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
+                        <label for="password" class="block text-sm/6 text-gray-900">Password</label>
                         <div class="text-sm">
-                            <UiLink class="font-semibold text-indigo-600 hover:text-indigo-500" to="/forgot-password">
+                            <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500" to="/forgot-password">
                                 Forgot password?</UiLink>
                         </div>
                     </div>

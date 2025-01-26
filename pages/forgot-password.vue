@@ -7,7 +7,7 @@
                     <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Forgot password?</h1>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Remember your password?
-                        <UiLink class="text-indigo-600 decoration-2 font-medium ml-2" to="/login">
+                        <UiLink class="text-indigo-600 decoration-2 text-size-sm ml-2" to="/login">
                             Login here
                         </UiLink>
                     </p>
@@ -16,7 +16,7 @@
                 <div class="mt-5">
                     <div class="grid gap-y-4">
                         <div>
-                            <label for="email" class="block text-sm font-bold ml-1 mb-2 dark:text-white">Email
+                            <label for="email" class="block text-sm/6 mb-2 text-gray-900">Email
                                 address</label>
                             <div class="relative">
                                 <UiInput type="email" id="email" name="email" v-model="email" />

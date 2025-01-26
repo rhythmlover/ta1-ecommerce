@@ -9,11 +9,14 @@
                         Pending fulfillment
                     </span> -->
                 </div>
-                <p class="text-gray-600 text-sm" v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) }} at {{ new Date(orderTime).toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' }) }}</p>
+                <p class="text-gray-600 text-sm" v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-GB', {
+                    day: 'numeric', month: 'short', year: 'numeric'
+                }) }} at {{ new
+                        Date(orderTime).toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' }) }}</p>
                 <p class="text-gray-600 text-sm" v-else>...</p>
             </div>
             <a href="/" class="text-gray-700 hover:text-gray-900 flex items-center gap-2">
-                Continue shopping
+                <span class="max-md:hidden">Continue shopping</span>
                 <IconCornerRightUp class="h-6 w-6" />
             </a>
         </div>
@@ -23,7 +26,7 @@
                 <div>
                     <h1 class="text-4xl font-bold mb-4">Thank you for your purchase!</h1>
                     <p class="text-gray-600 mb-8">
-                        Your order will be processed within 24 hours during working days. 
+                        Your order will be processed within 24 hours during working days.
                         We have sent you a receipt via email with your order details.
                     </p>
 
@@ -48,8 +51,7 @@
                             </div>
                         </div>
                     </div>
-<!-- 
-                    <button class="bg-[#FF7171] text-white px-8 py-3 rounded-full hover:bg-[#FF5959] transition-colors">
+                    <!-- <button class="bg-[#FF7171] text-white px-8 py-3 rounded-full hover:bg-[#FF5959] transition-colors">
                         Track Your Order
                     </button> -->
                 </div>
@@ -61,7 +63,12 @@
                     <div class="flex justify-between gap-4 text-sm mb-5">
                         <div>
                             <span class="text-gray-600">Date</span>
-                            <p v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', { timeZone: "Asia/Singapore", day: 'numeric', month: 'short', year: 'numeric' }) }}</p>
+                            <p v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', {
+                                timeZone: "Asia/Singapore",
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric'
+                            }) }}</p>
                             <p v-else>...</p>
                         </div>
                         <div>

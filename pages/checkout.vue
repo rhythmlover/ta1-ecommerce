@@ -9,20 +9,16 @@
                     <div class="space-y-4">
                         <h2 class="text-2xl font-semibold">Contact</h2>
                         <div class="space-y-2">
-                            <label for="hs-leading-icon" class="block text-sm font-medium mb-2 dark:text-white">Email
+                            <label for="hs-leading-icon" class="block text-sm mb-2 dark:text-white">Email
                                 address</label>
                             <div class="relative">
                                 <input type="email" placeholder="johndoe@email.com"
                                     :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', emailError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']"
                                     v-model="email" />
-                                <label class="block pt-2 text-sm font-medium text-gray-700">A receipt will be sent to
-                                    the email</label>
+                                <p v-if="emailError" class="text-red-500 text-xs italic">Please enter your email.</p>
+                                <label class="block pt-2 text-sm text-gray-700">A receipt will be sent to the
+                                    email</label>
                             </div>
-                            <!-- <input type="email" placeholder="Email"
-                                :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', emailError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']"
-                                v-model="email" />
-                            <label class="block pt-2 text-sm font-medium text-gray-700">A receipt will be sent to the
-                                email</label> -->
                         </div>
                     </div>
 
@@ -30,41 +26,48 @@
                     <div class="space-y-4">
                         <h2 class="text-2xl font-semibold">Delivery</h2>
                         <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="first-name" class="block text-sm font-medium mb-2 dark:text-white">First
-                                        name</label>
+                                    <label for="first-name" class="block text-sm mb-2 dark:text-white">First
+                                        Name</label>
                                     <input id="first-name" placeholder="John" v-model="firstName"
-                                        :class="['bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', firstNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                        :class="['w-full bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', firstNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                    <p v-if="firstNameError" class="text-red-500 text-xs italic">Please enter your first name.</p>
                                 </div>
                                 <div>
-                                    <label for="last-name" class="block text-sm font-medium mb-2 dark:text-white">Last
-                                        name</label>
+                                    <label for="last-name" class="block text-sm mb-2 dark:text-white">Last
+                                        Name</label>
                                     <input id="last-name" placeholder="Doe" v-model="lastName"
-                                        :class="['bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', lastNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                        :class="['w-full bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', lastNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                    <p v-if="lastNameError" class="text-red-500 text-xs italic">Please enter your last
+                                        name.</p>
                                 </div>
                             </div>
                             <div>
-                                <label for="address"
-                                    class="block text-sm font-medium mb-2 dark:text-white">Address</label>
+                                <label for="address" class="block text-sm mb-2 dark:text-white">Address</label>
                                 <input id="address" placeholder="Blk 111 Hougang St 1" v-model="address"
                                     :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', addressError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                <p v-if="addressError" class="text-red-500 text-xs italic">Please enter your address.
+                                </p>
                             </div>
                             <div>
-                                <label for="apartment"
-                                    class="block text-sm font-medium mb-2 dark:text-white">Unit No.</label>
+                                <label for="apartment" class="block text-sm mb-2 dark:text-white">Unit No.</label>
                                 <input id="apartment" placeholder="#01-111" v-model="apartment"
                                     :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', apartmentError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                <p v-if="apartmentError" class="text-red-500 text-xs italic">Please enter your unit
+                                    number.</p>
                             </div>
                             <div>
-                                <label for="postal-code" class="block text-sm font-medium mb-2 dark:text-white">Postal
+                                <label for="postal-code" class="block text-sm mb-2 dark:text-white">Postal
                                     Code</label>
                                 <input id="postal-code" placeholder="111111" v-model="postalCode"
                                     :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', postalCodeError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
+                                <p v-if="postalCodeError" class="text-red-500 text-xs italic">Please enter your postal
+                                    code.</p>
                             </div>
 
                             <div>
-                                <label for="phone" class="block text-sm font-medium mb-2 dark:text-white">Phone</label>
+                                <label for="phone" class="block text-sm mb-2 dark:text-white">Phone</label>
                                 <div class="relative flex">
                                     <select v-model="phoneCountryCode"
                                         class="bg-white px-2 py-2 rounded-l-md border border-r-0 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -75,6 +78,8 @@
                                     <input id="phone" placeholder="91234567" v-model="phoneNumber"
                                         :class="['flex-grow bg-white px-3 py-2 rounded-r-md border focus:outline-none focus:ring-2', phoneNumberError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
                                 </div>
+                                <p v-if="phoneNumberError" class="text-red-500 text-xs italic">Please enter your phone
+                                    number.</p>
                             </div>
                         </div>
                     </div>
@@ -92,9 +97,9 @@
                                     v-model="selected" class="sr-only" />
                                 <div class="grid gap-1.5 w-full">
                                     <div class="flex items-center justify-between">
-                                        <div class="font-medium text-gray-900">{{ option.title }}</div>
+                                        <div class="font-600 text-size-lg text-gray-900">{{ option.title }}</div>
                                         <div class="flex items-center">
-                                            <span class="font-medium text-gray-900">
+                                            <span class="font-600 text-size-lg text-gray-900">
                                                 {{ (option.price !== 0.00 ? '$' : '') }}{{ (option.price !== 0.00 ?
                                                     option.price.toFixed(2) : 'Free') }}
                                             </span>
@@ -145,7 +150,7 @@
                         <UiParagraph> Total </UiParagraph>
 
                         <strong class="font-semibold">
-                            <span>SGD $ {{ totalAmount }}</span>
+                            <span>SGD ${{ totalAmount }}</span>
                         </strong>
                     </div>
                 </div>
