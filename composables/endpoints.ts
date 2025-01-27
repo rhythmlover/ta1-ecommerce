@@ -17,7 +17,7 @@ export async function getProduct(id: string): Promise<Product> {
     return product;
 }
 
-export async function userLogin(email: string, password: string): Promise<User> {
+export async function userLogin(email: string, password: string): Promise<User | { message: string, error: string, statusCode: number }> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/auth/signin`, {
         method: "POST",
@@ -27,8 +27,8 @@ export async function userLogin(email: string, password: string): Promise<User> 
         body: JSON.stringify({ email, password }),
     });
     const userData = await response.json();
-    if (userData.statusCode === 403){
-        console.error(userData.message);
+    if (userData.statusCode === 403) {
+        return { message: userData.message, error: userData.error, statusCode: userData.statusCode };
     }
     return userData;
 }
@@ -254,4 +254,25 @@ export async function sendInquiryEmail(name: string, email: string, message: str
     return await response.json();
 }
 
+export async function requestEmailVerification(email: string): Promise<Response> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/auth/request-email-verification/${email}`, {
+        method: "POST",
+    });
+
+    return await response.json();
+}
+
+export async function verifyEmail(id: string, email: string): Promise<{ message: string }> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/auth/verify-email`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, email }),
+    });
+
+    return await response.json();
+}
 

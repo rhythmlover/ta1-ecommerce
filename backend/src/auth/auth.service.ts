@@ -39,6 +39,8 @@ export class AuthService {
                 },
             });
 
+            await this.requestEmailVerification(user.email);
+
             return user;
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
@@ -63,12 +65,110 @@ export class AuthService {
 
         const valid = await argon.verify(user.password, dto.password);
 
+        if (!user.verified) {
+            throw new ForbiddenException("Email not verified");
+        }
+
         if (!valid) {
             throw new ForbiddenException("Invalid account or password");
         }
 
         delete user.password;
         return user;
+    }
+
+    async requestEmailVerification(email: string) {
+        const emailObj = await this.prisma.emailVerification.create({
+            data: {
+                email: email.toLowerCase(),
+                expiresAt: new Date(Date.now() + 600000),
+            },
+            select: {
+                id: true,
+                email: true,
+            },
+        });
+
+        await this.sendEmailVerificationEmail(emailObj.email, emailObj.id);
+        return { message: "Email sent successfully" };
+    }
+
+    async sendEmailVerificationEmail(email: string, id: string) {
+        const emailUser = this.configService.get<string>("EMAIL_USER");
+        const emailClientID = this.configService.get<string>("CLIENT_ID");
+        const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
+        const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
+        const webUrl = this.configService.get<string>("WEB_URL");
+        const accessToken = await this.oAuth2Client.getAccessToken();
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                type: "OAuth2",
+                user: emailUser,
+                clientId: emailClientID,
+                clientSecret: emailClientSecret,
+                refreshToken: refreshToken,
+                accessToken: accessToken.token as string,
+            },
+            tls: {
+                rejectUnauthorized: true,
+            },
+        } as SMTPTransport.Options);
+
+        transporter.sendMail(
+            {
+                from: emailUser,
+                to: email,
+                subject: "TA1 Email Verification",
+                html: `<a href="${webUrl}/verify-email?id=${id}&email=${email}">Click here to verify email</a>`,
+            } as nodemailer.SendMailOptions,
+            (err, info) => {
+                if (err) {
+                    console.error(err);
+                }
+                console.log("Email sent successfully", info.response);
+            }
+        );
+    }
+
+    async verifyEmail(id: string, email: string) {
+        const emailVerification = await this.prisma.emailVerification.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!emailVerification) {
+            throw new ForbiddenException("Invalid request");
+        }
+
+        if (emailVerification.validated) {
+            throw new ForbiddenException("Request has already been validated");
+        }
+
+        if (emailVerification.expiresAt < new Date()) {
+            throw new ForbiddenException("Request expired");
+        }
+
+        await this.prisma.user.update({
+            where: {
+                email: email.toLowerCase(),
+            },
+            data: {
+                verified: true,
+            },
+        });
+
+        await this.prisma.emailVerification.update({
+            where: {
+                id,
+            },
+            data: {
+                validated: true,
+            },
+        });
+
+        return { message: "Verification Successful" };
     }
 
     async requestPasswordReset(dto: ResetPasswordDto) {

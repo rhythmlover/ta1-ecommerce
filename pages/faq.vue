@@ -28,8 +28,8 @@
                 <summary class="py-2 outline-none cursor-pointer focus:underline">Returns, Exchanges due to product defects</summary>
                 <div class="px-4 pb-4">
                     <p>Yes, we have a hassle-free return policy. If there is a defect in the product you received,
-                        you can initiate a return within 30 days of receiving the product. Please contact our
-                        customer support at <span class="underline">example@gmail.com</span> for assistance.
+                        you can initiate a return within 7 days of receiving the product. You can contact us
+                        at <span class="underline">info@ta1-shop.com</span> for assistance.
                     </p>
                 </div>
             </details>

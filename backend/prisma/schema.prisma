@@ -69,6 +69,7 @@ model User {
     email     String   @unique
     password  String
     name      String?
+    verified  Boolean  @default(false)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Cart      Cart[]
@@ -104,6 +105,15 @@ model OrderItem {
 }
 
 model ForgetPassword {
+    id        String   @id @default(cuid())
+    email     String
+    validated Boolean  @default(false)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model EmailVerification {
     id        String   @id @default(cuid())
     email     String
     validated Boolean  @default(false)

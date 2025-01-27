@@ -76,6 +76,7 @@
 
                 <p class="mt-10 text-center text-sm/6 text-gray-500">
                 <div v-if="errorMessage" class="text-red-600">{{ errorMessage }}</div>
+                <div v-if="successMessage" class="text-green-600">{{ successMessage }}</div>
                 </p>
             </div>
         </div>
@@ -90,6 +91,7 @@ const passwordsMatch = computed(() => password.value === confirmPassword.value);
 const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 
 const errorMessage = ref('');
+const successMessage = ref('');
 const emailError = ref(false);
 const passwordError = ref(false);
 
@@ -109,10 +111,11 @@ async function signUp() {
 
         const userDetails = await userSignup(email.value, password.value);
         if (userDetails.statusCode === 403) {
+            successMessage.value = '';
             errorMessage.value = userDetails.message;
         } else {
             errorMessage.value = '';
-            navigateTo('/login');
+            successMessage.value = 'A verification email has been sent to your email address. Please verify your email to complete the registration.';
         }
     } catch (error) {
         errorMessage.value = 'An error occurred. Please try again.';

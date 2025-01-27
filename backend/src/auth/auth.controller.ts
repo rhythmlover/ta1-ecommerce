@@ -30,4 +30,14 @@ export class AuthController {
     resetPassword(@Body() body: { dto: AuthDto, id: string }) {
         return this.authService.resetPassword(body.dto, body.id);
     }
+
+    @Post('request-email-verification/:email')
+    requestEmailVerification(@Param("email") email: string) {
+        return this.authService.requestEmailVerification(email);
+    }
+
+    @Post('verify-email')
+    verifyUserEmail(@Body() body: { id: string, email: string }) {
+        return this.authService.verifyEmail(body.id, body.email);
+    }
 }

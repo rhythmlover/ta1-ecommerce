@@ -37,8 +37,8 @@
             <p class="mt-10 text-center text-sm/6 text-gray-500">
                 Don't have an account?
                 {{ ' ' }}
-                <UiButton variant="text" class="font-semibold text-indigo-600 hover:text-indigo-500" :to="'/signup'">
-                    Sign up</UiButton>
+                <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500 ml-1" :to="'/signup'">
+                    Sign up</UiLink>
             </p>
 
             <p class="mt-5 text-center text-sm/6 text-gray-500">
@@ -50,6 +50,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import type { User } from '~/types/types';
 
 const email = ref('');
 const password = ref('');
@@ -72,10 +73,15 @@ async function login() {
 
         const userDetails = await userLogin(email.value, password.value);
 
-        if (userDetails.id === undefined) {
-            errorMessage.value = 'Login failed';
+        if ("statusCode" in userDetails) {
+            errorMessage.value = userDetails.message;
             return;
         }
+
+        if (userDetails.id === undefined) {
+            errorMessage.value = 'No such account found';
+            return;
+        } 
 
         const cart = await getUserCart(userDetails.id);
 
