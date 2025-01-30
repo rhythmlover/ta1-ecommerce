@@ -24,10 +24,6 @@
         </div>
 
         <div class="grid place-content-center sm:grid-cols-2 md:grid-cols-3 gap-8">
-            <!-- <ProductModel
-                :model-value="product.node"
-                v-for="product in data?.collection.products.edges"
-            /> -->
             <ProductModel :product-value="product" v-for="product in products" />
         </div>
     </UiCenter>

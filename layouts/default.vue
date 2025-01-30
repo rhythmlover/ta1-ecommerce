@@ -11,15 +11,15 @@
 
             <div class="hidden lg:flex items-center gap-4">
                 <hr class="w-px h-6 border-none bg-slate-200" />
-                <UiLink class="text-sm hover:underline" to="/"> Explore </UiLink>
-                <UiLink class="text-sm hover:underline" to="/contact"> Contact </UiLink>
-                <UiLink class="text-sm hover:underline" to="/faq"> FAQ </UiLink>
+                <UiLink class="text-sm font-mono hover:underline" to="/"> Shop </UiLink>
+                <!-- <UiLink class="text-sm hover:underline" to="/contact"> Contact </UiLink>
+                <UiLink class="text-sm hover:underline" to="/faq"> FAQ </UiLink> -->
             </div>
         </div>
 
         <div>
             <UiButton v-if="!userLoggedIn" variant="text" class="text-sm" aria-label="Login" to="/login">
-                <IconLogin width="22" height="22" />
+                <IconLogin2 width="22" height="22" />
             </UiButton>
             <Menu v-else as="div" class="relative inline-block text-left pr-2">
                 <MenuButton>
@@ -88,6 +88,21 @@
 
     <footer class="flex flex-col border-t border-slate-200">
         <div class="flex flex-col items-start gap-8 md:gap-12 md:flex-row mx-auto w-full max-w-6xl p-8">
+            <div class="flex flex-col gap-2">
+                <h3 class="text-size-2xl font-extrabold mb-5">Help and Support</h3>
+                <UiLink to="/contact" class="font-mono w-0">
+                    Contact
+                </UiLink>
+                <UiLink to="/faq" class="font-mono w-0">
+                    FAQ
+                </UiLink>
+                <UiLink to="/" class="font-mono w-40">
+                    Terms and Conditions
+                </UiLink>
+                <UiLink to="/" class="font-mono w-25">
+                    Privacy Policy
+                </UiLink>
+            </div>
         </div>
 
         <div
@@ -100,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { IconLogin, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
+import { IconLogin, IconLogin2, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 
 const isMenuOpen = ref(false);
