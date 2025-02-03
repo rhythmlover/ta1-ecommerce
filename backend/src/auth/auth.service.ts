@@ -45,7 +45,7 @@ export class AuthService {
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
-                    throw new ForbiddenException("Email already in use");
+                    throw new ForbiddenException("Email already in use.");
                 }
             }
             throw error;
@@ -60,17 +60,17 @@ export class AuthService {
         });
 
         if (!user) {
-            throw new ForbiddenException("No such account found");
+            throw new ForbiddenException("No such account found.");
         }
 
         const valid = await argon.verify(user.password, dto.password);
 
         if (!user.verified) {
-            throw new ForbiddenException("Email not verified");
+            throw new ForbiddenException("Email not verified.");
         }
 
         if (!valid) {
-            throw new ForbiddenException("Invalid account or password");
+            throw new ForbiddenException("Invalid account or password.");
         }
 
         delete user.password;
@@ -139,15 +139,15 @@ export class AuthService {
         });
 
         if (!emailVerification) {
-            throw new ForbiddenException("Invalid request");
+            throw new ForbiddenException("Invalid request.");
         }
 
         if (emailVerification.validated) {
-            throw new ForbiddenException("Request has already been validated");
+            throw new ForbiddenException("Request has already been validated.");
         }
 
         if (emailVerification.expiresAt < new Date()) {
-            throw new ForbiddenException("Request expired");
+            throw new ForbiddenException("Request expired.");
         }
 
         await this.prisma.user.update({
@@ -179,7 +179,7 @@ export class AuthService {
         });
 
         if (!user) {
-            throw new ForbiddenException("No such account found");
+            throw new ForbiddenException("No such account found.");
         }
 
         const emailObj = await this.prisma.forgetPassword.create({
@@ -243,15 +243,15 @@ export class AuthService {
         });
 
         if (!forgetPasswordReq) {
-            throw new ForbiddenException("Invalid request");
+            throw new ForbiddenException("Invalid request.");
         }
 
         if (forgetPasswordReq.validated) {
-            throw new ForbiddenException("Request has already been validated");
+            throw new ForbiddenException("Request has already been validated.");
         }
 
         if (forgetPasswordReq.expiresAt < new Date()) {
-            throw new ForbiddenException("Request expired");
+            throw new ForbiddenException("Request expired.");
         }
 
         return { message: "Verification Successful" };

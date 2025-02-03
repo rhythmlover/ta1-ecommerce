@@ -45,7 +45,8 @@
                         Confirm Password
                     </label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input id="password_confirmation" v-model="confirmPassword" type="password" name="password_confirmation" required
+                        <input id="password_confirmation" v-model="confirmPassword" type="password"
+                            name="password_confirmation" required
                             :class="['w-full bg-white pl-3 pr-7 py-1.5 rounded-md border focus:outline-none focus:ring-2', !passwordsMatch ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
                         <div class="hidden absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <svg v-if="!passwordsMatch" class="h-5 w-5 text-red-500" fill="currentColor"
@@ -74,10 +75,8 @@
                     </span>
                 </div>
 
-                <p class="mt-10 text-center text-sm/6 text-gray-500">
-                <div v-if="errorMessage" class="text-red-600">{{ errorMessage }}</div>
-                <div v-if="successMessage" class="text-green-600">{{ successMessage }}</div>
-                </p>
+                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
+                <UiSuccessAlert v-if="successMessage" :message="successMessage" />
             </div>
         </div>
     </div>
@@ -98,8 +97,10 @@ const passwordError = ref(false);
 async function signUp() {
     try {
         if (!email.value || !password.value) {
-            errorMessage.value = 'Please fill in all fields';
+            errorMessage.value = 'Please fill in all fields.';
             return;
+        } else {
+            errorMessage.value = '';
         }
 
         emailError.value = !email.value.includes('@') || !email.value.includes('.');
@@ -115,9 +116,10 @@ async function signUp() {
             errorMessage.value = userDetails.message;
         } else {
             errorMessage.value = '';
-            successMessage.value = 'A verification email has been sent to your email address. Please verify your email to complete the registration.';
+            successMessage.value = 'A verification email has been sent to your email address.';
         }
     } catch (error) {
+        console.error(error);
         errorMessage.value = 'An error occurred. Please try again.';
     }
 }

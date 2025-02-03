@@ -57,8 +57,8 @@
                     {{ "Add to cart" }}
                 </UiButton>
 
-                <div v-if="errorMessage" class="text-red-600 mx-auto">{{ errorMessage }}</div>
-                <div v-if="successMessage" class="text-green-600 mx-auto">{{ successMessage }}</div>
+                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
+                <UiSuccessAlert v-if="successMessage" :message="successMessage" />
 
                 <!-- <UiButton
                     :loading="isLoading"
@@ -164,7 +164,7 @@ async function addItemToCart() {
             await addItemToUserCart(cart.id, product.value.id, optionId, quantity_selected.value);
             cartStore.incrementCartQty();
         }
-        
+
         successMessage.value = 'Item added to cart.';
     }
 }

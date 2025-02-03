@@ -48,24 +48,10 @@
             </div>
         </div>
 
-        <div v-else-if="validationSuccess && confirmationMessage"
-            class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
-            <div class="p-4 sm:p-7">
-                <div class="text-center">
-                    <p class="block text-2xl font-bold text-green-600 dark:text-white">{{ confirmationMessage }}
-                    </p>
-                </div>
-            </div>
-        </div>
+        <UiErrorAlert v-else-if="!validationSuccess && afterValidation" :message="validationMessage" />
+        <UiSuccessAlert v-else-if="validationSuccess && confirmationMessage" :message="confirmationMessage" />
 
-        <div v-else
-            class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
-            <div class="p-4 sm:p-7">
-                <div class="text-center">
-                    <p class="block text-2xl font-bold text-red-600 dark:text-white">{{ validationMessage }}</p>
-                </div>
-            </div>
-        </div>
+        <div v-else />
     </main>
 </template>
 
@@ -73,6 +59,7 @@
 const route = useRoute();
 const validationSuccess = ref(false);
 const validationMessage = ref('');
+const afterValidation = ref(false);
 const password = ref('');
 const confirmPassword = ref('');
 const confirmationMessage = ref('');
@@ -84,7 +71,8 @@ const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$
 
 onMounted(async () => {
     const res = await verifyPasswordReset(id);
-    if (res.message === 'Verification Successful') {
+    afterValidation.value = true;
+    if (res.message === 'Verification Successful.') {
         validationSuccess.value = true;
     } else {
         validationMessage.value = res.message;
@@ -92,22 +80,27 @@ onMounted(async () => {
 });
 
 async function resetUserPassword() {
-    if (!password.value.match(decimal)) {
-        errorMessage.value = 'Password must contain at least one number, one uppercase letter, one lowercase letter, one special character, and be more than 8 characters';
-        return;
+    try {
+        if (!password.value.match(decimal)) {
+            errorMessage.value = 'Password must contain at least one number, one uppercase letter, one lowercase letter, one special character, and be more than 8 characters.';
+            return;
+        }
+
+        if (!passwordsMatch.value) {
+            errorMessage.value = 'Passwords do not match.';
+            return;
+        }
+
+        await resetPassword({ email: email, password: password.value }, id);
+
+        confirmationMessage.value = 'Password reset successful. Redirecting to login page...';
+
+        setTimeout(() => {
+            navigateTo('/login');
+        }, 2000);
+    } catch (error) {
+        console.error(error);
+        errorMessage.value = "An error occurred. Please request for another password reset.";
     }
-
-    if (!passwordsMatch.value) {
-        errorMessage.value = 'Passwords do not match';
-        return;
-    }
-
-    await resetPassword({ email: email, password: password.value }, id);
-
-    confirmationMessage.value = 'Password reset successful';
-
-    setTimeout(() => {
-        navigateTo('/login');
-    }, 2000);
 }
 </script>

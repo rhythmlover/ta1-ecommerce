@@ -11,9 +11,10 @@
 
             <div class="hidden lg:flex items-center gap-4">
                 <hr class="w-px h-6 border-none bg-slate-200" />
-                <UiLink class="text-sm font-mono hover:underline" to="/"> Shop </UiLink>
-                <!-- <UiLink class="text-sm hover:underline" to="/contact"> Contact </UiLink>
-                <UiLink class="text-sm hover:underline" to="/faq"> FAQ </UiLink> -->
+                <UiLink v-for="(item, index) in navigationItems" :key="index" :to="item.path"
+                    class="text-sm font-mono hover:underline">
+                    {{ item.name }}
+                </UiLink>
             </div>
         </div>
 
@@ -68,7 +69,7 @@
                     <IconX width="28" height="28" />
                 </button>
                 <UiLogo class="mx-auto" />
-                <div class="w-[22px]"></div> <!-- Spacer for centering logo -->
+                <div class="w-[22px]"></div>
             </div>
 
             <div class="flex flex-col p-4 space-y-1">
@@ -76,7 +77,6 @@
                     class="text-black-300 hover:text-white text-base py-2 transition-colors duration-200"
                     @click="isMenuOpen = false">
                     {{ item.name }}
-                    <hr class="h-2px mt-2 border-none bg-slate-200" />
                 </UiLink>
             </div>
         </nav>
@@ -115,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { IconLogin, IconLogin2, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
+import { IconLogin2, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 
 const isMenuOpen = ref(false);
@@ -126,8 +126,6 @@ const userLoggedIn = computed(() => userStore.getUserId !== '');
 
 const navigationItems = [
     { name: 'Explore', path: '/' },
-    { name: 'Contact', path: '/contact' },
-    { name: 'FAQ', path: '/faq' },
 ]
 
 onMounted(() => {

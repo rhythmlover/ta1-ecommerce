@@ -56,7 +56,7 @@ export class OrderService {
             console.log(error);
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
-                    throw new ForbiddenException("Payment Intent has previously been used");
+                    throw new ForbiddenException("Payment Intent has previously been used.");
                 }
             }
         }

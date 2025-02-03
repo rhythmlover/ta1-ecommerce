@@ -18,7 +18,8 @@
                     <div class="flex items-center justify-between">
                         <label for="password" class="block text-sm/6 text-gray-900">Password</label>
                         <div class="text-sm">
-                            <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500" to="/forgot-password">
+                            <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500"
+                                to="/forgot-password">
                                 Forgot password?</UiLink>
                         </div>
                     </div>
@@ -41,16 +42,13 @@
                     Sign up</UiLink>
             </p>
 
-            <p class="mt-5 text-center text-sm/6 text-gray-500">
-            <div v-if="errorMessage" class="text-red-600">{{ errorMessage }}</div>
-            </p>
+            <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { User } from '~/types/types';
 
 const email = ref('');
 const password = ref('');
@@ -62,12 +60,12 @@ const userStore = useUserStore();
 async function login() {
     try {
         if (!email.value || !password.value) {
-            errorMessage.value = 'Please enter email and password';
+            errorMessage.value = 'Please enter email and password.';
             return;
         }
 
         if (!email.value.includes('@') || !email.value.includes('.')) {
-            errorMessage.value = 'Please enter a valid email';
+            errorMessage.value = 'Please enter a valid email.';
             return;
         }
 
@@ -79,9 +77,9 @@ async function login() {
         }
 
         if (userDetails.id === undefined) {
-            errorMessage.value = 'No such account found';
+            errorMessage.value = 'No such account found.';
             return;
-        } 
+        }
 
         const cart = await getUserCart(userDetails.id);
 

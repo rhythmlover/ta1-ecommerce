@@ -21,36 +21,40 @@
                             <div class="relative">
                                 <UiInput type="email" id="email" name="email" v-model="email" />
                             </div>
-                            <p v-if="emailIsValid" class="text-xs text-red-600">{{ errorMessage }}</p>
                         </div>
                         <UiButton @click="requestReset" type="submit"
                             class="py-3 px-4 mt-2 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
                             Request</UiButton>
                     </div>
                 </div>
+
+                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
+                <UiSuccessAlert v-if="confirmationMessage" :message="confirmationMessage" />
             </div>
         </div>
-
-        <p v-if="confirmationMessage" class="mt-3 flex justify-center items-center text-center divide-x divide-gray-300 dark:divide-gray-700 text-green-600 dark:text-green-400">
-            {{ confirmationMessage }}
-        </p>
     </main>
 </template>
 
 <script lang="ts" setup>
 const email = ref('');
-const emailIsValid = computed(() => {
-    return email.value.includes('@') && email.value.includes('.');
-});
 const errorMessage = ref('');
 const confirmationMessage = ref('');
 
 async function requestReset() {
-    if (emailIsValid.value === false) {
-        errorMessage.value = 'Please enter a valid email';
+    try {
+        if (!email.value || !email.value.includes('@') || !email.value.includes('.')) {
+        confirmationMessage.value = '';
+        errorMessage.value = 'Please enter a valid email.';
         return;
+    } else {
+        errorMessage.value = '';
     }
     await requestPasswordReset(email.value);
-    confirmationMessage.value = 'Password reset link sent to your email';
+    confirmationMessage.value = 'Password reset link sent to your email.';
+    } catch (error) {
+        console.error(error);
+        confirmationMessage.value = '';
+        errorMessage.value = "An error occurred. Please try again.";
+    }
 }
 </script>

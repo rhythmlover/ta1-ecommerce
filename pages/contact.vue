@@ -24,7 +24,8 @@
                         Please do not contact us through our alternative platforms for any inquiries regarding your
                         order made on this website.
                         It will be difficult for us to provide you with the necessary information.
-                        Instead, please contact us through the inquiry form on this page or via email.
+                        Instead, please contact us through the inquiry form on this page or directly via email at
+                        <span class="underline">info@ta1-shop.com</span>.
                     </UiParagraph>
                 </div>
             </div>
@@ -40,11 +41,9 @@
                     label="Message" placeholder="Message" />
                 <div class="flex text-center items-center">
                     <UiButton @click="sendEmail" class="w-25"> Send </UiButton>
-                    <p class="ml-5 text-center text-sm/6 text-gray-500">
-                    <div v-if="errorMessage" class="text-red-600">{{ errorMessage }}</div>
-                    <div v-if="successMessage" class="text-green-600">{{ successMessage }}</div>
-                    </p>
                 </div>
+                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
+                <UiSuccessAlert v-if="successMessage" :message="successMessage" />
             </div>
         </div>
     </UiCenter>
@@ -60,7 +59,7 @@ const successMessage = ref('');
 
 async function sendEmail() {
     if (!name.value || !email.value || !message.value) {
-        errorMessage.value = 'Please fill in name, email, and message';
+        errorMessage.value = 'Please fill in name, email, and message.';
         return;
     }
 
@@ -72,6 +71,7 @@ async function sendEmail() {
     const res = await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
 
     if (res.message === 'Email sent successfully') {
+        errorMessage.value = '';
         successMessage.value = 'Your inquiry has been sent successfully!';
         name.value = '';
         email.value = '';
