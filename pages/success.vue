@@ -157,7 +157,6 @@ onMounted(async () => {
     }
 
     if (cartData.value) {
-        console.log("hello")
         const orderItems: OrderItem[] = cartData.value.items.map((item) => {
             return {
                 productId: item.product.id,
@@ -186,7 +185,7 @@ onMounted(async () => {
         await clearCart(cartData.value.id);
         cartStore.setCartQty(0);
     } else {
-        console.log('Cart is empty');
+        console.error('Cart is empty');
     }
 });
 </script>

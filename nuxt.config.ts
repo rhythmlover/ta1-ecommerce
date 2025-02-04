@@ -25,7 +25,19 @@ export default defineNuxtConfig({
                 base64: false,
             },
         ],
+        '@nuxt/image',
     ],
+
+    image: {
+        provider: 'cloudinary',
+        cloudinary: {
+            baseURL: 'https://res.cloudinary.com/dtqcqe0iu/image/upload/v1738608759/',
+            modifiers: {
+                effect: 'sharpen:100',
+                quality: 'auto:best',
+            },
+        }
+    },
 
     imports: {
         dirs: ["composables"],

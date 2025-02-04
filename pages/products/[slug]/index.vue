@@ -2,14 +2,19 @@
     <UiCenter>
         <div class="grid sm:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4">
-                <img class="rounded-lg shadow-sm" :alt="product?.name" :src="currentImageUrl + `width=360px`" />
+                <NuxtImg 
+                    :src="currentImageUrl" 
+                    :alt="product?.name" 
+                    :modifiers="{ roundCorner: '10:10' }" 
+                    layout="responsive" 
+                />
             </div>
 
             <div class="flex flex-col gap-6">
                 <UiHeading> {{ product?.name }} </UiHeading>
 
                 <UiParagraph v-if="product?.description">
-                    <p v-html="formattedDescription"></p>
+                    <p v-html="formattedDescription" />
                 </UiParagraph>
 
                 <strong class="font-bold text-lg">
@@ -118,9 +123,9 @@ function updateImageUrl() {
     const option = product.value.options.find(opt => opt.name === Object.keys(selectedOptions)[0] && opt.name === selectedOption);
 
     if (option) {
-        currentImageUrl.value = option.imageUrl;
+        currentImageUrl.value = option.imageUrl + '.jpg';
     } else {
-        currentImageUrl.value = product.value.imageUrl!;
+        currentImageUrl.value = product.value.imageUrl! + '.jpg';
     }
 }
 

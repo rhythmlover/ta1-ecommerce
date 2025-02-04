@@ -1,6 +1,13 @@
 <template>
     <div class="flex items-center gap-4">
-        <img :src="modelValue.option.imageUrl" :alt="modelValue.product.name" class="w-16 h-16 rounded-lg object-cover" />
+        <NuxtImg 
+            :src="modelValue.option.imageUrl + '.jpg'" 
+            :alt="modelValue.product.name" 
+            :modifiers="{ roundCorner: '10:10' }" 
+            layout="responsive" 
+            width="70" 
+            height="70"
+        />
         <div class="flex-1">
             <h3 class="font-semibold">{{ modelValue.product.name }}</h3>
             <p class="text-sm text-gray-600">Type:【{{ modelValue.option.name }}】</p>

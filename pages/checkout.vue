@@ -125,7 +125,7 @@
                             <span v-if="loading"><img :src="Loading" alt="Loading" class="w-7 h-7" /></span>
                             <span v-else>Pay</span>
                         </UiButton>
-                        <p class="text-red-500 text-sm">{{ errorMsg }}</p>
+                        <UiErrorAlert v-if="errorMsg" :message="errorMsg" />
                     </div>
                 </div>
             </div>
