@@ -96,10 +96,10 @@
                 <UiLink to="/faq" class="font-mono w-0">
                     FAQ
                 </UiLink>
-                <UiLink to="/" class="font-mono w-40">
+                <UiLink to="/terms-conditions" class="font-mono w-40">
                     Terms and Conditions
                 </UiLink>
-                <UiLink to="/" class="font-mono w-25">
+                <UiLink to="/privacy-policy" class="font-mono w-25">
                     Privacy Policy
                 </UiLink>
             </div>
@@ -117,20 +117,25 @@
 <script setup lang="ts">
 import { IconLogin2, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import type { Cart } from "~/types/types";
 
 const isMenuOpen = ref(false);
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const cartQuantity = computed(() => cartStore.getCartQty);
 const userLoggedIn = computed(() => userStore.getUserId !== '');
+const cartData = ref<Cart | null>(null);
 
 const navigationItems = [
     { name: 'Explore', path: '/' },
 ]
 
-onMounted(() => {
+onMounted(async () => {
     if (!userLoggedIn.value) {
         cartStore.clearCartQty();
+    } else {
+        cartData.value = await getUserCart(userStore.getUserId);
+        cartStore.setCartQty(cartData.value?.items.length || 0);
     }
 });
 
