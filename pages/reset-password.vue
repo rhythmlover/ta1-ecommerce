@@ -72,7 +72,7 @@ const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$
 onMounted(async () => {
     const res = await verifyPasswordReset(id);
     afterValidation.value = true;
-    if (res.message === 'Verification Successful.') {
+    if (res.message === 'Verification Successful') {
         validationSuccess.value = true;
     } else {
         validationMessage.value = res.message;
