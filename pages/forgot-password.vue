@@ -30,6 +30,10 @@
 
                 <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
                 <UiSuccessAlert v-if="confirmationMessage" :message="confirmationMessage" />
+                <UiParagraph v-if="confirmationMessage" class="mt-5 text-sm text-indigo-600 dark:text-indigo-400">
+                    Didn't receive an email? Check your spam folder or <button @click="requestReset"
+                        class="text-indigo-600 decoration-2">try again</button>.
+                </UiParagraph>
             </div>
         </div>
     </main>
@@ -42,15 +46,14 @@ const confirmationMessage = ref('');
 
 async function requestReset() {
     try {
-        if (!email.value || !email.value.includes('@') || !email.value.includes('.')) {
-        confirmationMessage.value = '';
-        errorMessage.value = 'Please enter a valid email.';
-        return;
-    } else {
         errorMessage.value = '';
-    }
-    await requestPasswordReset(email.value);
-    confirmationMessage.value = 'Password reset link sent to your email.';
+        confirmationMessage.value = '';
+        if (!email.value || !email.value.includes('@') || !email.value.includes('.')) {
+            errorMessage.value = 'Please enter a valid email.';
+            return;
+        }
+        await requestPasswordReset(email.value);
+        confirmationMessage.value = 'Password reset link sent to your email.';
     } catch (error) {
         console.error(error);
         confirmationMessage.value = '';

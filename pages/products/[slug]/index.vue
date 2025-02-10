@@ -1,12 +1,14 @@
 <template>
     <UiCenter>
-        <div class="grid sm:grid-cols-2 gap-8">
+        <ProductPageSkeleton v-show="!imageLoaded" />
+        <div v-show="imageLoaded" class="grid sm:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4">
                 <NuxtImg 
                     :src="currentImageUrl" 
                     :alt="product?.name" 
                     :modifiers="{ roundCorner: '10:10' }" 
-                    layout="responsive" 
+                    layout="responsive"
+                    @load="imageLoaded = true"
                 />
             </div>
 
@@ -91,6 +93,7 @@ const currentImageUrl = ref('');
 const formattedDescription = computed(() => product.value?.description ?? '');
 const errorMessage = ref('');
 const successMessage = ref('');
+const imageLoaded = ref(false);
 
 onMounted(async () => {
     const id = route.query.id as string;
