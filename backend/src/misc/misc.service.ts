@@ -23,6 +23,7 @@ export class MiscService {
 
     async sendInquiry(dto: InquiryDto) {
         const emailUser = this.configService.get<string>("EMAIL_USER");
+        const infoEmailUser = this.configService.get<string>("INFO_EMAIL_USER");
         const emailClientID = this.configService.get<string>("CLIENT_ID");
         const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
         const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
@@ -55,8 +56,8 @@ export class MiscService {
 
         transporter.sendMail(
             {
-                from: emailUser,
-                to: emailUser,
+                from: infoEmailUser,
+                to: infoEmailUser,
                 subject: "Inquiry Email from " + dto.name + ", Order No.: " + dto.orderNo,
                 html: inquiryHtml,
             } as nodemailer.SendMailOptions,

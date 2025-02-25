@@ -114,6 +114,7 @@ export class AuthService {
 
     async sendEmailVerificationEmail(email: string, id: string) {
         const emailUser = this.configService.get<string>("EMAIL_USER");
+        const infoEmailUser = this.configService.get<string>("INFO_EMAIL_USER");
         const emailClientID = this.configService.get<string>("CLIENT_ID");
         const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
         const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
@@ -136,7 +137,7 @@ export class AuthService {
 
         transporter.sendMail(
             {
-                from: emailUser,
+                from: infoEmailUser,
                 to: email,
                 subject: "TA1 Email Verification",
                 html: `<a href="${webUrl}/verify-email?id=${id}&email=${email}">Click here to verify email</a>`,
@@ -218,6 +219,7 @@ export class AuthService {
 
     async sendForgetPasswordEmail(email: string, id: string) {
         const emailUser = this.configService.get<string>("EMAIL_USER");
+        const infoEmailUser = this.configService.get<string>("INFO_EMAIL_USER");
         const emailClientID = this.configService.get<string>("CLIENT_ID");
         const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
         const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
@@ -240,7 +242,7 @@ export class AuthService {
 
         transporter.sendMail(
             {
-                from: emailUser,
+                from: infoEmailUser,
                 to: email,
                 subject: "TA1 Forget Password Request",
                 html: `<a href="${webUrl}/reset-password?id=${id}&email=${email}">Click here to reset password</a>`,

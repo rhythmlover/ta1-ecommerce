@@ -109,6 +109,7 @@ export class PaymentService {
 
     async sendErrorEmail(error: string): Promise<void> {
         const emailUser = this.configService.get<string>("EMAIL_USER");
+        const infoEmailUser = this.configService.get<string>("INFO_EMAIL_USER");
         const emailClientID = this.configService.get<string>("CLIENT_ID");
         const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
         const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
@@ -129,8 +130,8 @@ export class PaymentService {
         } as SMTPTransport.Options);
 
         transporter.sendMail({
-            from: emailUser,
-            to: emailUser,
+            from: infoEmailUser,
+            to: infoEmailUser,
             subject: "TA1 Error: Missing Order Information",
             text: `Error: ${error}`,
         } as nodemailer.SendMailOptions, (err, info) => {
@@ -143,6 +144,7 @@ export class PaymentService {
 
     async sendEmailReceipt(emailToSend: string, receiptData: ReceiptData): Promise<void> {
         const emailUser = this.configService.get<string>("EMAIL_USER");
+        const infoEmailUser = this.configService.get<string>("INFO_EMAIL_USER");
         const emailClientID = this.configService.get<string>("CLIENT_ID");
         const emailClientSecret = this.configService.get<string>("CLIENT_SECRET");
         const refreshToken = this.configService.get<string>("REFRESH_TOKEN");
@@ -187,7 +189,7 @@ export class PaymentService {
 
         transporter.sendMail(
             {
-                from: emailUser,
+                from: infoEmailUser,
                 to: emailToSend,
                 subject: "TA1 E-Receipt",
                 html: htmlTemplate,
