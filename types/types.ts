@@ -58,12 +58,15 @@ export type User = {
     email: string;
     password: string;
     name?: string;
+    role: string;
+    verified: boolean;
     createdAt: Date;
     updatedAt: Date;
     carts: Cart[];
 };
 
 export type Order = {
+    id?: string;
     userId: string;
     paymentId: string;
     totalCost: number;
@@ -73,6 +76,8 @@ export type Order = {
     address: string;
     postalCode: string;
     items: OrderItem[];
+    orderFulfilled?: boolean;
+    createdAt?: Date;
 };
 
 export type OrderItem = {

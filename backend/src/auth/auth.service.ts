@@ -77,6 +77,25 @@ export class AuthService {
         return user;
     }
 
+    async getUserDetails(id: string) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id,
+            },
+            select: {
+                id: true,
+                email: true,
+                role: true,
+            },
+        });
+
+        if (!user) {
+            throw new ForbiddenException("No such account found.");
+        }
+
+        return user;
+    }
+
     async requestEmailVerification(email: string) {
         const emailObj = await this.prisma.emailVerification.create({
             data: {

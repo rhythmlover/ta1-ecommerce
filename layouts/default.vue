@@ -1,6 +1,6 @@
 <template>
     <header
-        class="flex items-center justify-between p-4 gap-4 bg-white border-b border-slate-200 z-50 md:px-10 lg:px-50 xl:px-80 2xl:px-100">
+        class="flex items-center justify-between p-4 gap-4 bg-white border-b border-slate-200 z-50 lg:px-10 xl:px-50 2xl:px-100">
         <button @click="isMenuOpen = !isMenuOpen" class="lg:hidden ml-2" aria-label="Toggle menu">
             <IconMenu2 width="28" height="28" />
         </button>
@@ -65,7 +65,7 @@
         leave-from-class="translate-x-0" leave-to-class="-translate-x-full">
         <nav v-if="isMenuOpen" class="fixed top-0 left-0 bottom-0 w-[340px] bg-[#ffffff] z-50 lg:hidden flex flex-col">
             <div class="flex items-center justify-between p-4 border-b border-gray-700">
-                <button @click="isMenuOpen = false" class="text-black-400 hover:text-white">
+                <button @click="isMenuOpen = false" class="text-black-400">
                     <IconX width="28" height="28" />
                 </button>
                 <UiLogo class="mx-auto" />
@@ -74,7 +74,7 @@
 
             <div class="flex flex-col p-4 space-y-1">
                 <UiLink v-for="(item, index) in navigationItems" :key="index" :to="item.path"
-                    class="text-black-300 hover:text-white text-base py-2 transition-colors duration-200"
+                    class="text-black-300 text-base py-2 transition-colors duration-200"
                     @click="isMenuOpen = false">
                     {{ item.name }}
                 </UiLink>

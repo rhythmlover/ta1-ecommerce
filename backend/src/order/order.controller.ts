@@ -11,6 +11,16 @@ export class OrderController {
         return this.orderService.createOrder(orderInfo);
     }
 
+    @Get('get-all')
+    getAllOrders() {
+        return this.orderService.getAllOrders();
+    }
+
+    @Post('update-order-fulfilled/:orderId')
+    updateOrderToFulfilled(@Param("orderId") orderId: string) {
+        return this.orderService.updateOrderToFulfilled(orderId);
+    }
+
     @Get('get/:paymentId')
     getOrderInfo(@Param("paymentId") paymentId: string) {
         return this.orderService.getOrder(paymentId);

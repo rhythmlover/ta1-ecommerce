@@ -17,6 +17,14 @@ export async function getProduct(id: string): Promise<Product> {
     return product;
 }
 
+export async function getUserDetails(id: string): Promise<User> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/auth/get-user-details/${id}`);
+    const user = await response.json();
+
+    return user;
+}
+
 export async function userLogin(email: string, password: string): Promise<User | { message: string, error: string, statusCode: number }> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/auth/signin`, {
@@ -154,6 +162,23 @@ export async function sendEmailAfterPayment(email: string): Promise<Response> {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
+    });
+
+    return await response.json();
+}
+
+export async function getAllOrders(): Promise<Order[]> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/order/get-all`);
+    const orders = await response.json();
+
+    return orders;
+}
+
+export async function updateOrderToFulfilled(orderId: string): Promise<Response> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/order/update-order-fulfilled/${orderId}`, {
+        method: "POST",
     });
 
     return await response.json();

@@ -1,4 +1,4 @@
-import { Controller, Param, Body, Post } from "@nestjs/common";
+import { Controller, Param, Body, Post, Get } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto, ResetPasswordDto } from "./dto";
 
@@ -39,5 +39,10 @@ export class AuthController {
     @Post('verify-email')
     verifyUserEmail(@Body() body: { id: string, email: string }) {
         return this.authService.verifyEmail(body.id, body.email);
+    }
+
+    @Get('get-user-details/:id')
+    getUserDetails(@Param("id") id: string) {
+        return this.authService.getUserDetails(id);
     }
 }

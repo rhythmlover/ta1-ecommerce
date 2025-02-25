@@ -29,6 +29,42 @@ export class OrderService {
         });
     }
 
+    async getAllOrders() {
+        return this.prisma.order.findMany({
+            select: {
+                id: true,
+                totalCost: true,
+                paymentId: true,
+                userId: true,
+                name: true,
+                email: true,
+                phone: true,
+                address: true,
+                postalCode: true,
+                orderFulfilled: true,
+                items: {
+                    select: {
+                        quantity: true,
+                        productId: true,
+                        optionId: true,
+                    },
+                },
+                createdAt: true,
+            },
+        });
+    }
+
+    async updateOrderToFulfilled(orderId: string) {
+        return this.prisma.order.update({
+            where: {
+                id: orderId,
+            },
+            data: {
+                orderFulfilled: true,
+            },
+        });
+    }
+
     async createOrder(dto: OrderDto) {
         try {
             const order = await this.prisma.order.create({
@@ -180,6 +216,7 @@ export class OrderService {
                     phone: true,
                     address: true,
                     postalCode: true,
+                    orderFulfilled: true,
                     items: {
                         select: {
                             quantity: true,

@@ -50,7 +50,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-vue";
 import { updateCartItemQuantity, deleteCartItem } from "~/composables/endpoints";
 import type { CartItem } from "~/types/types";

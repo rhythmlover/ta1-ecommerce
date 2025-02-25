@@ -9,10 +9,10 @@
                         Pending fulfillment
                     </span> -->
                 </div>
-                <p class="text-gray-600 text-sm" v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-GB', {
+                <p class="text-gray-600 text-sm" v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', {
                     day: 'numeric', month: 'short', year: 'numeric'
                 }) }} at {{ new
-                        Date(orderTime).toLocaleTimeString('en-GB', { hour: 'numeric', minute: 'numeric' }) }}</p>
+                        Date(orderTime).toLocaleTimeString('en-SG', { hour: 'numeric', minute: 'numeric' }) }}</p>
                 <p class="text-gray-600 text-sm" v-else>...</p>
             </div>
             <a href="/" class="text-gray-700 hover:text-gray-900 flex items-center gap-2">
