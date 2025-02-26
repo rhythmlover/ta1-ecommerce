@@ -137,7 +137,7 @@
                     <div class="flex items-center justify-between">
                         <UiParagraph> Subtotal </UiParagraph>
 
-                        <UiParagraph> ${{ subtotalAmount }} </UiParagraph>
+                        <UiParagraph> ${{ subtotalAmount.toFixed(2) }} </UiParagraph>
                     </div>
 
                     <div class="flex items-center justify-between">
@@ -150,7 +150,7 @@
                         <UiParagraph> Total </UiParagraph>
 
                         <strong class="font-semibold">
-                            <span>SGD ${{ totalAmount }}</span>
+                            <span>SGD ${{ totalAmount.toFixed(2) }}</span>
                         </strong>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { AuthDto, ResetPasswordDto } from "./dto";
@@ -11,6 +11,7 @@ import { Auth } from "googleapis";
 @Injectable()
 export class AuthService {
     private oAuth2Client: Auth.OAuth2Client;
+    private logger = new Logger("AuthService");
 
     constructor(private prisma: PrismaService, private configService: ConfigService) {
         this.oAuth2Client = new Auth.OAuth2Client({
@@ -45,6 +46,7 @@ export class AuthService {
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
+                    this.logger.error("Sign up email: " + dto.email.toLowerCase() + ", Email already in use.");
                     throw new ForbiddenException("Email already in use.");
                 }
             }
@@ -60,16 +62,19 @@ export class AuthService {
         });
 
         if (!user) {
+            this.logger.error("Sign in email: " + dto.email.toLowerCase() + ", No such account found.");
             throw new ForbiddenException("No such account found.");
         }
 
         const valid = await argon.verify(user.password, dto.password);
 
         if (!user.verified) {
+            this.logger.error("Sign in email: " + dto.email.toLowerCase() + ", Email not verified.");
             throw new ForbiddenException("Email not verified.");
         }
 
         if (!valid) {
+            this.logger.error("Sign in email: " + dto.email.toLowerCase() + ", Invalid account or password.");
             throw new ForbiddenException("Invalid account or password.");
         }
 
@@ -90,6 +95,7 @@ export class AuthService {
         });
 
         if (!user) {
+            this.logger.error("Get user ID: " + id + ", No such account found.");
             throw new ForbiddenException("No such account found.");
         }
 
@@ -159,14 +165,17 @@ export class AuthService {
         });
 
         if (!emailVerification) {
+            this.logger.error("Email verification request ID: " + id + ", Invalid request.");
             throw new ForbiddenException("Invalid request.");
         }
 
         if (emailVerification.validated) {
+            this.logger.error("Email verification request ID: " + id + ", Request has already been validated.");
             throw new ForbiddenException("Request has already been validated.");
         }
 
         if (emailVerification.expiresAt < new Date()) {
+            this.logger.error("Email verification request ID: " + id + ", Request expired.");
             throw new ForbiddenException("Request expired.");
         }
 
@@ -199,6 +208,7 @@ export class AuthService {
         });
 
         if (!user) {
+            this.logger.error("Password reset request email: " + dto.email.toLowerCase() + ", No such account found.");
             throw new ForbiddenException("No such account found.");
         }
 
@@ -264,14 +274,17 @@ export class AuthService {
         });
 
         if (!forgetPasswordReq) {
+            this.logger.error("Password reset request ID: " + id + ", Invalid request.");
             throw new ForbiddenException("Invalid request.");
         }
 
         if (forgetPasswordReq.validated) {
+            this.logger.error("Password reset request ID: " + id + ", Request has already been validated.");
             throw new ForbiddenException("Request has already been validated.");
         }
 
         if (forgetPasswordReq.expiresAt < new Date()) {
+            this.logger.error("Password reset request ID: " + id + ", Request expired.");
             throw new ForbiddenException("Request expired.");
         }
 
@@ -279,7 +292,6 @@ export class AuthService {
     }
 
     async resetPassword(dto: AuthDto, id: string) {
-        console.log(dto.password);
         const hash = await argon.hash(dto.password);
 
         await this.prisma.user.update({

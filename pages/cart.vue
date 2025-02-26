@@ -33,7 +33,7 @@
                         <UiParagraph> Subtotal </UiParagraph>
 
                         <strong class="font-semibold">
-                            <span>$ {{ calculateTotal() }}</span>
+                            <span>${{ calculateTotal() }}</span>
                         </strong>
                     </div>
 

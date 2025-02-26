@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from "@nestjs/common";
+import { Injectable, ForbiddenException, Logger } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { ProductService } from "../products/product.service";
@@ -13,6 +13,7 @@ import type { ReceiptData } from "../types";
 @Injectable()
 export class OrderService {
     private oAuth2Client: Auth.OAuth2Client;
+    private logger = new Logger("OrderService");
 
     constructor(
         private prisma: PrismaService,
@@ -86,13 +87,15 @@ export class OrderService {
                     },
                 },
             });
+
             await this.sendOrderToInHouseEmail(dto.paymentId);
+            
             return order;
         } catch (error) {
-            console.log(error);
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
-                    throw new ForbiddenException("Payment Intent has previously been used.");
+                    this.logger.error("Order already exists.");
+                    throw new ForbiddenException("Order already exists.");
                 }
             }
         }
@@ -236,7 +239,6 @@ export class OrderService {
     }
 
     async getOrderId(paymentId: string) {
-        console.log("Getting order id for payment id: ", paymentId);
         const order = await this.prisma.order.findUnique({
             where: {
                 paymentId: paymentId,
@@ -250,7 +252,6 @@ export class OrderService {
     }
 
     async getOrderTimestamp(paymentId: string) {
-        console.log("Getting order timestamp for payment id: ", paymentId);
         const order = await this.prisma.order.findUnique({
             where: {
                 paymentId: paymentId,

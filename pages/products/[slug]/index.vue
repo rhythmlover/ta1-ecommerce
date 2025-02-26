@@ -20,7 +20,7 @@
                 </UiParagraph>
 
                 <strong class="font-bold text-lg">
-                    ${{ product?.price }}
+                    ${{ product?.price.toFixed(2) }}
                 </strong>
 
                 <div v-if="product?.options.length">

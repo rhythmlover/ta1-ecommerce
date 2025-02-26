@@ -19,7 +19,7 @@
             </strong> -->
 
             <strong class="font-semibold">
-                <span>$ {{ accumulatedPrice }}</span>
+                <span>${{ accumulatedPrice.toFixed(2) }}</span>
             </strong>
 
             <div class="flex flex-col text-sm">

@@ -9,13 +9,21 @@
                         Pending fulfillment
                     </span> -->
                 </div>
-                <p class="text-gray-600 text-sm" v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', {
-                    day: 'numeric', month: 'short', year: 'numeric'
-                }) }} at {{ new
-                        Date(orderTime).toLocaleTimeString('en-SG', { hour: 'numeric', minute: 'numeric' }) }}</p>
+                <p class="text-gray-600 text-sm" v-if="orderTime">{{
+                    new Date(orderTime).toLocaleDateString('en-SG', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    })
+                }} at {{
+                        new Date(orderTime).toLocaleTimeString('en-SG', {
+                            timeZone: "Asia/Singapore",
+                            hour: 'numeric',
+                            minute: 'numeric'
+                        }) }}</p>
                 <p class="text-gray-600 text-sm" v-else>...</p>
             </div>
-            <a href="/" class="text-gray-700 hover:text-gray-900 flex items-center gap-2">
+            <a @click="goBackToHome" class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
                 <span class="max-md:hidden">Continue shopping</span>
                 <IconCornerRightUp class="h-6 w-6" />
             </a>
@@ -112,7 +120,7 @@
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Sub Total</span>
-                            <span>{{ cartData?.totalCost }}</span>
+                            <span>${{ cartData?.totalCost.toFixed(2) }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Shipping</span>
@@ -121,7 +129,8 @@
                         <div class="h-px bg-gray-300 my-4"></div>
                         <div class="flex justify-between text-lg font-bold">
                             <span>Order Total</span>
-                            <span>${{ cartData?.totalCost != undefined ? cartData.totalCost + shippingCost : 0.00 }}</span>
+                            <span>${{ cartData?.totalCost != undefined ? (cartData.totalCost + shippingCost).toFixed(2) : 0.00
+                            }}</span>
                         </div>
                     </div>
                 </div>
@@ -137,7 +146,11 @@ import type { Cart, Order, OrderItem } from '~/types/types';
 const route = useRoute();
 const userStore = useUserStore();
 const cartStore = useCartStore();
+
 const cartData = ref<Cart | null>(null);
+const orderId = ref<string | null>(null);
+const orderTime = ref<string | null>(null);
+
 const pid = route.query.payment_intent as string;
 const name = route.query.name as string;
 const email = route.query.email as string;
@@ -146,9 +159,8 @@ const phone = route.query.phone as string;
 const address = route.query.address as string;
 const apartment = route.query.apartment as string;
 const postalCode = route.query.postal_code as string;
+
 const shippingCost = 0;
-const orderId = ref<string | null>(null);
-const orderTime = ref<string | null>(null);
 const userId = userStore.getUserId;
 
 onMounted(async () => {
@@ -188,4 +200,8 @@ onMounted(async () => {
         console.error('Cart is empty');
     }
 });
+
+function goBackToHome() {
+    navigateTo('/');
+}
 </script>
