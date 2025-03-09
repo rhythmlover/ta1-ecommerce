@@ -7,6 +7,7 @@ import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import * as argon from "argon2";
 import { Auth } from "googleapis";
+import * as fs from "fs";
 
 @Injectable()
 export class AuthService {
@@ -141,12 +142,18 @@ export class AuthService {
             },
         } as SMTPTransport.Options);
 
+        const templatePath = "src/auth/verify-email-template.html";
+        let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+
+        htmlTemplate = htmlTemplate
+            .replace(/{{link}}/g, `${webUrl}/verify-email?id=${id}&email=${email}`);
+
         transporter.sendMail(
             {
                 from: infoEmailUser,
                 to: email,
                 subject: "TA1 Email Verification",
-                html: `<a href="${webUrl}/verify-email?id=${id}&email=${email}">Click here to verify email</a>`,
+                html: htmlTemplate,
             } as nodemailer.SendMailOptions,
             (err, info) => {
                 if (err) {
