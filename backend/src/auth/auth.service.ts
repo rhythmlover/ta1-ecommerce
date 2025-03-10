@@ -257,12 +257,18 @@ export class AuthService {
             },
         } as SMTPTransport.Options);
 
+        const templatePath = "src/auth/reset-password-template.html";
+        let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+
+        htmlTemplate = htmlTemplate
+            .replace(/{{link}}/g, `${webUrl}/reset-password?id=${id}&email=${email}`);
+
         transporter.sendMail(
             {
                 from: infoEmailUser,
                 to: email,
                 subject: "TA1 Forget Password Request",
-                html: `<a href="${webUrl}/reset-password?id=${id}&email=${email}">Click here to reset password</a>`,
+                html: htmlTemplate,
             } as nodemailer.SendMailOptions,
             (err, info) => {
                 if (err) {
