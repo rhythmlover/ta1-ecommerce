@@ -4,25 +4,22 @@ import Stripe from "stripe";
 export async function getAllProducts(): Promise<Product[]> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/products/get-all`);
-    const products = await response.json();
-
-    return products;
+    
+    return await response.json();
 }
 
 export async function getProduct(id: string): Promise<Product> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/products/get/${id}`);
-    const product = await response.json();
-
-    return product;
+    
+    return await response.json();
 }
 
 export async function getUserDetails(id: string): Promise<User> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/auth/get-user-details/${id}`);
-    const user = await response.json();
 
-    return user;
+    return await response.json();
 }
 
 export async function userLogin(email: string, password: string): Promise<User | { message: string, error: string, statusCode: number }> {
@@ -34,10 +31,12 @@ export async function userLogin(email: string, password: string): Promise<User |
         },
         body: JSON.stringify({ email, password }),
     });
+    
     const userData = await response.json();
     if (userData.statusCode === 403) {
         return { message: userData.message, error: userData.error, statusCode: userData.statusCode };
     }
+
     return userData;
 }
 
@@ -50,8 +49,8 @@ export async function userSignup(email: string, password: string): Promise<{ mes
         },
         body: JSON.stringify({ email, password }),
     });
-    const userData = await response.json();
-    return userData;
+
+    return await response.json();
 }
 
 export async function getUserCart(userId: string): Promise<Cart | null> {
@@ -66,8 +65,7 @@ export async function getUserCart(userId: string): Promise<Cart | null> {
         return null;
     }
 
-    const cart = JSON.parse(text);
-    return cart;
+    return JSON.parse(text);
 }
 
 export async function createCart(userId: string): Promise<Cart> {
@@ -170,9 +168,8 @@ export async function sendEmailAfterPayment(email: string): Promise<Response> {
 export async function getAllOrders(): Promise<Order[]> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/order/get-all`);
-    const orders = await response.json();
-
-    return orders;
+    
+    return await response.json();
 }
 
 export async function updateOrderToFulfilled(orderId: string): Promise<Response> {
@@ -210,25 +207,22 @@ export async function createOrder(orderInfo: Order): Promise<Response> {
 export async function getOrder(paymentId: string): Promise<Order> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/order/get/${paymentId}`);
-    const order = await response.json();
-
-    return order;
+    
+    return await response.json();
 }
 
 export async function getOrderId(paymentId: string): Promise<{ id: string }> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/order/get-order-id/${paymentId}`);
-    const order = await response.json();
-
-    return order;
+    
+    return await response.json();
 }
 
 export async function getOrderTimestamp(paymentId: string): Promise<{ createdAt: string }> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/order/get-order-timestamp/${paymentId}`);
-    const order = await response.json();
-
-    return order;
+    
+    return await response.json();
 }
 
 export async function requestPasswordReset(email: string): Promise<Response> {
@@ -297,6 +291,13 @@ export async function verifyEmail(id: string, email: string): Promise<{ message:
         },
         body: JSON.stringify({ id, email }),
     });
+
+    return await response.json();
+}
+
+export async function getAnnouncement(): Promise<{ content: string }> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/misc/get-announcement`);
 
     return await response.json();
 }

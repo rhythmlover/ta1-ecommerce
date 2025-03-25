@@ -11,8 +11,8 @@
                 </UiParagraph>
 
                 <UiParagraph class="italic">
-                    *When inquiring about an order, please be sure to include your "order number" and "name" when you
-                    send us an email.
+                    *When inquiring about an order, please be sure to include your "order number", "name" and the "email"
+                    that you received the order receipt on.
                 </UiParagraph>
 
                 <UiParagraph class="italic">
@@ -25,13 +25,14 @@
                         order made on this website.
                         It will be difficult for us to provide you with the necessary information.
                         Instead, please contact us through the inquiry form on this page or directly via email at
-                        <span class="underline">info@ta1-shop.com</span>.
+                        info@ta1-shop.com.
                     </UiParagraph>
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
+                    <UiInput v-model="botSniffer" label="Leave this empty" placeholder="Leave this empty" class="hidden"/>
                     <UiInput v-model="name" label="Name" placeholder="Name" />
                     <UiInput v-model="email" label="Email" placeholder="Email" />
                 </div>
@@ -50,6 +51,7 @@
 </template>
 
 <script lang="ts" setup>
+const botSniffer = ref('');
 const name = ref('');
 const email = ref('');
 const orderNo = ref('');
@@ -58,6 +60,10 @@ const errorMessage = ref('');
 const successMessage = ref('');
 
 async function sendEmail() {
+    if (botSniffer.value) {
+        return;
+    }
+
     if (!name.value || !email.value || !message.value) {
         errorMessage.value = 'Please fill in name, email, and message.';
         return;

@@ -32,11 +32,15 @@
                     leave-active-class="transition ease-in duration-75"
                     leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
                     <MenuItems
-                        class="absolute right-0 z-10 mt-2 w-30 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                        <div class="py-1">
+                        class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                        <div>
+                            <!-- <MenuItem v-slot="{ active }">
+                            <button
+                                :class="[active ? 'bg-gray-100 text-black-900 outline-none rounded-md' : 'text-black-700', 'block w-full px-4 py-2 text-left text-sm']">Order History</button>
+                            </MenuItem> -->
                             <MenuItem v-slot="{ active }">
                             <button @click="logout"
-                                :class="[active ? 'bg-gray-100 text-red-900 outline-none' : 'text-red-700', 'block w-full px-4 py-2 text-left text-sm']">Sign out</button>
+                                :class="[active ? 'bg-gray-100 text-red-900 outline-none rounded-md' : 'text-red-700', 'block w-full px-4 py-2 text-left text-sm']">Sign out</button>
                             </MenuItem>
                         </div>
                     </MenuItems>
@@ -51,6 +55,10 @@
             </UiButton>
         </div>
     </header>
+
+    <div v-if="announcement" class="bg-[#685044] text-white text-center p-2">
+        <p class="text-md">{{ announcement }}</p>
+    </div>
 
     <!-- Mobile Menu Overlay -->
     <transition enter-active-class="transition-opacity ease-out duration-300" enter-from-class="opacity-0"
@@ -125,6 +133,7 @@ const userStore = useUserStore();
 const cartQuantity = computed(() => cartStore.getCartQty);
 const userLoggedIn = computed(() => userStore.getUserId !== '');
 const cartData = ref<Cart | null>(null);
+const announcement = ref('');
 
 const navigationItems = [
     { name: 'Explore', path: '/' },
@@ -136,6 +145,9 @@ onMounted(async () => {
     } else {
         cartData.value = await getUserCart(userStore.getUserId);
         cartStore.setCartQty(cartData.value?.items.length || 0);
+    }
+    if ((await getAnnouncement()).content !== '') {
+        announcement.value = (await getAnnouncement()).content;
     }
 });
 
@@ -150,6 +162,6 @@ async function checkIfUserIsLoggedIn() {
 async function logout() {
     cartStore.clearCartQty();
     userStore.clearUserId();
-    navigateTo("/");
+    window.location.href = '/';
 }
 </script>

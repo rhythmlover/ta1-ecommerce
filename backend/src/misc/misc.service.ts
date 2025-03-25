@@ -70,4 +70,11 @@ export class MiscService {
         );
         return { message: "Email sent successfully" };
     }
+
+    async getAnnouncement() {
+        return await this.prisma.announcement.findUnique({
+            where: { id: "cm8oxpozl0000ubysly7ozorg" },
+            select: { content: true },
+        });
+    }
 }
