@@ -1,5 +1,5 @@
 <template>
-    <UiCenter>
+    <!-- <UiCenter>
         <UiHeading>
             {{ data?.pageByHandle.title }}
         </UiHeading>
@@ -7,16 +7,16 @@
         <UiParagraph>
             {{ data?.pageByHandle.body }}
         </UiParagraph>
-    </UiCenter>
+    </UiCenter> -->
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
+// const route = useRoute();
 
-const { data } = await usePage(route.params.page as string);
+// const { data } = await usePage(route.params.page as string);
 
-useSeoMeta({
-    title: () => `${data.value?.pageByHandle.title} - Together as One Store`,
-    description: () => data.value?.pageByHandle.bodySummary,
-});
+// useSeoMeta({
+//     title: () => `${data.value?.pageByHandle.title} - Together as One Store`,
+//     description: () => data.value?.pageByHandle.bodySummary,
+// });
 </script>

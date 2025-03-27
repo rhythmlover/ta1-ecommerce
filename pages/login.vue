@@ -42,7 +42,7 @@
                     Sign up</UiLink>
             </p>
 
-            <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
+            <UiErrorAlert />
         </div>
     </div>
 </template>
@@ -52,32 +52,37 @@ import { ref } from 'vue';
 
 const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
+const alertStore = useAlertStore();
+
+onMounted(() => {
+    alertStore.clearAlert();
+});
 
 async function login() {
     try {
+        alertStore.clearAlert();
         if (!email.value || !password.value) {
-            errorMessage.value = 'Please enter email and password.';
+            alertStore.showAlert('Please enter email and password.', 'error');
             return;
         }
 
         if (!email.value.includes('@') || !email.value.includes('.')) {
-            errorMessage.value = 'Please enter a valid email.';
+            alertStore.showAlert('Please enter a valid email.', 'error');
             return;
         }
 
         const userDetails = await userLogin(email.value, password.value);
 
         if ("statusCode" in userDetails) {
-            errorMessage.value = userDetails.message;
+            alertStore.showAlert(userDetails.message, 'error');
             return;
         }
 
         if (userDetails.id === undefined) {
-            errorMessage.value = 'No such account found.';
+            alertStore.showAlert('No such account found.', 'error');
             return;
         }
 
@@ -91,11 +96,11 @@ async function login() {
         }
         userStore.setUserId(userDetails.id);
 
-        errorMessage.value = '';
-        await navigateTo('/');
+        alertStore.clearAlert();
+        window.location.href = '/';
     } catch (error) {
         console.error(error);
-        errorMessage.value = 'Login failed';
+        alertStore.showAlert('An error occurred. Please try again.', 'error');
     }
 }
 

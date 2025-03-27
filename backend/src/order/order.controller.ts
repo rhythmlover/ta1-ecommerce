@@ -40,4 +40,9 @@ export class OrderController {
     sendToInhouseEmail(@Param("paymentId") paymentId: string) {
         return this.orderService.sendOrderToInHouseEmail(paymentId);
     }
+
+    @Get('get-orders-by-user/:userId')
+    getOrdersByUser(@Param("userId") userId: string) {
+        return this.orderService.getOrdersByUser(userId);
+    }
 }

@@ -42,6 +42,49 @@ export const useUserStore = defineStore("user-store", {
     persist: true,
 });
 
+export const useAlertStore = defineStore("alert-store", {
+    state: () => ({
+        alert: {
+            show: false,
+            message: "",
+            type: "success",
+        },
+        timeoutId: null as ReturnType<typeof setTimeout> | null,
+    }),
+    actions: {
+        showAlert(message: string, type: "success" | "error") {
+            if (this.timeoutId) {
+                clearTimeout(this.timeoutId);
+                this.timeoutId = null;
+            }
+
+            this.alert = {
+                show: true,
+                message,
+                type,
+            };
+
+            this.timeoutId = setTimeout(() => {
+                this.clearAlert();
+            }, 3000);
+        },
+        clearAlert() {
+            this.alert = {
+                show: false,
+                message: "",
+                type: "success",
+            };
+            if (this.timeoutId) {
+                clearTimeout(this.timeoutId);
+                this.timeoutId = null;
+            }
+        },
+    },
+    getters: {
+        getAlert: (state) => state.alert,
+    },
+});
+
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCartStore, import.meta.hot));
     import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));

@@ -32,7 +32,8 @@
                                         Name</label>
                                     <input id="first-name" placeholder="John" v-model="firstName"
                                         :class="['w-full bg-white pl-3 pr-7 py-2 rounded-md border focus:outline-none focus:ring-2', firstNameError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
-                                    <p v-if="firstNameError" class="text-red-500 text-xs italic">Please enter your first name.</p>
+                                    <p v-if="firstNameError" class="text-red-500 text-xs italic">Please enter your first
+                                        name.</p>
                                 </div>
                                 <div>
                                     <label for="last-name" class="block text-sm mb-2 dark:text-white">Last
@@ -125,7 +126,6 @@
                             <span v-if="loading"><img :src="Loading" alt="Loading" class="w-7 h-7" /></span>
                             <span v-else>Pay</span>
                         </UiButton>
-                        <UiErrorAlert v-if="errorMsg" :message="errorMsg" />
                     </div>
                 </div>
             </div>
@@ -155,19 +155,22 @@
                     </div>
                 </div>
             </div>
+            <UiErrorAlert />
         </div>
     </UiCenter>
 </template>
 
 <script lang="ts" setup>
 import { loadStripe } from '@stripe/stripe-js';
-import { IconCheck, IconSearch } from '@tabler/icons-vue';
+import { IconCheck } from '@tabler/icons-vue';
 import Loading from '~/assets/loading.svg';
 import type { Cart } from '~/types/types';
 import type { StripeElements, Stripe } from '@stripe/stripe-js';
 
 const config = useRuntimeConfig();
 const userStore = useUserStore();
+const alertStore = useAlertStore();
+
 const stripe = ref<Stripe | null>(null);
 const successUrl = `${config.public.WEB_URL}/success`;
 const loading = ref(false);
@@ -208,7 +211,7 @@ const postalCode = ref('')
 const phoneCountryCode = ref('+65')
 const phoneNumber = ref('')
 
-const errorMsg = ref('');
+// const errorMsg = ref('');
 const emailError = ref(false);
 const firstNameError = ref(false);
 const lastNameError = ref(false);
@@ -218,6 +221,8 @@ const postalCodeError = ref(false);
 const phoneNumberError = ref(false);
 
 onMounted(async () => {
+    alertStore.clearAlert();
+
     if (userId) {
         cartData.value = await getUserCart(userId);
     }
@@ -264,7 +269,7 @@ async function confirmPayment() {
     phoneNumberError.value = !phoneNumber.value;
 
     if (!email.value || !firstName.value || !lastName.value || !address.value || !apartment.value || !postalCode.value || !phoneNumber.value) {
-        errorMsg.value = 'Please fill in all fields';
+        alertStore.showAlert('Please fill in all fields.', 'error');
         return;
     }
 

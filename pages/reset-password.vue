@@ -1,7 +1,7 @@
 <template>
     <main id="content" role="main" class="w-full max-w-md mx-auto p-6">
         <div v-if='validationSuccess && !confirmationMessage'
-            class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
+            class="mt-7 bg-white rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
             <div class="p-4 sm:p-7">
                 <div class="text-center">
                     <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Change Password</h1>
@@ -48,8 +48,18 @@
             </div>
         </div>
 
-        <UiErrorAlert v-else-if="!validationSuccess && afterValidation" :message="validationMessage" />
-        <UiSuccessAlert v-else-if="validationSuccess && confirmationMessage" :message="confirmationMessage" />
+        <div v-else-if="!validationSuccess && afterValidation"
+            class="my-7 bg-white rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
+            <p class="my-5 text-xl font-bold text-red-600 dark:text-red-400 text-center">
+                {{ validationMessage }}
+            </p>
+        </div>
+        <div v-else-if="validationSuccess && confirmationMessage"
+            class="my-7 bg-white rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
+            <p class="my-5 text-xl font-bold text-green-600 dark:text-green-400 text-center">
+                {{ confirmationMessage }}
+            </p>
+        </div>
 
         <div v-else />
     </main>

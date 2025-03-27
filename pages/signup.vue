@@ -75,8 +75,8 @@
                     </span>
                 </div>
 
-                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
-                <UiSuccessAlert v-if="successMessage" :message="successMessage" />
+                <UiErrorAlert />
+                <UiSuccessAlert />
             </div>
         </div>
     </div>
@@ -89,18 +89,22 @@ const confirmPassword = ref('');
 const passwordsMatch = computed(() => password.value === confirmPassword.value);
 const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
 
-const errorMessage = ref('');
-const successMessage = ref('');
 const emailError = ref(false);
 const passwordError = ref(false);
+
+const alertStore = useAlertStore();
+
+onMounted(() => {
+    alertStore.clearAlert();
+});
 
 async function signUp() {
     try {
         if (!email.value || !password.value) {
-            errorMessage.value = 'Please fill in all fields.';
+            alertStore.showAlert('Please fill in all fields.', 'error');
             return;
         } else {
-            errorMessage.value = '';
+            alertStore.clearAlert();
         }
 
         emailError.value = !email.value.includes('@') || !email.value.includes('.');
@@ -112,15 +116,15 @@ async function signUp() {
 
         const userDetails = await userSignup(email.value, password.value);
         if (userDetails.statusCode === 403) {
-            successMessage.value = '';
-            errorMessage.value = userDetails.message;
+            alertStore.clearAlert();
+            alertStore.showAlert(userDetails.message, 'error');
         } else {
-            errorMessage.value = '';
-            successMessage.value = 'A verification email has been sent to your email address.';
+            alertStore.clearAlert();
+            alertStore.showAlert('Account created successfully! Please check your email for verification.', 'success');
         }
     } catch (error) {
         console.error(error);
-        errorMessage.value = 'An error occurred. Please try again.';
+        alertStore.showAlert('An error occurred. Please try again.', 'error');
     }
 }
 

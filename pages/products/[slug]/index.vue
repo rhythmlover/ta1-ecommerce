@@ -64,8 +64,8 @@
                     {{ "Add to cart" }}
                 </UiButton>
 
-                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
-                <UiSuccessAlert v-if="successMessage" :message="successMessage" />
+                <UiErrorAlert />
+                <UiSuccessAlert />
 
                 <!-- <UiButton
                     :loading="isLoading"
@@ -86,16 +86,19 @@ import { IconMinus, IconPlus } from "@tabler/icons-vue";
 const route = useRoute();
 const userStore = useUserStore();
 const cartStore = useCartStore();
+const alertStore = useAlertStore();
+
 const product = ref<Product | null>(null);
 const selectedOptions = reactive<{ [key: string]: string }>({});
 const quantity_selected = ref(1);
 const currentImageUrl = ref('');
 const formattedDescription = computed(() => product.value?.description ?? '');
-const errorMessage = ref('');
-const successMessage = ref('');
+// const errorMessage = ref('');
+// const successMessage = ref('');
 const imageLoaded = ref(false);
 
 onMounted(async () => {
+    alertStore.clearAlert();
     const id = route.query.id as string;
     product.value = await getProduct(id);
     updateImageUrl();
@@ -140,8 +143,7 @@ function changeQuantity(amount: number) {
 }
 
 async function addItemToCart() {
-    errorMessage.value = '';
-    successMessage.value = '';
+    alertStore.clearAlert();
 
     const userId = userStore.getUserId;
 
@@ -156,7 +158,7 @@ async function addItemToCart() {
         })[0];
 
         if (!optionId) {
-            errorMessage.value = 'Please select an option.';
+            alertStore.showAlert('Please select an option.', 'error');
             console.error('No option selected.');
             return;
         }
@@ -164,7 +166,7 @@ async function addItemToCart() {
         const cart = await getUserCart(userId);
 
         if (cart && cart.items.some(item => item.option.id === optionId)) {
-            errorMessage.value = 'Item already in cart.';
+            alertStore.showAlert('Item already in cart.', 'error');
             return;
         }
 
@@ -173,7 +175,7 @@ async function addItemToCart() {
             cartStore.incrementCartQty();
         }
 
-        successMessage.value = 'Item added to cart.';
+        alertStore.showAlert('Item added to cart.', 'success');
     }
 }
 

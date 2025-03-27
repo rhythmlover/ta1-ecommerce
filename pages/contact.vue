@@ -43,8 +43,9 @@
                 <div class="flex text-center items-center">
                     <UiButton @click="sendEmail" class="w-25"> Send </UiButton>
                 </div>
-                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
-                <UiSuccessAlert v-if="successMessage" :message="successMessage" />
+                
+                <UiErrorAlert />
+                <UiSuccessAlert />
             </div>
         </div>
     </UiCenter>
@@ -56,8 +57,12 @@ const name = ref('');
 const email = ref('');
 const orderNo = ref('');
 const message = ref('');
-const errorMessage = ref('');
-const successMessage = ref('');
+
+const alertStore = useAlertStore();
+
+onMounted(() => {
+    alertStore.clearAlert();
+});
 
 async function sendEmail() {
     if (botSniffer.value) {
@@ -65,26 +70,26 @@ async function sendEmail() {
     }
 
     if (!name.value || !email.value || !message.value) {
-        errorMessage.value = 'Please fill in name, email, and message.';
+        alertStore.showAlert('Please fill in name, email, and message.', 'error');
         return;
     }
 
     if (!email.value.includes('@') || !email.value.includes('.')) {
-        errorMessage.value = 'Please enter a valid email address';
+        alertStore.showAlert('Please enter a valid email address', 'error');
         return;
     }
 
     const res = await sendInquiryEmail(name.value, email.value, message.value, orderNo.value);
 
     if (res.message === 'Email sent successfully') {
-        errorMessage.value = '';
-        successMessage.value = 'Your inquiry has been sent successfully!';
+        alertStore.clearAlert();
+        alertStore.showAlert('Your inquiry has been sent successfully!', 'success');
         name.value = '';
         email.value = '';
         orderNo.value = '';
         message.value = '';
     } else {
-        errorMessage.value = 'An error occurred. Please try again later.';
+        alertStore.showAlert('An error occurred. Please try again later.', 'error');
     }
 }
 

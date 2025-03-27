@@ -28,9 +28,10 @@
                     </div>
                 </div>
 
-                <UiErrorAlert v-if="errorMessage" :message="errorMessage" />
-                <UiSuccessAlert v-if="confirmationMessage" :message="confirmationMessage" />
-                <UiParagraph v-if="confirmationMessage" class="mt-5 text-sm text-indigo-600 dark:text-indigo-400">
+                <UiErrorAlert />
+                <UiSuccessAlert />
+                
+                <UiParagraph v-if="emailConfirmation" class="mt-5 text-sm text-indigo-600 dark:text-indigo-400">
                     Didn't receive an email? Check your spam folder or <button @click="requestReset"
                         class="text-indigo-600 decoration-2">try again</button>.
                 </UiParagraph>
@@ -41,23 +42,28 @@
 
 <script lang="ts" setup>
 const email = ref('');
-const errorMessage = ref('');
-const confirmationMessage = ref('');
+const emailConfirmation = ref(false);
+
+const alertStore = useAlertStore();
+
+onMounted(() => {
+    alertStore.clearAlert();
+});
 
 async function requestReset() {
     try {
-        errorMessage.value = '';
-        confirmationMessage.value = '';
+        alertStore.clearAlert();
         if (!email.value || !email.value.includes('@') || !email.value.includes('.')) {
-            errorMessage.value = 'Please enter a valid email.';
+            alertStore.showAlert('Please enter a valid email.', 'error');
             return;
         }
         await requestPasswordReset(email.value);
-        confirmationMessage.value = 'Password reset link sent to your email.';
+        alertStore.showAlert('Password reset link sent to your email.', 'success');
+        emailConfirmation.value = true;
     } catch (error) {
         console.error(error);
-        confirmationMessage.value = '';
-        errorMessage.value = "An error occurred. Please try again.";
+        alertStore.clearAlert();
+        alertStore.showAlert('An error occurred while sending the reset link. Please try again.', 'error');
     }
 }
 </script>

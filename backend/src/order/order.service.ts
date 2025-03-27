@@ -263,4 +263,32 @@ export class OrderService {
 
         return order;
     }
+
+    async getOrdersByUser(userId: string) {
+        return this.prisma.order.findMany({
+            where: {
+                userId: userId,
+            },
+            select: {
+                id: true,
+                totalCost: true,
+                paymentId: true,
+                userId: true,
+                name: true,
+                email: true,
+                phone: true,
+                address: true,
+                postalCode: true,
+                orderFulfilled: true,
+                items: {
+                    select: {
+                        quantity: true,
+                        productId: true,
+                        optionId: true,
+                    },
+                },
+                createdAt: true,
+            },
+        });
+    }
 }

@@ -225,6 +225,13 @@ export async function getOrderTimestamp(paymentId: string): Promise<{ createdAt:
     return await response.json();
 }
 
+export async function getOrdersByUser(userId: string): Promise<Order[]> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/order/get-orders-by-user/${userId}`);
+    
+    return await response.json();
+}
+
 export async function requestPasswordReset(email: string): Promise<Response> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/auth/request-password-reset`, {
