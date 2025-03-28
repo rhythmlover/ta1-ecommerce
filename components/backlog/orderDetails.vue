@@ -4,13 +4,13 @@
             @click="toggleDropdown">
             <div class="data mb-4 lg:mb-0">
                 <p class="font-semibold text-sm lg:text-base leading-6 lg:leading-7 text-black">
-                    Order Id: <span class="text-indigo-600 font-medium">{{ orderId?.toUpperCase() }}</span>
+                    Order ID: <span class="text-indigo-600 font-medium">{{ orderId?.toUpperCase() }}</span>
                 </p>
                 <p class="font-semibold text-sm lg:text-base leading-6 lg:leading-7 text-black mt-2 lg:mt-4">
                     Order Payment: <span class="text-gray-500 font-medium">{{ orderDate }}</span>
                 </p>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center justify-between">
                 <span v-if="orderFulfilled === false"
                     class="rounded-full py-2 px-4 lg:py-3 lg:px-7 font-semibold text-xs lg:text-sm leading-6 lg:leading-7 bg-[#FFF3E3] text-[#FF9900] shadow-sm shadow-transparent transition-all duration-500 mr-2 lg:mr-4">
                     Pending
@@ -25,6 +25,34 @@
         </div>
         <div class="transition-all duration-300 ease-in-out overflow-hidden"
             :class="isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'">
+            <!-- name, email, address and postal code -->
+            <div class="flex flex-col justify-start items-start p-4 lg:p-6 border-b border-gray-200 gap-4 lg:gap-6">
+                <h2 class="font-semibold text-lg lg:text-xl leading-7 lg:leading-8 text-black mb-2 lg:mb-3">
+                    Customer Details
+                </h2>
+                <div class="flex max-md:flex-col items-start w-full">
+                    <div class="w-auto flex-auto">
+                        <p class="font-medium text-sm lg:text-base leading-6 lg:leading-7 text-black mb-2 lg:mb-3">
+                            Name: <span class="text-indigo-600">{{ orderCustomerName }}</span>
+                        </p>
+                        <p class="font-medium text-sm lg:text-base leading-6 lg:leading-7 text-black mb-2 lg:mb-3">
+                            Email: <span class="text-indigo-600">{{ orderCustomerEmail }}</span>
+                        </p>
+                        <p class="font-medium text-sm lg:text-base leading-6 lg:leading-7 text-black mb-2 lg:mb-3">
+                            Phone Number: <span class="text-indigo-600">{{ orderPhoneNumber.slice(2) }}</span>
+                        </p>
+                    </div>
+                    <div class="w-auto flex-auto">
+                        <p class="font-medium text-sm lg:text-base leading-6 lg:leading-7 text-black mb-2 lg:mb-3">
+                            Address: <span class="text-indigo-600">{{ orderAddress }}</span>
+                        </p>
+                        <p class="font-medium text-sm lg:text-base leading-6 lg:leading-7 text-black mb-2 lg:mb-3">
+                            Postal Code:
+                            <span class="text-indigo-600">{{ orderPostalCode }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div v-for="item in orderItems" class="w-full px-3 lg:px-6">
                 <div
                     class="flex flex-col lg:flex-row items-start lg:items-center py-4 lg:py-6 px-4 lg:px-10 border-b border-gray-200 gap-4 lg:gap-6 w-full">
@@ -100,7 +128,14 @@ const props = defineProps<{
     modelValue: Order;
 }>();
 
+const emit = defineEmits(['orderFulfilled']);
+
 const isOpen = ref(false)
+const orderCustomerName = props.modelValue.name
+const orderCustomerEmail = props.modelValue.email
+const orderAddress = props.modelValue.address
+const orderPostalCode = props.modelValue.postalCode
+const orderPhoneNumber = props.modelValue.phone
 const orderId = props.modelValue.id
 const orderDate = new Date(props.modelValue.createdAt ?? '').toLocaleString(
     "en-SG", {
@@ -143,13 +178,14 @@ const fetchOrderItems = async () => {
 const changeOrderStatus = async () => {
     await updateOrderToFulfilled(orderId ?? '');
     orderFulfilled.value = true;
+    emit('orderFulfilled');
+}
+
+const toggleDropdown = () => {
+    isOpen.value = !isOpen.value
 }
 
 onMounted(() => {
     fetchOrderItems();
 });
-
-const toggleDropdown = () => {
-    isOpen.value = !isOpen.value
-}
 </script>

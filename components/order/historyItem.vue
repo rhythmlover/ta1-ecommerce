@@ -1,8 +1,9 @@
 <template>
-    <div class="py-6 flex flex-col sm:flex-row border-b border-gray-200">
+    <OrderHistoryItemSkeleton v-show="!imageLoaded" />
+    <div class="py-6 flex flex-col sm:flex-row border-b border-gray-200" v-show="imageLoaded">
         <!-- Mobile view: Horizontal layout for image and details -->
         <div class="flex sm:block">
-            <NuxtImg :src="option?.imageUrl + '.jpg'" :alt="productDetails?.name"
+            <NuxtImg :src="option?.imageUrl + '.jpg'" :alt="productDetails?.name" @load="imageLoaded = true"
                 class="object-center object-cover h-24 w-24 sm:h-32 sm:w-32 bg-gray-100 rounded-md overflow-hidden flex-shrink-0" />
 
             <div class="ml-4 sm:ml-0 sm:mt-0 flex-1 flex flex-col">
@@ -72,6 +73,7 @@ const item = props.modelValue;
 const productDetails = ref<Product | null>(null);
 const optionName = ref<string | null>(null);
 const option = ref<Option | null>(null);
+const imageLoaded = ref(false);
 
 const userStore = useUserStore();
 const cartStore = useCartStore();

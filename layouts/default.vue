@@ -36,17 +36,17 @@
                         <div>
                             <MenuItem v-if="isAdmin" v-slot="{ active }">
                             <button @click="goToOrderBacklog"
-                                :class="[active ? 'bg-#FFF0F5 text-#B57EDC outline-none rounded-md' : 'text-#B57EDC bg-#E6E6FA rounded-t-md', 'block w-full px-4 py-2 text-left text-sm']">Order
+                                :class="[active ? 'bg-#FFF0F5 text-#B57EDC outline-none' : 'text-#B57EDC bg-#E6E6FA', 'block w-full px-4 py-2 text-left text-sm rounded-t-md']">Order
                                 Backlog</button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
                             <button @click="goToOrderHistory"
-                                :class="[active ? 'bg-gray-100 text-black-900 outline-none rounded-md' : 'text-black-900', 'block w-full px-4 py-2 text-left text-sm']">Order
+                                :class="[active ? 'bg-gray-100 text-black-900 outline-none' : 'text-black-900', 'block w-full px-4 py-2 text-left text-sm']">Order
                                 History</button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
                             <button @click="logout"
-                                :class="[active ? 'bg-gray-100 text-#FF0000 outline-none rounded-md' : 'text-#FF0000', 'block w-full px-4 py-2 text-left text-sm']">Sign
+                                :class="[active ? 'bg-gray-100 text-#FF0000 outline-none' : 'text-#FF0000', 'block w-full px-4 py-2 text-left text-sm rounded-b-md']">Sign
                                 out</button>
                             </MenuItem>
                         </div>
@@ -153,7 +153,7 @@ onMounted(async () => {
     } else {
         cartData.value = await getUserCart(userStore.getUserId);
         cartStore.setCartQty(cartData.value?.items.length || 0);
-        
+
         const userDetails = await getUserDetails(userStore.getUserId);
         console.log(userDetails);
         if (userDetails && userDetails.role === 'admin') {
