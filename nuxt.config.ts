@@ -1,6 +1,5 @@
 export default defineNuxtConfig({
     modules: [
-        "@nuxtjs/apollo",
         "@unocss/nuxt",
         [
             "@pinia/nuxt",
@@ -57,14 +56,6 @@ export default defineNuxtConfig({
     },
 
     css: ["@unocss/reset/tailwind.css"],
-
-    apollo: {
-        clients: {
-            default: {
-                httpEndpoint: "https://mock.shop/api",
-            },
-        },
-    },
 
     unocss: {
         rules: [

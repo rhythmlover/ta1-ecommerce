@@ -126,11 +126,13 @@
             </UiButton>
         </div>
     </footer>
+    <SpeedInsights />
 </template>
 
 <script setup lang="ts">
 import { IconLogin2, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { SpeedInsights } from '@vercel/speed-insights/vue';
 import type { Cart } from "~/types/types";
 
 const cartStore = useCartStore();
@@ -155,7 +157,6 @@ onMounted(async () => {
         cartStore.setCartQty(cartData.value?.items.length || 0);
 
         const userDetails = await getUserDetails(userStore.getUserId);
-        console.log(userDetails);
         if (userDetails && userDetails.role === 'admin') {
             isAdmin.value = true;
         }

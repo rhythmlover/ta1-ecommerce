@@ -1,8 +1,6 @@
 {
     "name": "ta1-ecommerce-backend",
-    "version": "0.0.1",
-    "description": "",
-    "author": "",
+    "version": "1.0.0",
     "private": true,
     "scripts": {
         "prisma:dev:deploy": "prisma migrate deploy",

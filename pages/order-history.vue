@@ -33,9 +33,8 @@ onMounted(async () => {
         navigateTo('/login');
         return;
     }
-        
+
     orders.value = await getOrdersByUser(userStore.getUserId);
-    console.log(orders.value);
     if (orders.value.length === 0) {
         noOrders.value = true;
     }
