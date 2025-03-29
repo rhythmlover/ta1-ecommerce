@@ -3,13 +3,8 @@
         <ProductPageSkeleton v-show="!imageLoaded" />
         <div v-show="imageLoaded" class="grid sm:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4">
-                <NuxtImg 
-                    :src="currentImageUrl" 
-                    :alt="product?.name" 
-                    :modifiers="{ roundCorner: '10:10' }" 
-                    layout="responsive"
-                    @load="imageLoaded = true"
-                />
+                <NuxtImg :src="currentImageUrl" :alt="product?.name" :modifiers="{ roundCorner: '10:10' }"
+                    layout="responsive" @load="imageLoaded = true" />
             </div>
 
             <div class="flex flex-col gap-6">
@@ -66,6 +61,7 @@
 
                 <UiErrorAlert />
                 <UiSuccessAlert />
+                <UiAddToCartAlert />
 
                 <!-- <UiButton
                     :loading="isLoading"
@@ -93,8 +89,6 @@ const selectedOptions = reactive<{ [key: string]: string }>({});
 const quantity_selected = ref(1);
 const currentImageUrl = ref('');
 const formattedDescription = computed(() => product.value?.description ?? '');
-// const errorMessage = ref('');
-// const successMessage = ref('');
 const imageLoaded = ref(false);
 
 onMounted(async () => {
@@ -175,7 +169,7 @@ async function addItemToCart() {
             cartStore.incrementCartQty();
         }
 
-        alertStore.showAlert('Item added to cart.', 'success');
+        alertStore.showAlert('Item added to cart.', 'addToCart');
     }
 }
 

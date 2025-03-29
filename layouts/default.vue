@@ -6,7 +6,7 @@
         </button>
 
         <div class="flex items-center gap-4 lg:flex-1">
-            <UiLogo class="lg:hidden ml-10" />
+            <UiLogo :class="[userLoggedIn ? 'ml-12 sm:ml-24' : 'ml-8 sm:ml-16', 'lg:hidden']" />
             <UiBrand class="max-lg:hidden lg:mr-4" />
 
             <div class="hidden lg:flex items-center gap-4">
@@ -19,12 +19,27 @@
         </div>
 
         <div>
-            <UiButton v-if="!userLoggedIn" variant="text" class="text-sm" aria-label="Login" to="/login">
-                <IconLogin2 width="22" height="22" />
+            <UiButton variant="text"
+                :class="[userLoggedIn ? 'mr-0 sm:mr-2' : '', 'text-sm flex items-center relative gap-1 bg-white rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 sm:py-1.5 sm:px-2 sm:gap-2']"
+                aria-label="Shopping Cart" @click="checkIfUserIsLoggedIn">
+                <IconShoppingBag class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+                <span v-if="cartQuantity > 0"
+                    class="absolute bottom-0 right-1 sm:right-0 inline-flex items-center justify-center px-1 py-0.5 text-[8px] font-bold leading-none text-white bg-indigo-500 rounded-full sm:px-2 sm:py-0.5 sm:text-xs">
+                    {{ cartQuantity }}
+                </span>
             </UiButton>
+
+            <UiButton v-if="!userLoggedIn" variant="text"
+                class="flex items-center gap-1 bg-white rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 relative sm:py-1.5 sm:px-2 sm:gap-2 text-sm"
+                aria-label="Login" to="/login">
+                <IconUserCircle class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            </UiButton>
+
             <Menu v-else as="div" class="relative inline-block text-left">
-                <MenuButton class="hover:bg-slate-50 active:bg-slate-100 p-2 rounded-md">
-                    <IconUser width="22" height="22" />
+                <MenuButton
+                    class="flex items-center gap-1 bg-white border border-slate-200 rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 relative sm:py-2 sm:px-3 sm:gap-2">
+                    <IconMenu2 class="w-4 h-5 sm:w-5 sm:h-6 md:w-5 md:h-7" />
+                    <IconUserCircle class="w-5 h-7 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                 </MenuButton>
 
                 <transition enter-active-class="transition ease-out duration-100"
@@ -53,13 +68,6 @@
                     </MenuItems>
                 </transition>
             </Menu>
-
-            <UiButton variant="text" class="text-sm" aria-label="Shopping Cart" @click="checkIfUserIsLoggedIn">
-                <IconShoppingBag width="22" height="22" />
-                <span v-if="cartQuantity > 0"
-                    class="absolute bottom-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white-100 bg-indigo rounded-full">
-                    {{ cartQuantity }}</span>
-            </UiButton>
         </div>
     </header>
 
@@ -130,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import { IconLogin2, IconMenu2, IconShoppingBag, IconUser, IconX } from "@tabler/icons-vue";
+import { IconMenu2, IconShoppingBag, IconUserCircle, IconX } from "@tabler/icons-vue";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { SpeedInsights } from '@vercel/speed-insights/vue';
 import type { Cart } from "~/types/types";

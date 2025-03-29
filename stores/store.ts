@@ -52,7 +52,7 @@ export const useAlertStore = defineStore("alert-store", {
         timeoutId: null as ReturnType<typeof setTimeout> | null,
     }),
     actions: {
-        showAlert(message: string, type: "success" | "error") {
+        showAlert(message: string, type: "success" | "error" | "addToCart") {
             if (this.timeoutId) {
                 clearTimeout(this.timeoutId);
                 this.timeoutId = null;
@@ -64,9 +64,11 @@ export const useAlertStore = defineStore("alert-store", {
                 type,
             };
 
+            const timeoutDuration = type === "addToCart" ? 2000 : 3000;
+            
             this.timeoutId = setTimeout(() => {
                 this.clearAlert();
-            }, 3000);
+            }, timeoutDuration);
         },
         clearAlert() {
             this.alert = {
