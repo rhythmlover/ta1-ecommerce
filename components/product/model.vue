@@ -6,7 +6,7 @@
             <!-- <img loading="lazy" width="360" height="360"
                     class="rounded-lg aspect-square shadow-sm transition duration-200 hover:scale-104"
                     src="https://i.ibb.co/2SkgknF/A.jpg" /> -->
-            <NuxtLink :to="`/products/${productValue.handle}?id=${productValue.id}`">
+            <NuxtLink :to="`/products/${productValue.handle}`">
                 <NuxtImg
                     provider="cloudinary"
                     :src="productValue.imageUrl + '.jpg'"
@@ -20,7 +20,7 @@
             </NuxtLink>
 
             <div class="flex flex-col">
-                <UiLink class="text-xl" :to="`/products/${productValue.handle}?id=${productValue.id}`">
+                <UiLink class="text-xl" :to="`/products/${productValue.handle}`">
                     {{ productValue.name }}
                 </UiLink>
 

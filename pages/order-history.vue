@@ -16,6 +16,9 @@
             </div>
         </div>
     </UiCenter>
+    <UiErrorAlert />
+    <UiSuccessAlert />
+    <UiAddToCartAlert />
 </template>
 
 <script lang="ts" setup>

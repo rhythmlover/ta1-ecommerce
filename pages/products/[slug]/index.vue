@@ -14,7 +14,7 @@
                     <p v-html="formattedDescription" />
                 </UiParagraph>
 
-                <strong class="font-bold text-lg">
+                <strong class="font-semibold text-lg">
                     ${{ product?.price.toFixed(2) }}
                 </strong>
 
@@ -45,9 +45,9 @@
                             <IconMinus width="20" height="20" />
                         </UiButton>
 
-                        <span class="text-sm px-4">
-                            {{ quantity_selected }}
-                        </span>
+                        <input type="number" v-model.number="quantity"
+                            class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
+                            :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" />
 
                         <UiButton variant="text" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
                             <IconPlus width="20" height="20" />
@@ -86,15 +86,15 @@ const alertStore = useAlertStore();
 
 const product = ref<Product | null>(null);
 const selectedOptions = reactive<{ [key: string]: string }>({});
-const quantity_selected = ref(1);
+const quantity = ref(1);
 const currentImageUrl = ref('');
 const formattedDescription = computed(() => product.value?.description ?? '');
 const imageLoaded = ref(false);
 
 onMounted(async () => {
     alertStore.clearAlert();
-    const id = route.query.id as string;
-    product.value = await getProduct(id);
+    const slug = route.params.slug as string;
+    product.value = await getProductByHandle(slug);
     updateImageUrl();
 });
 
@@ -131,8 +131,49 @@ function updateImageUrl() {
 
 
 function changeQuantity(amount: number) {
-    if (quantity_selected.value + amount > 0 && quantity_selected.value + amount <= 10) {
-        quantity_selected.value += amount;
+    if (quantity.value + amount > 0 && quantity.value + amount <= 10) {
+        quantity.value += amount;
+    } else if (quantity.value + amount < 1) {
+        quantity.value = 1;
+        alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
+    } else if (quantity.value + amount > 10) {
+        quantity.value = 10;
+        alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
+    }
+}
+
+function sanitizeQuantity(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    // Remove invalid characters (non-numeric, negative signs, plus signs)
+    input.value = input.value.replace(/[^0-9]/g, '');
+
+    // Prevent starting with 0
+    if (input.value.startsWith('0')) {
+        input.value = input.value.replace(/^0+/, "0");
+    }
+
+    // Allow the input to remain blank temporarily
+    if (input.value === '') {
+        quantity.value = 0; // Temporarily set quantity to 0
+        return;
+    }
+
+    // Update the quantity value
+    quantity.value = parseInt(input.value, 10);
+}
+
+function validateQuantity() {
+    // If the input is blank or invalid, reset it to the minimum value (1)
+    if (!quantity.value || isNaN(quantity.value)) {
+        quantity.value = 1;
+        alertStore.showAlert('Please enter a quantity.', 'error');
+    } else if (quantity.value < 1) {
+        quantity.value = 1;
+        alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
+    } else if (quantity.value > 10) {
+        quantity.value = 10;
+        alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
     }
 }
 
@@ -165,7 +206,7 @@ async function addItemToCart() {
         }
 
         if (cart && product.value) {
-            await addItemToUserCart(cart.id, product.value.id, optionId, quantity_selected.value);
+            await addItemToUserCart(cart.id, product.value.id, optionId, quantity.value);
             cartStore.incrementCartQty();
         }
 

@@ -44,6 +44,8 @@
             </div>
         </div>
     </UiCenter>
+
+    <UiErrorAlert />
 </template>
 
 <script setup lang="ts">

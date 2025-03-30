@@ -20,4 +20,9 @@ export class ProductController {
     getProduct(@Param('id') id: string) {
         return this.productService.getProduct(id);
     }
+
+    @Get('get-by-handle/:handle')
+    getProductByHandle(@Param('handle') handle: string) {
+        return this.productService.getProductByHandle(handle);
+    }
 }

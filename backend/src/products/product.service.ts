@@ -4,12 +4,12 @@ import { ProductDto } from "./dto";
 
 @Injectable({})
 export class ProductService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     getProducts() {
         return this.prisma.product.findMany();
     }
-    
+
     async addProduct(dto: ProductDto) {
         const product = await this.prisma.product.create({
             data: {
@@ -27,6 +27,33 @@ export class ProductService {
         return this.prisma.product.findUnique({
             where: {
                 id,
+            },
+            select: {
+                id: true,
+                name: true,
+                handle: true,
+                price: true,
+                description: true,
+                imageUrl: true,
+                createdAt: false,
+                updatedAt: false,
+                options: {
+                    select: {
+                        id: true,
+                        name: true,
+                        quantity: true,
+                        productId: true,
+                        imageUrl: true,
+                    },
+                },
+            }
+        });
+    }
+
+    async getProductByHandle(handle: string) {
+        return this.prisma.product.findFirst({
+            where: {
+                handle,
             },
             select: {
                 id: true,

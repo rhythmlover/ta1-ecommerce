@@ -56,9 +56,6 @@
                 </UiButton>
             </div>
         </div>
-
-        <UiErrorAlert />
-        <UiSuccessAlert />
     </div>
 </template>
 
@@ -108,12 +105,12 @@ async function addItemToCart() {
             await addItemToUserCart(cart.id, productDetails.value.id, item.optionId, item.quantity);
             cartStore.incrementCartQty();
         }
-
-        alertStore.showAlert('Item added to cart.', 'success');
     }
+
+    alertStore.showAlert('Item added to cart.', 'addToCart');
 }
 
 async function goToProductPage() {
-    navigateTo(`/products/${productDetails?.value?.handle}?id=${productDetails?.value?.id}`);
+    navigateTo(`/products/${productDetails?.value?.handle}`);
 }
 </script>

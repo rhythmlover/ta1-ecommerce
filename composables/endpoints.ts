@@ -15,6 +15,13 @@ export async function getProduct(id: string): Promise<Product> {
     return await response.json();
 }
 
+export async function getProductByHandle(handle: string): Promise<Product> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/products/get-by-handle/${handle}`);
+    
+    return await response.json();
+}
+
 export async function getUserDetails(id: string): Promise<User> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/auth/get-user-details/${id}`);
