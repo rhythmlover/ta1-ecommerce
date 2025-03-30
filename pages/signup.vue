@@ -120,8 +120,12 @@ async function signUp() {
             alertStore.showAlert(userDetails.message, 'error');
         } else {
             alertStore.clearAlert();
-            alertStore.showAlert('Account created successfully! Please check your email for verification.', 'success');
+            alertStore.showAlert('Account created successfully! Please check your email for verification.<br>Redirecting you back to login page...', 'success');
         }
+
+        setTimeout(() => {
+            navigateTo('/login');
+        }, 5000);
     } catch (error) {
         console.error(error);
         alertStore.showAlert('An error occurred. Please try again.', 'error');

@@ -23,7 +23,7 @@
             </div> -->
         </div>
 
-        <div class="border-b border-gray-200 mt-3 md:mt-5"></div>
+        <div class="border-b border-gray-200 mt-3 md:mt-5" />
 
         <div class="divide-y divide-gray-200">
             <OrderHistoryItem v-for="item in order.items" :modelValue="item" />

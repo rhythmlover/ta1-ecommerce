@@ -202,6 +202,7 @@ const paymentIntentCS = ref('');
 const paymentIntentId = ref('');
 const elements = ref<StripeElements | null>(null);
 
+// if userId is not null, get the user email else set it to empty string
 const email = ref('')
 const firstName = ref('')
 const lastName = ref('')
@@ -225,6 +226,8 @@ onMounted(async () => {
 
     if (userId) {
         cartData.value = await getUserCart(userId);
+        const userDetails = await getUserDetails(userId);
+        email.value = userDetails.email;
     }
 
     stripe.value = await loadStripe(config.public.STRIPE_KEY);

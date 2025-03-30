@@ -7,12 +7,12 @@
 
         <div class="flex items-center gap-4 lg:flex-1">
             <UiLogo :class="[userLoggedIn ? 'ml-19 sm:ml-24' : 'ml-8 sm:ml-16', 'lg:hidden']" />
-            <UiBrand class="max-lg:hidden lg:mr-4" />
+            <UiBrand class="max-lg:hidden lg:mr-1" />
 
             <div class="hidden lg:flex items-center gap-4">
                 <hr class="w-px h-6 border-none bg-slate-200" />
                 <UiLink v-for="(item, index) in navigationItems" :key="index" :to="item.path"
-                    class="text-sm font-mono hover:underline">
+                    class="text-sm font-semibold hover:underline">
                     {{ item.name }}
                 </UiLink>
             </div>

@@ -20,7 +20,7 @@
             </NuxtLink>
 
             <div class="flex flex-col">
-                <UiLink class="text-xl" :to="`/products/${productValue.handle}`">
+                <UiLink class="text-xl tracking-tight" :to="`/products/${productValue.handle}`">
                     {{ productValue.name }}
                 </UiLink>
 

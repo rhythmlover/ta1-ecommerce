@@ -54,7 +54,7 @@ const props = defineProps<{
 }>();
 
 const productUrl = `/products/${props.modelValue.product.handle}`;
-const tempQuantity = ref(0);
+const tempQuantity = ref(props.modelValue.quantity);
 const quantity = ref(props.modelValue.quantity);
 const accumulatedPrice = ref(props.modelValue.product.price * quantity.value);
 

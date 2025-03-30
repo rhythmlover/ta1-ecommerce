@@ -3,20 +3,28 @@
         <ProductPageSkeleton v-show="!imageLoaded" />
         <div v-show="imageLoaded" class="grid sm:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4">
-                <NuxtImg :src="currentImageUrl" :alt="product?.name" :modifiers="{ roundCorner: '10:10' }"
-                    layout="responsive" @load="imageLoaded = true" />
+                <!-- fixed dimensions for image -->
+                <NuxtImg provider="cloudinary" :src="currentImageUrl" :alt="product?.name"
+                    :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="600" height="600"
+                    @load="imageLoaded = true" />
+
+                <!-- <NuxtImg :src="currentImageUrl" :alt="product?.name" :modifiers="{ roundCorner: '10:10' }"
+                    layout="responsive" @load="imageLoaded = true" /> -->
             </div>
 
-            <div class="flex flex-col gap-6">
-                <UiHeading> {{ product?.name }} </UiHeading>
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-2 justify-between">
+                    <UiSubheading class="tracking-tight"> {{ product?.name }} </UiSubheading>
+                    <span class="font-semibold text-lg">
+                        S${{ product?.price.toFixed(2) }}
+                    </span>
+                </div>
+
+                <div class="border-b border-gray-900 mt-2" />
 
                 <UiParagraph v-if="product?.description">
                     <p v-html="formattedDescription" />
                 </UiParagraph>
-
-                <strong class="font-semibold text-lg">
-                    ${{ product?.price.toFixed(2) }}
-                </strong>
 
                 <div v-if="product?.options.length">
                     <h2 class="font-semibold mb-2">
