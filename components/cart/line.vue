@@ -30,7 +30,7 @@
                         <IconMinus width="20" height="20" />
                     </UiButton>
 
-                    <input type="number" v-model.number="tempQuantity"
+                    <input type="number" v-model.number="displayedQuantity"
                         class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
                         :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" />
 
@@ -54,7 +54,7 @@ const props = defineProps<{
 }>();
 
 const productUrl = `/products/${props.modelValue.product.handle}`;
-const tempQuantity = ref(props.modelValue.quantity);
+const displayedQuantity = ref(0);
 const quantity = ref(props.modelValue.quantity);
 const accumulatedPrice = ref(props.modelValue.product.price * quantity.value);
 
@@ -62,6 +62,7 @@ const alertStore = useAlertStore();
 
 onMounted(() => {
     alertStore.clearAlert();
+    displayedQuantity.value = quantity.value;
 });
 
 watch(quantity, async (newQuantity) => {
@@ -72,6 +73,7 @@ watch(quantity, async (newQuantity) => {
 
 function changeQuantity(amount: number) {
     if (quantity.value + amount > 0 && quantity.value + amount <= 10) {
+        displayedQuantity.value += amount;
         quantity.value += amount;
     } else if (quantity.value + amount < 1) {
         alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
@@ -97,22 +99,22 @@ function sanitizeQuantity(event: Event) {
         return;
     }
 
-    tempQuantity.value = parseInt(input.value, 10);
+    displayedQuantity.value = parseInt(input.value, 10);
 }
 
 function validateQuantity() {
-    if (!tempQuantity.value || isNaN(tempQuantity.value)) {
-        tempQuantity.value = 1;
+    if (!displayedQuantity.value || isNaN(displayedQuantity.value)) {
+        displayedQuantity.value = 1;
         alertStore.showAlert('Please enter a quantity.', 'error');
-    } else if (tempQuantity.value < 1) {
-        tempQuantity.value = 1;
+    } else if (displayedQuantity.value < 1) {
+        displayedQuantity.value = 1;
         alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
-    } else if (tempQuantity.value > 10) {
-        tempQuantity.value = 10;
+    } else if (displayedQuantity.value > 10) {
+        displayedQuantity.value = 10;
         alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
     }
 
-    quantity.value = tempQuantity.value;
+    quantity.value = displayedQuantity.value;
 }
 
 async function deleteLineItem() {
