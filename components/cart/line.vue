@@ -72,14 +72,15 @@ watch(quantity, async (newQuantity) => {
 });
 
 function changeQuantity(amount: number) {
-    if (quantity.value + amount > 0 && quantity.value + amount <= 10) {
-        displayedQuantity.value += amount;
-        quantity.value += amount;
-    } else if (quantity.value + amount < 1) {
+    if (quantity.value + amount < 1) {
         alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
+        return;
     } else if (quantity.value + amount > 10) {
         alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
+        return;
     }
+    displayedQuantity.value += amount;
+    quantity.value += amount;
 }
 
 function sanitizeQuantity(event: Event) {
