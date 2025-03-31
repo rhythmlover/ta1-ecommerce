@@ -35,5 +35,7 @@
 <script lang="ts" setup>
 useSeoMeta({
     title: "Privacy Policy - Together as One Store",
+    description: "Privacy Policy of Together as One Store, outlining how we collect, use, and protect your personal information.",
+    keywords: "Privacy Policy, personal information, data protection, Together as One Store",
 });
 </script>

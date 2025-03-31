@@ -27,5 +27,7 @@
 <script lang="ts" setup>
 useSeoMeta({
     title: "FAQ - Together as One Store",
+    description: "Frequently Asked Questions about our store, including delivery information, payment methods, and return policies.",
+    keywords: "FAQ, delivery information, payment methods, return policy, international shipping",
 });
 </script>

@@ -107,5 +107,6 @@ async function login() {
 useSeoMeta({
     title: 'Login - Together as One Store',
     description: 'Login to your account',
+    keywords: 'login, together as one store, ecommerce, online shopping',
 });
 </script>

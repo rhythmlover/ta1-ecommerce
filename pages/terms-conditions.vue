@@ -32,5 +32,7 @@
 <script lang="ts" setup>
 useSeoMeta({
     title: "Terms & Conditions - Together as One Store",
+    description: "Terms and Conditions of Together as One Store, outlining the rules and regulations for using our website.",
+    keywords: "Terms and Conditions, Together as One Store, website usage rules",
 });
 </script>

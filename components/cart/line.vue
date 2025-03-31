@@ -48,7 +48,7 @@ import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-vue";
 import { updateCartItemQuantity, deleteCartItem } from "~/composables/endpoints";
 import type { CartItem } from "~/types/types";
 
-const emit = defineEmits(['update:modelValue', 'delete:item']);
+const emit = defineEmits(['update:cartItem', 'delete:item', 'update:totalCost']);
 const props = defineProps<{
     modelValue: CartItem;
 }>();
@@ -68,7 +68,8 @@ onMounted(() => {
 watch(quantity, async (newQuantity) => {
     accumulatedPrice.value = props.modelValue.product.price * newQuantity;
     await updateCartItemQuantity(props.modelValue.id, newQuantity);
-    emit('update:modelValue', { ...props.modelValue, quantity: newQuantity });
+    emit('update:cartItem', { ...props.modelValue, quantity: newQuantity });
+    emit('update:totalCost');
 });
 
 function changeQuantity(amount: number) {

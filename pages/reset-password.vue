@@ -113,4 +113,10 @@ async function resetUserPassword() {
         errorMessage.value = "An error occurred. Please request for another password reset.";
     }
 }
+
+useSeoMeta({
+    title: 'Reset Password',
+    description: 'Reset your password securely.',
+    keywords: 'Reset Password, Change Password, Secure Password Reset, Forgot Password',
+});
 </script>

@@ -42,5 +42,7 @@ onMounted(async () => {
 
 useSeoMeta({
     title: "Home - Together As One Store",
+    description: "Discover the latest TA1 products and collections.",
+    keywords: "Home, Together As One Store",
 });
 </script>

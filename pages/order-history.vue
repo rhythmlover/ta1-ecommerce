@@ -42,4 +42,10 @@ onMounted(async () => {
         noOrders.value = true;
     }
 });
+
+useSeoMeta({
+    title: 'Order History',
+    description: 'View your past orders and their details.',
+    keywords: 'Order History, Past Orders, Order Details',
+});
 </script>

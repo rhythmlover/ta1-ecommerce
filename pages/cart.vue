@@ -10,7 +10,8 @@
                     <p class="text-xl">Your cart is empty.</p>
                 </div>
                 <CartLine v-for="item in cartData?.items" :key="item.id" :modelValue="item"
-                    @update:modelValue="updateCartItem" @delete:item="removeCartItem" />
+                    @update:cartItem="updateCartItem" @delete:item="removeCartItem"
+                    @update:totalCost="calculateTotal" />
             </div>
 
             <div>
@@ -33,7 +34,7 @@
                         <UiParagraph> Subtotal </UiParagraph>
 
                         <strong class="font-semibold">
-                            <span>${{ calculateTotal() }}</span>
+                            <span>${{ totalCost }}</span>
                         </strong>
                     </div>
 
@@ -46,21 +47,29 @@
     </UiCenter>
 
     <UiErrorAlert />
+    <UiSuccessAlert />
 </template>
 
 <script setup lang="ts">
 import { IconShoppingCart } from "@tabler/icons-vue";
 import type { Cart, CartItem } from "~/types/types";
+import debounce from "lodash/debounce";
+
+const cartData = ref<Cart | null>(null);
+const isEmpty = computed(() => !cartData.value || cartData.value.items.length === 0);
+const totalCost = ref("0.00");
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
-const cartData = ref<Cart | null>(null);
-const isEmpty = computed(() => !cartData.value || cartData.value.items.length === 0);
+const alertStore = useAlertStore();
 
 onMounted(async () => {
     const userId = userStore.getUserId;
     if (userId) {
         cartData.value = await getUserCart(userId);
+        if (cartData.value) {
+            totalCost.value = cartData.value.totalCost.toFixed(2);
+        }
     }
 });
 
@@ -75,17 +84,19 @@ function removeCartItem(itemId: string) {
     if (cartData.value) {
         cartData.value.items = cartData.value.items.filter(item => item.id !== itemId);
         cartStore.decrementCartQty();
+        alertStore.showAlert("Item removed from cart", "success");
     }
 }
 
-function calculateTotal() {
+// Applied debounce to avoid unsync due to rapid updates to the cart item quantity
+const calculateTotal = debounce(async () => {
     if (cartData.value) {
-        const modifiedCost = cartData.value.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0).toFixed(2);
-        updateTotalCost(cartData.value.id, parseFloat(modifiedCost));
-        return modifiedCost;
+        totalCost.value = cartData.value.items
+            .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+            .toFixed(2);
+        await updateTotalCost(cartData.value.id, parseFloat(totalCost.value));
     }
-    return 0;
-}
+}, 500);
 
 function goToCheckout() {
     navigateTo("/checkout");
@@ -93,5 +104,7 @@ function goToCheckout() {
 
 useSeoMeta({
     title: "Cart - Together as One Store",
+    description: "Your cart page",
+    keywords: "cart, checkout, together as one store",
 });
 </script>

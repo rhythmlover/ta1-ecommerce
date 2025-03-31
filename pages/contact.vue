@@ -95,5 +95,7 @@ async function sendEmail() {
 
 useSeoMeta({
     title: "Contact Us - Together as One Store",
+    description: "Contact us for any inquiries or support regarding your order.",
+    keywords: "contact, inquiry, support, order, together as one store",
 });
 </script>

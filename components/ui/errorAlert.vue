@@ -1,6 +1,6 @@
 <template>
     <div v-if="alert.show && alert.type === 'error'"
-        class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg z-50 w-auto pr-15"
+        class="fixed bottom-30 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg z-50 w-auto pr-15"
         role="alert">
         <span class="block sm:inline" v-html="alert.message" />
         <span class="absolute top-0 bottom-0 right-0 px-4 py-3">

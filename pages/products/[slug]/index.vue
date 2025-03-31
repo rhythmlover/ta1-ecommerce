@@ -225,12 +225,10 @@ async function addItemToCart() {
 useSeoMeta({
     title: () => {
         const title = product.value?.name ?? '';
-
         return `${title} - Together As One Store`;
     },
     description: () => {
         const description = product.value?.description ?? '';
-
         return description;
     },
 });

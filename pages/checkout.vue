@@ -325,5 +325,7 @@ async function confirmPayment() {
 
 useSeoMeta({
     title: 'Checkout Cart - Together as One Store',
+    description: 'Checkout your cart and make payment',
+    keywords: 'checkout, cart, payment, together as one store',
 });
 </script>

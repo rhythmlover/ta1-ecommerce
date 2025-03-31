@@ -75,13 +75,13 @@ export default defineNuxtConfig({
             link: [
                 {
                     rel: "icon",
-                    href: "/TA1.svg",
+                    href: "/public/TA1.svg",
                 },
             ],
             meta: [
                 {
                     name: "description",
-                    content: "Together As One Storefront Description",
+                    content: "Discover the latest TA1 products and collections.",
                 },
                 {
                     name: "keywords",
@@ -89,7 +89,7 @@ export default defineNuxtConfig({
                 },
                 {
                     property: "og:image",
-                    content: "/og-image.jpg",
+                    content: "/public/TA1.svg",
                 },
                 {
                     property: "og:title",

@@ -36,7 +36,7 @@
                             :class="['w-full bg-white pl-3 pr-7 py-1.5 rounded-md border focus:outline-none focus:ring-2', passwordError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']" />
                         <p v-if="passwordError" class="text-red-500 text-xs italic">Password must contain at least one
                             number, one uppercase letter, one lowercase letter, one special character, and be more than
-                            8 characters</p>
+                            10 characters</p>
                     </div>
                 </div>
 
@@ -63,7 +63,7 @@
                 <p class="mt-6 text-sm text-gray-500">
                     Password must contain at least:
                     <br> • one number,<br> • one uppercase letter,<br> • one lowercase letter,<br> • one special
-                    character,<br> • more than 8 characters
+                    character,<br> • more than 10 characters
                 </p>
 
                 <div class="mt-6">
@@ -87,7 +87,7 @@ const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const passwordsMatch = computed(() => password.value === confirmPassword.value);
-const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
 
 const emailError = ref(false);
 const passwordError = ref(false);
@@ -121,11 +121,10 @@ async function signUp() {
         } else {
             alertStore.clearAlert();
             alertStore.showAlert('Account created successfully! Please check your email for verification.<br>Redirecting you back to login page...', 'success');
+            setTimeout(() => {
+                navigateTo('/login');
+            }, 5000);
         }
-
-        setTimeout(() => {
-            navigateTo('/login');
-        }, 5000);
     } catch (error) {
         console.error(error);
         alertStore.showAlert('An error occurred. Please try again.', 'error');
