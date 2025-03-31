@@ -75,7 +75,8 @@ export default defineNuxtConfig({
             link: [
                 {
                     rel: "icon",
-                    href: "/public/TA1.svg",
+                    type: "image/png",
+                    href: "TA1.png",
                 },
             ],
             meta: [
@@ -89,7 +90,7 @@ export default defineNuxtConfig({
                 },
                 {
                     property: "og:image",
-                    content: "/public/TA1.svg",
+                    content: "TA1.png",
                 },
                 {
                     property: "og:title",
