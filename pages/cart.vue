@@ -67,11 +67,7 @@ onMounted(async () => {
     const userId = userStore.getUserId;
     if (userId) {
         cartData.value = await getUserCart(userId);
-        if (cartData.value) {
-            totalCost.value = cartData.value.items
-                .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
-                .toFixed(2);;
-        }
+        calculateTotal();
     }
 });
 
