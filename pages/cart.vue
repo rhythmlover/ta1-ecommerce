@@ -100,7 +100,7 @@ const calculateTotal = debounce(async () => {
             .toFixed(2);
         await updateTotalCost(cartData.value.id, parseFloat(totalCost.value));
     }
-}, 200);
+}, 500);
 
 function goToCheckout() {
     navigateTo("/checkout");
