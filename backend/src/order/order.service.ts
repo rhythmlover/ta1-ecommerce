@@ -197,7 +197,7 @@ export class OrderService {
                 if (err) {
                     console.error(err);
                 }
-                console.log("Email sent successfully", info.response);
+                console.log("Email inhouse order sent successfully", info.response);
             }
         );
         return { message: "Email sent successfully" };

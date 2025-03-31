@@ -58,7 +58,7 @@ export class PaymentService {
         const endpointSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET");
         const webUrl = this.configService.get<string>("WEB_URL");
         const event = this.stripe.webhooks.constructEvent(req.rawBody, signature, endpointSecret);
-        console.log("Received event:", event.type);
+        console.log("Received event: ", event.type);
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log("Payment Intent: ", paymentIntent);
@@ -97,13 +97,15 @@ export class PaymentService {
             };
             console.log("Receipt Data: ", receiptData);
             this.sendEmailReceipt(order.email, receiptData);
-            console.log("PaymentIntent was successful:", paymentIntent.id);
+            res.status(201).send("Payment succeeded with ID: " + paymentIntent.id);
+            console.log("PaymentIntent was successful: ", paymentIntent.id);
         } else if (event.type === "payment_intent.payment_failed") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
+            res.status(400).send("Payment failed with ID: " + paymentIntent.id);
             res.redirect(`${webUrl}/payment-failed?pid=${paymentIntent.id}`);
-            console.log("PaymentIntent failed:", paymentIntent.id);
+            console.log("PaymentIntent failed: ", paymentIntent.id);
         } else {
-            console.warn("Unhandled event type:", event.type);
+            console.warn("Unhandled event type: ", event.type);
         }
     }
 
@@ -198,7 +200,7 @@ export class PaymentService {
                 if (err) {
                     console.error(err);
                 }
-                console.log("Email sent successfully", info.response);
+                console.log("Email receipt sent successfully", info.response);
             }
         );
     }

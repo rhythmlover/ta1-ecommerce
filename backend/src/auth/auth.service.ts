@@ -159,7 +159,7 @@ export class AuthService {
                 if (err) {
                     console.error(err);
                 }
-                console.log("Email sent successfully", info.response);
+                console.log("Email verification sent successfully", info.response);
             }
         );
     }
@@ -274,7 +274,7 @@ export class AuthService {
                 if (err) {
                     console.error(err);
                 }
-                console.log("Email sent successfully", info.response);
+                console.log("Email password reset sent successfully", info.response);
             }
         );
     }

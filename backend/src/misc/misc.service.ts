@@ -65,7 +65,7 @@ export class MiscService {
                 if (err) {
                     console.error(err);
                 }
-                console.log("Email sent successfully", info.response);
+                console.log("Email inquiry sent successfully", info.response);
             }
         );
 
@@ -90,7 +90,7 @@ export class MiscService {
                 if (err) {
                     console.error(err);
                 }
-                console.log("Email sent successfully", info.response);
+                console.log("Email inquiry customer copy sent successfully", info.response);
             }
         );
         return { message: "Email sent successfully" };
