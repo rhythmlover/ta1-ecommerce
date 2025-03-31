@@ -11,11 +11,15 @@
                 </p>
             </div>
             <div class="flex items-center justify-between">
-                <span v-if="orderFulfilled === false"
+                <span v-if="orderError === true"
+                    class="rounded-full py-2 px-4 lg:py-3 lg:px-7 font-semibold text-xs lg:text-sm leading-6 lg:leading-7 bg-[#FEE2E2] text-[#DC2626] shadow-sm shadow-transparent transition-all duration-500 mr-2 lg:mr-4">
+                    Error
+                </span>
+                <span v-if="orderFulfilled === false && orderError === false"
                     class="rounded-full py-2 px-4 lg:py-3 lg:px-7 font-semibold text-xs lg:text-sm leading-6 lg:leading-7 bg-[#FFF3E3] text-[#FF9900] shadow-sm shadow-transparent transition-all duration-500 mr-2 lg:mr-4">
                     Pending
                 </span>
-                <span v-if="orderFulfilled === true"
+                <span v-if="orderFulfilled === true && orderError === false"
                     class="rounded-full py-2 px-4 lg:py-3 lg:px-7 font-semibold text-xs lg:text-sm leading-6 lg:leading-7 bg-[#E3F9E5] text-[#10B981] shadow-sm shadow-transparent transition-all duration-500 mr-2 lg:mr-4">
                     Completed
                 </span>
@@ -149,6 +153,7 @@ const orderDate = new Date(props.modelValue.createdAt ?? '').toLocaleString(
 }
 )
 const orderFulfilled = ref(props.modelValue.orderFulfilled)
+const orderError = ref(false)
 const orderCost = props.modelValue.totalCost
 const orderMailBy = new Date(props.modelValue.createdAt ?? '')
 orderMailBy.setDate(orderMailBy.getDate() + 3)
@@ -172,6 +177,10 @@ const fetchOrderItems = async () => {
                 quantity: item.quantity
             });
         }
+    }
+
+    if (orderItems.value.length === 0) {
+        orderError.value = true;
     }
 };
 

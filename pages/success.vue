@@ -195,6 +195,7 @@ onMounted(async () => {
         orderTime.value = await getOrderTimestamp(pid).then((res) => res.createdAt);
 
         await clearCart(cartData.value.id);
+        await updateTotalCost(cartData.value.id, 0);
         cartStore.setCartQty(0);
     } else {
         console.error('Cart is empty');

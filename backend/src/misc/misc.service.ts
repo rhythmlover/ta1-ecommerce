@@ -68,6 +68,31 @@ export class MiscService {
                 console.log("Email sent successfully", info.response);
             }
         );
+
+        const userCopyInquiryHtml = `
+            <h2>Hi ${dto.name}. We have received your message and will get back to you soon.</h2>
+            <p><b>Order No.:</b> ${dto.orderNo}</p>
+            <p><b>Email:</b> ${dto.email}</p>
+            <p><b>Message:</b></p>
+            <p>${dto.message}</p><br>
+            <p>Cheers,</p>
+            <p>Together As One</p>
+        `;
+
+        transporter.sendMail(
+            {
+                from: infoEmailUser,
+                to: dto.email,
+                subject: "Thank you for your inquiry.",
+                html: userCopyInquiryHtml,
+            } as nodemailer.SendMailOptions,
+            (err, info) => {
+                if (err) {
+                    console.error(err);
+                }
+                console.log("Email sent successfully", info.response);
+            }
+        );
         return { message: "Email sent successfully" };
     }
 
