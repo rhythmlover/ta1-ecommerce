@@ -68,7 +68,9 @@ onMounted(async () => {
     if (userId) {
         cartData.value = await getUserCart(userId);
         if (cartData.value) {
-            totalCost.value = cartData.value.totalCost.toFixed(2);
+            totalCost.value = cartData.value.items
+                .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+                .toFixed(2);;
         }
     }
 });
@@ -77,6 +79,7 @@ function updateCartItem(updatedItem: CartItem) {
     const index = cartData.value?.items.findIndex(item => item.id === updatedItem.id);
     if (index !== undefined && index !== -1) {
         cartData.value!.items[index] = updatedItem;
+        calculateTotal();
     }
 }
 
@@ -84,6 +87,7 @@ function removeCartItem(itemId: string) {
     if (cartData.value) {
         cartData.value.items = cartData.value.items.filter(item => item.id !== itemId);
         cartStore.decrementCartQty();
+        calculateTotal();
         alertStore.showAlert("Item removed from cart", "success");
     }
 }
@@ -96,7 +100,7 @@ const calculateTotal = debounce(async () => {
             .toFixed(2);
         await updateTotalCost(cartData.value.id, parseFloat(totalCost.value));
     }
-}, 500);
+}, 200);
 
 function goToCheckout() {
     navigateTo("/checkout");

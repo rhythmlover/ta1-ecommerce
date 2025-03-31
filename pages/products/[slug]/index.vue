@@ -3,7 +3,6 @@
         <ProductPageSkeleton v-show="!imageLoaded" />
         <div v-show="imageLoaded" class="grid sm:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4">
-                <!-- fixed dimensions for image -->
                 <NuxtImg provider="cloudinary" :src="currentImageUrl" :alt="product?.name"
                     :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="600" height="600"
                     @load="imageLoaded = true" />
@@ -55,7 +54,7 @@
 
                         <input type="number" v-model.number="quantity"
                             class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
-                            :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" />
+                            :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
 
                         <UiButton variant="text" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
                             <IconPlus width="20" height="20" />
@@ -167,12 +166,10 @@ function sanitizeQuantity(event: Event) {
         return;
     }
 
-    // Update the quantity value
     quantity.value = parseInt(input.value, 10);
 }
 
 function validateQuantity() {
-    // If the input is blank or invalid, reset it to the minimum value (1)
     if (!quantity.value || isNaN(quantity.value)) {
         quantity.value = 1;
         alertStore.showAlert('Please enter a quantity.', 'error');
@@ -183,6 +180,14 @@ function validateQuantity() {
         quantity.value = 10;
         alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
     }
+}
+
+function submitQuantity(event: KeyboardEvent) {
+    validateQuantity();
+
+    // Remove focus from the input field
+    const input = event.target as HTMLInputElement;
+    input.blur();
 }
 
 async function addItemToCart() {

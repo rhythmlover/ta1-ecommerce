@@ -32,7 +32,7 @@
 
                     <input type="number" v-model.number="displayedQuantity"
                         class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
-                        :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" />
+                        :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
 
                     <UiButton variant="text" aria-label="Decrease Product Quantity" @click="changeQuantity(1)">
                         <IconPlus width="20" height="20" />
@@ -117,6 +117,14 @@ function validateQuantity() {
     }
 
     quantity.value = displayedQuantity.value;
+}
+
+function submitQuantity(event: KeyboardEvent) {
+    validateQuantity();
+
+    // Remove focus from the input field
+    const input = event.target as HTMLInputElement;
+    input.blur();
 }
 
 async function deleteLineItem() {
