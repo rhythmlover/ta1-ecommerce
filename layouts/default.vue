@@ -1,12 +1,12 @@
 <template>
     <header
-        class="flex items-center justify-between p-1.5 sm:p-3 gap-4 bg-white border-b border-slate-200 z-50 lg:px-10 xl:px-50 2xl:px-100">
+        class="flex items-center justify-between p-2 sm:p-3 gap-4 bg-white border-b border-slate-200 z-50 lg:px-10 xl:px-50 2xl:px-100">
         <button @click="isMenuOpen = !isMenuOpen" class="lg:hidden ml-2" aria-label="Toggle menu">
             <IconMenu2 width="28" height="28" />
         </button>
 
         <div class="flex items-center gap-4 lg:flex-1">
-            <UiLogo :class="[userLoggedIn ? 'ml-19 sm:ml-24' : 'ml-8 sm:ml-16', 'lg:hidden']" />
+            <UiLogo :class="[userLoggedIn ? 'ml-18 sm:ml-24' : 'ml-13', 'lg:hidden']" />
             <UiBrand class="max-lg:hidden lg:mr-1" />
 
             <div class="hidden lg:flex items-center gap-4">
@@ -18,19 +18,19 @@
             </div>
         </div>
 
-        <div>
+        <div class="flex items-center">
             <UiButton variant="text"
-                :class="[userLoggedIn ? 'mr-0 sm:mr-2' : '', 'text-sm flex items-center relative gap-1 bg-white rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 sm:py-1.5 sm:px-2 sm:gap-2']"
+                :class="[userLoggedIn ? 'mr-0 sm:mr-2' : '', 'text-sm flex relative bg-white rounded-full']"
                 aria-label="Shopping Cart" @click="checkIfUserIsLoggedIn">
                 <IconShoppingBag class="w-7 h-7" />
                 <span v-if="cartQuantity > 0"
-                    class="absolute bottom-0 right-1 sm:right-0 inline-flex items-center justify-center px-1.5 py-1 text-[8px] font-bold leading-none text-white bg-indigo-500 rounded-full sm:px-2 sm:py-0.5 sm:text-xs">
+                    class="absolute bottom-1 md:bottom-0 right-1.5 sm:right-0.5 inline-flex items-center justify-center px-1.5 py-1 text-[8px] font-bold leading-none text-white bg-indigo-500 rounded-full sm:px-2 sm:py-0.75 sm:text-xs">
                     {{ cartQuantity }}
                 </span>
             </UiButton>
 
             <UiButton v-if="!userLoggedIn" variant="text"
-                class="flex items-center gap-1 bg-white rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 relative sm:py-1.5 sm:px-2 sm:gap-2 text-sm"
+                class="flex items-center gap-1 bg-white rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 relative sm:py-1.5 sm:gap-2 text-sm"
                 aria-label="Login" to="/login">
                 <IconUserCircle class="w-7 h-7" />
             </UiButton>

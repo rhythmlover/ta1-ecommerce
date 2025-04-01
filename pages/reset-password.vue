@@ -37,7 +37,7 @@
                         <p class="mb-2 text-sm text-gray-500">
                             Password must contain at least:
                             <br> • one number,<br> • one uppercase letter,<br> • one lowercase letter,<br> • one special
-                            character,<br> • more than 8 characters
+                            character,<br> • more than 10 characters
                         </p>
                         <UiButton @click="resetUserPassword"
                             class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
@@ -77,7 +77,7 @@ const passwordsMatch = computed(() => password.value === confirmPassword.value);
 const errorMessage = ref('');
 const id = route.query.id as string;
 const email = route.query.email as string;
-const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
 
 onMounted(async () => {
     const res = await verifyPasswordReset(id);
@@ -92,7 +92,7 @@ onMounted(async () => {
 async function resetUserPassword() {
     try {
         if (!password.value.match(decimal)) {
-            errorMessage.value = 'Password must contain at least one number, one uppercase letter, one lowercase letter, one special character, and be more than 8 characters.';
+            errorMessage.value = 'Password must contain at least one number, one uppercase letter, one lowercase letter, one special character, and be more than 10 characters.';
             return;
         }
 
