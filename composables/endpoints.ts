@@ -15,11 +15,20 @@ export async function getProduct(id: string): Promise<Product> {
     return await response.json();
 }
 
-export async function getProductByHandle(handle: string): Promise<Product> {
-    const config = useRuntimeConfig();
-    const response = await fetch(`${config.public.API_URL}/products/get-by-handle/${handle}`);
-    
-    return await response.json();
+export async function getProductByHandle(handle: string): Promise<Product | null> {
+    try {
+        const config = useRuntimeConfig();
+        const response = await fetch(`${config.public.API_URL}/products/get-by-handle/${handle}`);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        return null;
+    }
 }
 
 export async function getUserDetails(id: string): Promise<User> {

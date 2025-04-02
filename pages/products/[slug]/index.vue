@@ -1,82 +1,96 @@
 <template>
     <UiCenter>
-        <ProductPageSkeleton v-show="!imageLoaded" />
-        <div v-show="imageLoaded" class="grid sm:grid-cols-2 gap-8">
-            <div class="flex flex-col gap-4">
-                <NuxtImg provider="cloudinary" :src="currentImageUrl" :alt="product?.name"
-                    :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="600" height="600"
-                    @load="imageLoaded = true" />
+        <div v-if="!productExists" class="flex flex-col items-center justify-center py-20 text-center">
+            <IconPaperBagOff class="text-red-400" width="100" height="100" />
+            <p class="text-lg text-gray-600 mt-4">
+                Sorry, the product you are looking for does not exist.
+            </p>
+            <UiButton class="mt-6 px-8 py-2" variant="primary" @click="goToHome">
+                Go Back to Home
+            </UiButton>
+        </div>
 
-                <!-- <NuxtImg :src="currentImageUrl" :alt="product?.name" :modifiers="{ roundCorner: '10:10' }"
+        <div v-else>
+            <ProductPageSkeleton v-show="!imageLoaded" />
+
+            <div v-show="imageLoaded" class="grid sm:grid-cols-2 gap-8">
+                <div class="flex flex-col gap-4">
+                    <NuxtImg provider="cloudinary" :src="currentImageUrl" :alt="product?.name"
+                        :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="600" height="600"
+                        @load="imageLoaded = true" />
+
+                    <!-- <NuxtImg :src="currentImageUrl" :alt="product?.name" :modifiers="{ roundCorner: '10:10' }"
                     layout="responsive" @load="imageLoaded = true" /> -->
-            </div>
-
-            <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-2 justify-between">
-                    <UiSubheading class="tracking-tight"> {{ product?.name }} </UiSubheading>
-                    <span class="font-semibold text-lg">
-                        S${{ product?.price.toFixed(2) }}
-                    </span>
                 </div>
 
-                <div class="border-b border-gray-900 mt-2" />
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-2 justify-between">
+                        <UiSubheading class="tracking-tight"> {{ product?.name }} </UiSubheading>
+                        <span class="font-semibold text-lg">
+                            S${{ product?.price.toFixed(2) }}
+                        </span>
+                    </div>
 
-                <UiParagraph v-if="product?.description">
-                    <p v-html="formattedDescription" />
-                </UiParagraph>
+                    <div class="border-b border-gray-900 mt-2" />
 
-                <div v-if="product?.options.length">
-                    <h2 class="font-semibold mb-2">
-                        Options
-                    </h2>
-                    <div class="flex gap-2 flex-wrap">
-                        <div v-for="option in product?.options" :key="option.id">
-                            <div class="flex flex-col gap-2">
-                                <div class="flex gap-2 flex-wrap">
-                                    <UiButton class="text-sm"
-                                        :variant="selectedOptions[option.name] === value ? 'highlight' : 'outline'"
-                                        @click="setOption(value, option)" v-for="value in option.name" :key="value">
-                                        <span class="px-2 font-normal">
-                                            {{ value }}
-                                        </span>
-                                    </UiButton>
+                    <UiParagraph v-if="product?.description">
+                        <p v-html="formattedDescription" />
+                    </UiParagraph>
+
+                    <div v-if="product?.options.length">
+                        <h2 class="font-semibold mb-2">
+                            Options
+                        </h2>
+                        <div class="flex gap-2 flex-wrap">
+                            <div v-for="option in product?.options" :key="option.id">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex gap-2 flex-wrap">
+                                        <UiButton class="text-sm"
+                                            :variant="selectedOptions[option.name] === value ? 'highlight' : 'outline'"
+                                            @click="setOption(value, option)" v-for="value in option.name" :key="value">
+                                            <span class="px-2 font-normal">
+                                                {{ value }}
+                                            </span>
+                                        </UiButton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex gap-2 flex-wrap">
-                    <div class="flex items-center border border-slate-200 rounded-lg">
-                        <UiButton variant="text" aria-label="Decrease Product Quantity" @click="changeQuantity(-1)">
-                            <IconMinus width="20" height="20" />
-                        </UiButton>
+                    <div class="flex gap-2 flex-wrap">
+                        <div class="flex items-center border border-slate-200 rounded-lg">
+                            <UiButton variant="text" aria-label="Decrease Product Quantity" @click="changeQuantity(-1)">
+                                <IconMinus width="20" height="20" />
+                            </UiButton>
 
-                        <input type="number" v-model.number="quantity"
-                            class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
-                            :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
+                            <input type="number" v-model.number="quantity"
+                                class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
+                                :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity"
+                                @keydown.enter="submitQuantity" />
 
-                        <UiButton variant="text" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
-                            <IconPlus width="20" height="20" />
-                        </UiButton>
+                            <UiButton variant="text" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
+                                <IconPlus width="20" height="20" />
+                            </UiButton>
+                        </div>
                     </div>
-                </div>
 
-                <UiButton @click="addItemToCart">
-                    {{ "Add to cart" }}
-                </UiButton>
+                    <UiButton @click="addItemToCart">
+                        {{ "Add to cart" }}
+                    </UiButton>
 
-                <UiErrorAlert />
-                <UiSuccessAlert />
-                <UiAddToCartAlert />
+                    <UiErrorAlert />
+                    <UiSuccessAlert />
+                    <UiAddToCartAlert />
 
-                <!-- <UiButton
+                    <!-- <UiButton
                     :loading="isLoading"
                     :disabled="!currentVariant || outOfStock"
                     @click="addCartLine"
                 >
                     {{ outOfStock ? "Out of stock" : "Add to cart" }}
                 </UiButton> -->
+                </div>
             </div>
         </div>
     </UiCenter>
@@ -84,7 +98,7 @@
 
 <script setup lang="ts">
 import type { Product, Option } from "~/types/types";
-import { IconMinus, IconPlus } from "@tabler/icons-vue";
+import { IconMinus, IconPaperBagOff, IconPlus } from "@tabler/icons-vue";
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -92,6 +106,7 @@ const cartStore = useCartStore();
 const alertStore = useAlertStore();
 
 const product = ref<Product | null>(null);
+const productExists = ref(true);
 const selectedOptions = reactive<{ [key: string]: string }>({});
 const quantity = ref(1);
 const currentImageUrl = ref('');
@@ -102,6 +117,11 @@ onMounted(async () => {
     alertStore.clearAlert();
     const slug = route.params.slug as string;
     product.value = await getProductByHandle(slug);
+    if (!product.value) {
+        productExists.value = false;
+        console.error('Product not found.');
+        return;
+    }
     updateImageUrl();
 });
 
@@ -225,6 +245,10 @@ async function addItemToCart() {
 
         alertStore.showAlert('Item added to cart.', 'addToCart');
     }
+}
+
+function goToHome() {
+    navigateTo('/');
 }
 
 useSeoMeta({
