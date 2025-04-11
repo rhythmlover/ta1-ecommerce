@@ -44,8 +44,8 @@
                     <UiButton @click="sendEmail" class="w-25"> Send </UiButton>
                 </div>
                 
-                <UiErrorAlert />
-                <UiSuccessAlert />
+                <UiAlertError />
+                <UiAlertSuccess />
             </div>
         </div>
     </UiCenter>

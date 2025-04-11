@@ -42,7 +42,8 @@
                     Sign up</UiLink>
             </p>
 
-            <UiErrorAlert />
+            <UiAlertError />
+            <UiPopupReVerifyEmail v-if="reVerify" :email="email" @close-pop-up="reVerify = false" />
         </div>
     </div>
 </template>
@@ -52,6 +53,7 @@ import { ref } from 'vue';
 
 const email = ref('');
 const password = ref('');
+const reVerify = ref(false);
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
@@ -77,6 +79,10 @@ async function login() {
         const userDetails = await userLogin(email.value, password.value);
 
         if ("statusCode" in userDetails) {
+            if (userDetails.message === 'Email not verified.') {
+                reVerify.value = true;
+                return;
+            }
             alertStore.showAlert(userDetails.message, 'error');
             return;
         }

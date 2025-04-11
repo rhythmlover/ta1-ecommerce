@@ -51,7 +51,7 @@
                         <div>
                             <MenuItem v-if="isAdmin" v-slot="{ active }">
                             <button @click="goToOrderBacklog"
-                                :class="[active ? 'bg-#FFF0F5 text-#B57EDC outline-none' : 'text-#B57EDC bg-#E6E6FA', 'block w-full px-4 py-2 text-left text-sm rounded-t-md']">Order
+                                :class="[active ? 'bg-#FFF0F5 outline-none' : '', 'text-#B57EDC block w-full px-4 py-2 text-left text-sm rounded-t-md']">Order
                                 Backlog</button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">

@@ -5,26 +5,36 @@
                 Order Backlog
             </h2>
 
-            <!-- Search and filter component -->
             <BacklogSearchFilter :total-orders="ordersList?.length || 0" :filtered-count="filteredOrders.length"
                 @update-filters="updateFilters" />
 
-            <!-- No results message -->
             <div v-if="filteredOrders.length === 0 && ordersList && ordersList.length > 0" class="text-center py-10">
                 <p class="text-gray-500 text-lg">No orders match your search criteria</p>
             </div>
 
-            <!-- Order list -->
             <BacklogOrderDetails v-for="order in filteredOrders" :key="order.id" :modelValue="order"
                 @order-fulfilled="refreshOrders" />
         </div>
-        <div v-else class="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
+        <!-- <div v-else class="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
             <p class="text-center text-red-500">{{ errorMessage }}</p>
+        </div> -->
+
+        <div v-if="errorMessage" class="flex flex-col items-center justify-center text-center">
+            <h1 class="text-8xl font-bold text-red-500">
+                <IconExclamationCircle class="w-48 h-48" />
+            </h1>
+            <p class="text-lg text-gray-600 mt-4">
+                {{ errorMessage }}
+            </p>
+            <UiButton class="my-6 px-8" variant="primary" :to="'/'">
+                Go Back to Home
+            </UiButton>
         </div>
     </UiCenter>
 </template>
 
 <script lang="ts" setup>
+import { IconExclamationCircle } from "@tabler/icons-vue";
 import type { Order } from "~/types/types";
 
 const userStore = useUserStore();
@@ -96,7 +106,7 @@ onMounted(async () => {
     const user = await getUserDetails(userStore.getUserId);
     if (user.role !== 'admin') {
         console.error('Insufficient permissions');
-        errorMessage.value = 'Insufficient permissions.';
+        errorMessage.value = 'Insufficient permissions to access this page.';
         return;
     } else {
         isAdmin.value = true;

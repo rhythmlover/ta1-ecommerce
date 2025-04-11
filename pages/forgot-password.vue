@@ -28,8 +28,8 @@
                     </div>
                 </div>
 
-                <UiErrorAlert />
-                <UiSuccessAlert />
+                <UiAlertError />
+                <UiAlertSuccess />
                 
                 <UiParagraph v-if="emailConfirmation" class="mt-5 text-sm text-indigo-600 dark:text-indigo-400">
                     Didn't receive an email? Check your spam folder or <button @click="requestReset"

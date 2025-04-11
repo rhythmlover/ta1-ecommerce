@@ -46,8 +46,8 @@
         </div>
     </UiCenter>
 
-    <UiErrorAlert />
-    <UiSuccessAlert />
+    <UiAlertError />
+    <UiAlertSuccess />
 </template>
 
 <script setup lang="ts">

@@ -79,9 +79,9 @@
                         {{ "Add to cart" }}
                     </UiButton>
 
-                    <UiErrorAlert />
-                    <UiSuccessAlert />
-                    <UiAddToCartAlert />
+                    <UiAlertError />
+                    <UiAlertSuccess />
+                    <UiAlertAddToCart />
 
                     <!-- <UiButton
                     :loading="isLoading"

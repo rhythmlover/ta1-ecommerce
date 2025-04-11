@@ -75,8 +75,8 @@
                     </span>
                 </div>
 
-                <UiErrorAlert />
-                <UiSuccessAlert />
+                <UiAlertError />
+                <UiAlertSuccess />
             </div>
         </div>
     </div>
