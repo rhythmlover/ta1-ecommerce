@@ -4,6 +4,13 @@
 
         <div class="grid md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4 bg-slate-50 rounded-lg p-8">
+                <h2 class="text-2xl font-semibold">Express Checkout</h2>
+                <div id="express-checkout-element" class="w-full mt-2" />
+                <div class="flex items-center justify-center mt-3">
+                    <div class="flex-grow border-b border-gray-200"></div>
+                    <span class="mx-4 text-gray-500 text-sm">or continue below</span>
+                    <div class="flex-grow border-b border-gray-200"></div>
+                </div>
                 <div class="space-y-6">
                     <!-- Contact Section -->
                     <div class="space-y-4">
@@ -121,10 +128,10 @@
                     <!-- Payment Section -->
                     <div class="flex flex-col gap-4">
                         <h2 class="text-2xl font-semibold">Payment</h2>
-                        <div id="payment-element" class="w-full"></div>
-                        <UiButton class="text-lg" @click="confirmPayment">
+                        <div id="payment-element" class="w-full" />
+                        <UiButton class="text-lg mt-3" @click="confirmPayment">
                             <span v-if="loading"><img :src="Loading" alt="Loading" class="w-7 h-7" /></span>
-                            <span v-else>Pay</span>
+                            <span v-else>Pay S${{ totalAmount.toFixed(2) }}</span>
                         </UiButton>
                     </div>
                 </div>
@@ -137,7 +144,7 @@
                     <div class="flex items-center justify-between">
                         <UiParagraph> Subtotal </UiParagraph>
 
-                        <UiParagraph> ${{ subtotalAmount.toFixed(2) }} </UiParagraph>
+                        <UiParagraph> S${{ subtotalAmount.toFixed(2) }} </UiParagraph>
                     </div>
 
                     <div class="flex items-center justify-between">
@@ -172,7 +179,6 @@ const userStore = useUserStore();
 const alertStore = useAlertStore();
 
 const stripe = ref<Stripe | null>(null);
-const successUrl = `${config.public.WEB_URL}/success`;
 const loading = ref(false);
 const deliveryOptions = [
     {
@@ -212,7 +218,6 @@ const postalCode = ref('')
 const phoneCountryCode = ref('+65')
 const phoneNumber = ref('')
 
-// const errorMsg = ref('');
 const emailError = ref(false);
 const firstNameError = ref(false);
 const lastNameError = ref(false);
@@ -230,7 +235,9 @@ onMounted(async () => {
         email.value = userDetails.email;
     }
 
-    stripe.value = await loadStripe(config.public.STRIPE_KEY);
+    const isDevEnv = config.public.ENV === 'development';
+
+    stripe.value = await loadStripe(isDevEnv ? config.public.STRIPE_KEY_TEST : config.public.STRIPE_KEY_LIVE);
 
     if (!stripe.value) {
         console.error('Failed to load Stripe');
@@ -247,19 +254,37 @@ onMounted(async () => {
         return;
     }
 
+    const appearance = {
+        theme: "stripe" as const,
+        variables: {
+            colorPrimary: '#4f39f6',
+            colorBackground: '#ffffff',
+            colorDanger: '#df1b41',
+            fontFamily: 'Ideal Sans, system-ui, sans-serif',
+            borderRadius: '4px',
+        },
+    };
+
     const elementsObj = stripe.value.elements({
         clientSecret: paymentIntentCS.value,
+        appearance,
     });
 
     elements.value = elementsObj;
 
     const paymentElementObj = elementsObj.create('payment',
         {
-            layout: 'accordion',
+            layout: 'tabs',
+            business: {
+                name: 'Together as One Store',
+            },
         }
     );
 
+    const expressCheckoutElement = elementsObj.create('expressCheckout');
+
     paymentElementObj.mount('#payment-element');
+    expressCheckoutElement.mount('#express-checkout-element');
 });
 
 async function confirmPayment() {
@@ -291,8 +316,12 @@ async function confirmPayment() {
             return;
         }
 
+        localStorage.setItem('pid', paymentIntentId.value);
+
+        const redirectUrl = `${config.public.WEB_URL}/payment-redirect`;
+
         const paymentConfirmation = await stripe.value!.confirmPayment({
-            elements: elements.value!,
+            elements: elements.value,
             clientSecret: paymentIntentCS.value,
             confirmParams: {
                 receipt_email: email.value,
@@ -308,13 +337,54 @@ async function confirmPayment() {
                     name: `${firstName.value} ${lastName.value}`,
                     phone: `${phoneCountryCode.value}${phoneNumber.value}`,
                 },
-                return_url: successUrl + `?name=${firstName.value} ${lastName.value}&email=${email.value}&phone_country_code=${phoneCountryCode.value.slice(1)}&phone=${phoneNumber.value}&address=${address.value}&apartment=${apartment.value = apartment.value.replace('#', '')}&postal_code=${postalCode.value}`,
-            }
+                return_url: redirectUrl,
+            },
+            redirect: 'if_required',
         });
 
         if (paymentConfirmation.error) {
-            console.error(paymentConfirmation.error);
-            return;
+            switch (paymentConfirmation.error.type) {
+                case 'card_error':
+                    alertStore.showAlert(paymentConfirmation.error.message || 'An error occurred', 'error');
+                    break;
+                case 'validation_error':
+                    alertStore.showAlert(paymentConfirmation.error.message || 'An error occurred', 'error');
+                    break;
+                case 'api_connection_error':
+                    alertStore.showAlert('Network error. Please try again.', 'error');
+                    break;
+                case 'api_error':
+                    alertStore.showAlert('Internal server error. Please try again.', 'error');
+                    break;
+                case 'idempotency_error':
+                    alertStore.showAlert('Duplicate request. Please try again.', 'error');
+                    break;
+                case 'rate_limit_error':
+                    alertStore.showAlert('Too many requests. Please try again.', 'error');
+                    break;
+                case 'invalid_request_error':
+                    alertStore.showAlert('Invalid request. Please try again.', 'error');
+                    break;
+                case 'authentication_error':
+                    alertStore.showAlert('Authentication error. Please try again.', 'error');
+                    break;
+                default:
+                    alertStore.showAlert('An unknown error occurred. Please try again.', 'error');
+            }
+        }
+
+        if (paymentConfirmation.paymentIntent) {
+            if (paymentConfirmation.paymentIntent.status === 'succeeded') {
+                alertStore.showAlert('Payment succeeded! Redirecting...', 'success');
+                navigateTo({
+                    path: '/receipt',
+                    query: {
+                        id: paymentIntentId.value,
+                    },
+                })
+            } else {
+                alertStore.showAlert('Payment failed. Please try again.', 'error');
+            }
         }
     } catch (error) {
         console.error(error);

@@ -47,11 +47,12 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
-        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         public: {
+            ENV: process.env.ENV,
             API_URL: process.env.API_URL,
             WEB_URL: process.env.WEB_URL,
-            STRIPE_KEY: process.env.STRIPE_KEY,
+            STRIPE_KEY_TEST: process.env.STRIPE_KEY_TEST,
+            STRIPE_KEY_LIVE: process.env.STRIPE_KEY_LIVE,
         },
     },
 

@@ -13,7 +13,7 @@
             <p class="text-sm text-gray-600">Type:【{{ modelValue.option.name }}】</p>
             <p class="text-sm text-gray-600">Qty: {{ modelValue.quantity }}</p>
         </div>
-        <p class="font-sans">${{ accumulatedPrice.toFixed(2) }}</p>
+        <p class="font-sans">S${{ accumulatedPrice.toFixed(2) }}</p>
     </div>
 </template>
 

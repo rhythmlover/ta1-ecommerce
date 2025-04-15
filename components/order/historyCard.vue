@@ -16,11 +16,11 @@
                 </p>
                 <p v-else class="text-gray-500 text-xs md:text-sm">...</p>
             </div>
-            <!-- <div class="flex space-x-2 md:space-x-4 text-xs md:text-sm">
-                <a href="#" class="text-indigo-600 hover:text-indigo-800">Manage order</a>
-                <span class="text-gray-300 hidden sm:inline">|</span>
-                <a href="#" class="text-indigo-600 hover:text-indigo-800">View Invoice</a>
-            </div> -->
+            <div class="flex space-x-2 md:space-x-4 text-xs md:text-sm">
+                <!-- <a href="#" class="text-indigo-600 hover:text-indigo-800">Manage order</a>
+                <span class="text-gray-300 hidden sm:inline">|</span> -->
+                <UiLink class="text-indigo-600 hover:text-indigo-800" @click="goToReceipt">View Receipt</UiLink>
+            </div>
         </div>
 
         <div class="border-b border-gray-200 mt-3 md:mt-5" />
@@ -39,4 +39,8 @@ const props = defineProps<{
 }>();
 
 const order = props.modelValue;
+
+function goToReceipt() {
+    navigateTo(`/receipt?id=${order.paymentId}&from=history`);
+}
 </script>

@@ -16,16 +16,17 @@ export class PaymentService {
     private stripe: Stripe;
     private oAuth2Client: Auth.OAuth2Client;
 
-    constructor(private prisma: PrismaService, 
-                private configService: ConfigService, 
-                private orderService: OrderService, 
-                private productService: ProductService) {
-        const stripeSecretKey = this.configService.get<string>("STRIPE_SECRET_KEY");
+    constructor(private prisma: PrismaService,
+        private configService: ConfigService,
+        private orderService: OrderService,
+        private productService: ProductService) {
+        const isDevEnv = this.configService.get<string>("ENV") === 'development';
+        const stripeSecretKey = isDevEnv ? this.configService.get<string>("STRIPE_SECRET_KEY_TEST") : this.configService.get<string>("STRIPE_SECRET_KEY_LIVE");
         if (!stripeSecretKey) {
-            throw new Error("STRIPE_SECRET_KEY is not defined in the environment variables");
+            throw new Error("STRIPE_SECRET_KEY (TEST/LIVE) is not defined in the environment variables");
         }
         this.stripe = new Stripe(stripeSecretKey, {
-            apiVersion: "2023-10-16; custom_checkout_beta=v1" as any,
+            apiVersion: "2025-03-31.basil" as any,
         });
         this.oAuth2Client = new Auth.OAuth2Client({
             clientId: this.configService.get<string>("CLIENT_ID"),
@@ -35,6 +36,16 @@ export class PaymentService {
         this.oAuth2Client.setCredentials({
             refresh_token: this.configService.get<string>("REFRESH_TOKEN"),
         });
+    }
+
+    async getPayment(paymentId: string): Promise<Stripe.PaymentIntent> {
+        try {
+            const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
+            return paymentIntent;
+        } catch (error) {
+            console.error("Error retrieving payment intent:", error);
+            throw new Error("Failed to retrieve payment intent");
+        }
     }
 
     async createPayment(amountPaid: number): Promise<Stripe.PaymentIntent> {
@@ -51,6 +62,16 @@ export class PaymentService {
         } catch (error) {
             console.error("Error creating Stripe Checkout session:", error);
             throw new Error("Failed to create payment session");
+        }
+    }
+
+    async getCharge(chargeId: string): Promise<Stripe.Charge> {
+        try {
+            const charge = await this.stripe.charges.retrieve(chargeId);
+            return charge;
+        } catch (error) {
+            console.error("Error retrieving charge:", error);
+            throw new Error("Failed to retrieve charge");
         }
     }
 
@@ -102,7 +123,6 @@ export class PaymentService {
         } else if (event.type === "payment_intent.payment_failed") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             res.status(400).send("Payment failed with ID: " + paymentIntent.id);
-            res.redirect(`${webUrl}/payment-failed?pid=${paymentIntent.id}`);
             console.log("PaymentIntent failed: ", paymentIntent.id);
         } else {
             console.warn("Unhandled event type: ", event.type);

@@ -64,7 +64,7 @@ export const useAlertStore = defineStore("alert-store", {
                 type,
             };
 
-            const timeoutDuration = type === "addToCart" ? 2000 : 3000;
+            const timeoutDuration = type === "addToCart" ? 2000 : 5000;
             
             this.timeoutId = setTimeout(() => {
                 this.clearAlert();

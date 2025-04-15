@@ -3,13 +3,13 @@
         <div class="bg-white rounded-lg pt-10 px-10 flex justify-between items-center">
             <div>
                 <div class="flex items-center gap-3">
-                    <h2 class="text-lg font-bold" v-if="orderId">#{{ orderId.toUpperCase() }}</h2>
+                    <h2 class="text-lg font-bold" v-if="finishLoading && orderId">#{{ orderId.toUpperCase() }}</h2>
                     <h2 class="text-lg font-bold" v-else>...</h2>
                     <!-- <span class="bg-[#FFF3E3] text-[#FF9900] px-3 py-1 rounded-full text-sm">
                         Pending fulfillment
                     </span> -->
                 </div>
-                <p class="text-gray-600 text-sm" v-if="orderTime">{{
+                <p class="text-gray-600 text-sm" v-if="finishLoading && orderTime">{{
                     new Date(orderTime).toLocaleDateString('en-SG', {
                         day: 'numeric',
                         month: 'short',
@@ -23,7 +23,11 @@
                         }) }}</p>
                 <p class="text-gray-600 text-sm" v-else>...</p>
             </div>
-            <a @click="goBackToHome" class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
+            <a v-if="from === 'history'" @click="goToOrderHistory" class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
+                <span class="max-md:hidden">Back</span>
+                <IconCornerRightUp class="h-6 w-6" />
+            </a>
+            <a v-else @click="goBackToHome" class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
                 <span class="max-md:hidden">Continue shopping</span>
                 <IconCornerRightUp class="h-6 w-6" />
             </a>
@@ -43,19 +47,23 @@
                         <div class="space-y-2">
                             <div>
                                 <span class="font-light">Name</span>
-                                <p>{{ name }}</p>
+                                <p v-if="finishLoading">{{ name }}</p>
+                                <p v-else>--</p>
                             </div>
                             <div>
                                 <span class="font-light">Address</span>
-                                <p>{{ address }} #{{ apartment }},<br />S{{ postalCode }}, Singapore</p>
+                                <p v-if="finishLoading">{{ address }}, {{ apartment }}<br />S{{ postalCode }}, Singapore</p>
+                                <p v-else>--</p>
                             </div>
                             <div>
                                 <span class="font-light">Phone</span>
-                                <p>+{{ phoneCountryCode }} {{ phone }}</p>
+                                <p v-if="finishLoading">{{ phoneCountryCode }}{{ phone }}</p>
+                                <p v-else>--</p>
                             </div>
                             <div>
                                 <span class="font-light">Email</span>
-                                <p>{{ email }}</p>
+                                <p v-if="finishLoading">{{ email }}</p>
+                                <p v-else>--</p>
                             </div>
                         </div>
                     </div>
@@ -71,23 +79,31 @@
                     <div class="flex justify-between gap-4 text-sm mb-5">
                         <div>
                             <span class="text-gray-600">Date</span>
-                            <p v-if="orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', {
+                            <p v-if="finishLoading && orderTime">{{ new Date(orderTime).toLocaleDateString('en-SG', {
                                 timeZone: "Asia/Singapore",
                                 day: 'numeric',
                                 month: 'short',
                                 year: 'numeric'
                             }) }}</p>
-                            <p v-else>...</p>
+                            <p v-else>--</p>
                         </div>
                         <div>
-                            <span class="text-gray-600">Order Number</span>
-                            <p v-if="orderId">{{ orderId }}</p>
-                            <p v-else>...</p>
+                            <span class="text-gray-600">Payment Status</span>
+                            <p v-if="finishLoading">{{ charge.status === 'succeeded' ? "Success" : "Failed" }}</p>
+                            <p v-else>--</p>
                         </div>
-                        <!-- <div>
+                        <div>
                             <span class="text-gray-600">Payment Method</span>
-                            <p>Mastercard</p>
-                        </div> -->
+                            <p v-if="finishLoading">{{ paymentType }}</p>
+                            <p v-else>--</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between gap-4 text-sm mb-5">
+                        <div>
+                            <span class="text-gray-600">Payment Reference</span>
+                            <p v-if="finishLoading">{{ reference }}</p>
+                            <p v-else>--</p>
+                        </div>
                     </div>
 
                     <!-- Order Items -->
@@ -120,17 +136,19 @@
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Sub Total</span>
-                            <span>${{ cartData?.totalCost.toFixed(2) }}</span>
+                            <span v-if="finishLoading">S${{ subTotal }}</span>
+                            <span v-else>--</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Shipping</span>
-                            <span>{{ shippingCost === 0 ? "Free" : shippingCost }}</span>
+                            <span>{{ shippingCost === "0.00" ? "Free" : shippingCost }}</span>
                         </div>
                         <div class="h-px bg-gray-300 my-4"></div>
                         <div class="flex justify-between text-lg font-bold">
                             <span>Order Total</span>
-                            <span>${{ cartData?.totalCost != undefined ? (cartData.totalCost + shippingCost).toFixed(2) : 0.00
-                            }}</span>
+                            <span v-if="finishLoading">S${{ shippingCost === "0.00" ? subTotal : (parseFloat(subTotal) +
+                                parseFloat(shippingCost)).toFixed(2) }}</span>
+                            <span v-else>--</span>
                         </div>
                     </div>
                 </div>
@@ -140,6 +158,7 @@
 </template>
 
 <script setup lang="ts">
+import Stripe from "stripe";
 import { IconCornerRightUp } from '@tabler/icons-vue';
 import type { Cart, Order, OrderItem } from '~/types/types';
 
@@ -150,59 +169,110 @@ const cartStore = useCartStore();
 const cartData = ref<Cart | null>(null);
 const orderId = ref<string | null>(null);
 const orderTime = ref<string | null>(null);
+const charge = ref<Stripe.Charge>({} as Stripe.Charge);
+const reference = ref<string>('--');
+const paymentType = ref<string>('--');
 
-const pid = route.query.payment_intent as string;
-const name = route.query.name as string;
-const email = route.query.email as string;
-const phoneCountryCode = route.query.phone_country_code as string;
-const phone = route.query.phone as string;
-const address = route.query.address as string;
-const apartment = route.query.apartment as string;
-const postalCode = route.query.postal_code as string;
+const pid = route.query.id as string;
+const from = route.query.from as string;
+const name = ref<string>('--');
+const email = ref<string>('--');
+const phoneCountryCode = ref<string>('--');
+const phone = ref<string>('--');
+const address = ref<string>('--');
+const apartment = ref<string>('--');
+const postalCode = ref<string>('--');
+const subTotal = ref<string>('0.00');
 
-const shippingCost = 0;
+const shippingCost = ref<string>('0.00');
 const userId = userStore.getUserId;
+const finishLoading = ref<boolean>(false);
 
 onMounted(async () => {
-    if (userId) {
-        cartData.value = await getUserCart(userId);
-    }
+    try {
+        if (userId) {
+            cartData.value = await getUserCart(userId);
+            cartStore.clearCartQty();
+        }
 
-    if (cartData.value) {
-        const orderItems: OrderItem[] = cartData.value.items.map((item) => {
-            return {
-                productId: item.product.id,
-                quantity: item.quantity,
-                optionId: item.option.id,
+        const details = await getPaymentIntent(pid);
+        if (details) {
+            name.value = details.shipping?.name || '--';
+            email.value = details.receipt_email || '--';
+            phoneCountryCode.value = details.shipping?.phone?.slice(0, 3) || '--';
+            phone.value = details.shipping?.phone?.slice(3) || '--';
+            address.value = details.shipping?.address?.line1 || '--';
+            apartment.value = details.shipping?.address?.line2 || '--';
+            postalCode.value = details.shipping?.address?.postal_code || '--';
+            subTotal.value = (details.amount_received / 100).toFixed(2) + '';
+        }
+
+        if (cartData.value) {
+            const orderItems: OrderItem[] = cartData.value.items.map((item) => {
+                return {
+                    productId: item.product.id,
+                    quantity: item.quantity,
+                    optionId: item.option.id,
+                };
+            });
+
+            const order: Order = {
+                userId: userId ?? '',
+                paymentId: pid,
+                totalCost: cartData.value.totalCost,
+                name: name.value,
+                email: email.value,
+                phone: phoneCountryCode.value + phone.value,
+                address: address.value + " #" + apartment.value || '',
+                postalCode: postalCode.value || '',
+                items: orderItems,
             };
-        });
 
-        const order: Order = {
-            userId: userId ?? '',
-            paymentId: pid,
-            totalCost: cartData.value.totalCost,
-            name: name,
-            email: email,
-            phone: phoneCountryCode + phone,
-            address: address + " #" + apartment,
-            postalCode: postalCode,
-            items: orderItems,
-        };
+            const chargeId = details.latest_charge as string;
+            charge.value = await getCharge(chargeId);
 
-        await createOrder(order);
+            switch (charge.value.payment_method_details?.type) {
+                case 'card':
+                    reference.value = charge.value.id.slice(3) as string || '--';
+                    let brand = charge.value.payment_method_details?.card?.brand || '--';
+                    brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
+                    const last4 = charge.value.payment_method_details?.card?.last4 || '--';
+                    paymentType.value = `${brand} ending in ${last4}`;
+                    break;
+                case 'paynow':
+                    reference.value = charge.value.id.slice(3) as string || '';
+                    paymentType.value = 'PayNow';
+                    break;
+            }
 
-        orderId.value = await getOrderId(pid).then((res) => res.id).then((id) => id.slice(0, 13));
-        orderTime.value = await getOrderTimestamp(pid).then((res) => res.createdAt);
+            await createOrder(order);
 
-        await clearCart(cartData.value.id);
-        await updateTotalCost(cartData.value.id, 0);
-        cartStore.setCartQty(0);
-    } else {
-        console.error('Cart is empty');
+            orderId.value = await getOrderId(pid).then((res) => res.id).then((id) => id.slice(0, 13));
+            orderTime.value = await getOrderTimestamp(pid).then((res) => res.createdAt);
+
+            await clearCart(cartData.value.id);
+            await updateTotalCost(cartData.value.id, 0);
+        } else {
+            console.error('Cart is empty');
+        }
+    } catch (error) {
+        console.error('Error fetching payment intent or charge: ', error);
+    } finally {
+        finishLoading.value = true;
     }
 });
 
 function goBackToHome() {
     navigateTo('/');
 }
+
+function goToOrderHistory() {
+    navigateTo('/order-history');
+}
+
+useSeoMeta({
+    title: "Order Receipt - Together as One Store",
+    description: "Order receipt page",
+    keywords: "order, receipt, together as one store",
+});
 </script>

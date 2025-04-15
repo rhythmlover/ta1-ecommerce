@@ -7,7 +7,7 @@
             </p> -->
 
             <div v-if="!noOrders" class="space-y-6 md:space-y-8">
-                <OrderHistoryCard v-for="order in orders.slice().reverse()" :key="order.id" :modelValue="order" />
+                <OrderHistoryCard v-for="order in sortedOrders" :key="order.id" :modelValue="order" />
             </div>
             <div v-else class="flex flex-col items-center justify-center h-full py-10">
                 <p class="text-gray-500 text-center">It seems like you haven't placed any orders yet... <br>
@@ -41,6 +41,12 @@ onMounted(async () => {
     if (orders.value.length === 0) {
         noOrders.value = true;
     }
+});
+
+const sortedOrders = computed(() => {
+    return orders.value
+        .slice()
+        .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
 });
 
 useSeoMeta({

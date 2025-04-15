@@ -38,7 +38,7 @@
                         </strong>
                     </div>
 
-                    <UiButton @click="goToCheckout" class="text-lg" :disabled="isEmpty">
+                    <UiButton @click="goToCheckout" class="text-lg" :disabled="isEmpty || totalCost === '0.00'">
                         Checkout
                     </UiButton>
                 </div>

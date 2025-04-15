@@ -146,6 +146,19 @@ export async function updateTotalCost(cartId: string, totalCost: number): Promis
     return await response.json();
 }
 
+export async function getPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/payment/get-payment-intent`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paymentIntentId }),
+    });
+
+    return await response.json();
+}
+
 export async function createPaymentIntent(amount: number): Promise<Stripe.PaymentIntent> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/payment/create-payment-intent`, {
@@ -154,6 +167,19 @@ export async function createPaymentIntent(amount: number): Promise<Stripe.Paymen
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ amount }),
+    });
+
+    return await response.json();
+}
+
+export async function getCharge(chargeId: string): Promise<Stripe.Charge> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/payment/get-charge`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ chargeId }),
     });
 
     return await response.json();

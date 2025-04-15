@@ -7,9 +7,21 @@ import { ReceiptData } from "src/types";
 export class PaymentController {
     constructor(private paymentService: PaymentService) {}
 
+    @Post('get-payment-intent')
+    async getPaymentIntent(@Body() body: { paymentIntentId: string }) {
+        const res_Obj = await this.paymentService.getPayment(body.paymentIntentId);
+        return res_Obj;
+    }
+
     @Post('create-payment-intent')
     async createPaymentIntent(@Body() body: { amount: number }) {
         const res_Obj = await this.paymentService.createPayment(body.amount);
+        return res_Obj;
+    }
+    
+    @Post('get-charge')
+    async getCharge(@Body() body: { chargeId: string }) {
+        const res_Obj = await this.paymentService.getCharge(body.chargeId);
         return res_Obj;
     }
 
