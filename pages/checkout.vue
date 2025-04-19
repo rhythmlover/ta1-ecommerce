@@ -1,8 +1,11 @@
 <template>
     <UiCenter>
         <UiHeading> Checkout </UiHeading>
+        <div v-show="!pageIsLoaded">
+            <CheckoutSkeleton />
+        </div>
 
-        <div class="grid md:grid-cols-2 gap-8">
+        <div v-show="pageIsLoaded" class="grid md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4 bg-slate-50 rounded-lg p-8">
                 <h2 class="text-2xl font-semibold">Express Checkout</h2>
                 <div id="express-checkout-element" class="w-full mt-2" />
@@ -172,14 +175,20 @@ import { loadStripe } from '@stripe/stripe-js';
 import { IconCheck } from '@tabler/icons-vue';
 import Loading from '~/assets/loading.svg';
 import type { Cart } from '~/types/types';
-import type { StripeElements, Stripe } from '@stripe/stripe-js';
+import type { StripeElements, Stripe, StripePaymentElement, StripeExpressCheckoutElement } from '@stripe/stripe-js';
 
 const config = useRuntimeConfig();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
 
 const stripe = ref<Stripe | null>(null);
-const loading = ref(false);
+const elements = ref<StripeElements | null>(null);
+const paymentIntentCS = ref<string>('');
+const paymentIntentId = ref<string>('');
+const loading = ref<boolean>(false);
+const pageIsLoaded = ref<boolean>(false);
+const userId = userStore.getUserId;
+
 const deliveryOptions = [
     {
         id: "standard",
@@ -187,56 +196,38 @@ const deliveryOptions = [
         description: "2–3 business days",
         price: 0.00
     },
-    //   {
-    //     id: "express",
-    //     title: "Express",
-    //     description: "2–5 business days",
-    //     price: 16.00
-    //   }
-]
+];
 
-const selected = ref("standard")
-
-const shippingAmount = ref(0.00);
-const subtotalAmount = computed(() => cartData.value?.totalCost || 0);
-const totalAmount = computed(() => cartData.value?.totalCost ? cartData.value?.totalCost + shippingAmount.value : 0);
-
+const selected = ref<string>("standard");
+const shippingAmount = ref<string>('0.00');
 const cartData = ref<Cart | null>(null);
-const userId = userStore.getUserId;
+const subtotalAmount = computed(() => cartData.value?.totalCost || 0);
+const totalAmount = computed(() => cartData.value?.totalCost ? cartData.value?.totalCost + parseFloat(shippingAmount.value) : 0);
 
-const paymentIntentCS = ref('');
-const paymentIntentId = ref('');
-const elements = ref<StripeElements | null>(null);
+const email = ref<string>('');
+const firstName = ref<string>('');
+const lastName = ref<string>('');
+const address = ref<string>('');
+const apartment = ref<string>('');
+const postalCode = ref<string>('');
+const phoneCountryCode = ref('+65');
+const phoneNumber = ref<string>('');
 
-// if userId is not null, get the user email else set it to empty string
-const email = ref('')
-const firstName = ref('')
-const lastName = ref('')
-const address = ref('')
-const apartment = ref('')
-const postalCode = ref('')
-const phoneCountryCode = ref('+65')
-const phoneNumber = ref('')
+const emailError = ref<boolean>(false);
+const firstNameError = ref<boolean>(false);
+const lastNameError = ref<boolean>(false);
+const addressError = ref<boolean>(false);
+const apartmentError = ref<boolean>(false);
+const postalCodeError = ref<boolean>(false);
+const phoneNumberError = ref<boolean>(false);
 
-const emailError = ref(false);
-const firstNameError = ref(false);
-const lastNameError = ref(false);
-const addressError = ref(false);
-const apartmentError = ref(false);
-const postalCodeError = ref(false);
-const phoneNumberError = ref(false);
+const elementsObj = ref<StripeElements | null>(null);
+const paymentElementObj = ref<StripePaymentElement | null>(null);
+const expressCheckoutElement = ref<StripeExpressCheckoutElement | null>(null);
 
-onMounted(async () => {
-    alertStore.clearAlert();
+const isDevEnv = config.public.ENV === 'development';
 
-    if (userId) {
-        cartData.value = await getUserCart(userId);
-        const userDetails = await getUserDetails(userId);
-        email.value = userDetails.email;
-    }
-
-    const isDevEnv = config.public.ENV === 'development';
-
+async function initializeStripe() {
     stripe.value = await loadStripe(isDevEnv ? config.public.STRIPE_KEY_TEST : config.public.STRIPE_KEY_LIVE);
 
     if (!stripe.value) {
@@ -244,10 +235,8 @@ onMounted(async () => {
         return;
     }
 
-    const response = await createPaymentIntent(parseInt((totalAmount.value * 100).toFixed(0)));
-
-    paymentIntentCS.value = response.client_secret || '';
-    paymentIntentId.value = response.id;
+    paymentIntentCS.value = localStorage.getItem('piCS') || '';
+    paymentIntentId.value = localStorage.getItem('piID') || '';
 
     if (paymentIntentCS.value === '') {
         console.error('Failed to create payment intent');
@@ -265,26 +254,49 @@ onMounted(async () => {
         },
     };
 
-    const elementsObj = stripe.value.elements({
+    elementsObj.value = stripe.value.elements({
         clientSecret: paymentIntentCS.value,
+        loader: 'always',
         appearance,
     });
 
-    elements.value = elementsObj;
+    elements.value = elementsObj.value;
 
-    const paymentElementObj = elementsObj.create('payment',
-        {
-            layout: 'tabs',
-            business: {
-                name: 'Together as One Store',
-            },
+    paymentElementObj.value = elementsObj.value.create('payment', {
+        layout: 'tabs',
+        business: {
+            name: 'Together as One Store',
+        },
+    });
+
+    expressCheckoutElement.value = elementsObj.value.create('expressCheckout', {
+        layout: {
+            maxRows: 1,
         }
-    );
+    });
+}
 
-    const expressCheckoutElement = elementsObj.create('expressCheckout');
+async function initializeUserData() {
+    if (userId) {
+        const userDetails = await getUserDetails(userId);
+        email.value = userDetails.email;
+    } else {
+        navigateTo('/login');
+    }
+}
 
-    paymentElementObj.mount('#payment-element');
-    expressCheckoutElement.mount('#express-checkout-element');
+await initializeStripe();
+await initializeUserData();
+
+onMounted(async () => {
+    alertStore.clearAlert();
+
+    cartData.value = await getUserCart(userId);
+
+    pageIsLoaded.value = true;
+
+    paymentElementObj.value?.mount('#payment-element');
+    expressCheckoutElement.value?.mount('#express-checkout-element');
 });
 
 async function confirmPayment() {
@@ -316,8 +328,6 @@ async function confirmPayment() {
             return;
         }
 
-        localStorage.setItem('pid', paymentIntentId.value);
-
         const redirectUrl = `${config.public.WEB_URL}/payment-redirect`;
 
         const paymentConfirmation = await stripe.value!.confirmPayment({
@@ -343,58 +353,26 @@ async function confirmPayment() {
         });
 
         if (paymentConfirmation.error) {
-            switch (paymentConfirmation.error.type) {
-                case 'card_error':
-                    alertStore.showAlert(paymentConfirmation.error.message || 'An error occurred', 'error');
-                    break;
-                case 'validation_error':
-                    alertStore.showAlert(paymentConfirmation.error.message || 'An error occurred', 'error');
-                    break;
-                case 'api_connection_error':
-                    alertStore.showAlert('Network error. Please try again.', 'error');
-                    break;
-                case 'api_error':
-                    alertStore.showAlert('Internal server error. Please try again.', 'error');
-                    break;
-                case 'idempotency_error':
-                    alertStore.showAlert('Duplicate request. Please try again.', 'error');
-                    break;
-                case 'rate_limit_error':
-                    alertStore.showAlert('Too many requests. Please try again.', 'error');
-                    break;
-                case 'invalid_request_error':
-                    alertStore.showAlert('Invalid request. Please try again.', 'error');
-                    break;
-                case 'authentication_error':
-                    alertStore.showAlert('Authentication error. Please try again.', 'error');
-                    break;
-                default:
-                    alertStore.showAlert('An unknown error occurred. Please try again.', 'error');
-            }
+            alertStore.showAlert(paymentConfirmation.error.message || 'An error occurred', 'error');
+            return;
         }
 
-        if (paymentConfirmation.paymentIntent) {
-            if (paymentConfirmation.paymentIntent.status === 'succeeded') {
-                alertStore.showAlert('Payment succeeded! Redirecting...', 'success');
-                navigateTo({
-                    path: '/receipt',
-                    query: {
-                        id: paymentIntentId.value,
-                    },
-                })
-            } else {
-                alertStore.showAlert('Payment failed. Please try again.', 'error');
-            }
+        if (paymentConfirmation.paymentIntent?.status === 'succeeded') {
+            alertStore.showAlert('Payment succeeded! Redirecting...', 'success');
+            navigateTo(`/receipt?id=${paymentIntentId.value}&from=checkout`);
+        } else {
+            alertStore.showAlert('Payment failed. Please try again.', 'error');
         }
     } catch (error) {
         console.error(error);
+        alertStore.showAlert('An error occurred. Please try again.', 'error');
     } finally {
         loading.value = false;
     }
 }
 
 useSeoMeta({
-    title: 'Checkout Cart - Together as One Store',
+    title: 'Checkout - Together as One Store',
     description: 'Checkout your cart and make payment',
     keywords: 'checkout, cart, payment, together as one store',
 });

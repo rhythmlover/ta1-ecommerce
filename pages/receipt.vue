@@ -172,6 +172,7 @@ const orderTime = ref<string | null>(null);
 const charge = ref<Stripe.Charge>({} as Stripe.Charge);
 const reference = ref<string>('--');
 const paymentType = ref<string>('--');
+const last4 = ref<string>('--');
 
 const pid = route.query.id as string;
 const from = route.query.from as string;
@@ -191,7 +192,15 @@ const finishLoading = ref<boolean>(false);
 onMounted(async () => {
     try {
         if (userId) {
-            cartData.value = await getUserCart(userId);
+            // make sure it is redirected only from checkout or order history to load the items
+            if (from) {
+                cartData.value = await getUserCart(userId);
+            }
+        } else {
+            navigateTo('/login');
+        }
+
+        if (from !== 'history') {
             cartStore.clearCartQty();
         }
 
@@ -234,14 +243,26 @@ onMounted(async () => {
             switch (charge.value.payment_method_details?.type) {
                 case 'card':
                     reference.value = charge.value.id.slice(3) as string || '--';
+
                     let brand = charge.value.payment_method_details?.card?.brand || '--';
                     brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
-                    const last4 = charge.value.payment_method_details?.card?.last4 || '--';
-                    paymentType.value = `${brand} ending in ${last4}`;
+
+                    last4.value = charge.value.payment_method_details?.card?.last4 || '--';
+                    paymentType.value = `${brand} ending in ${last4.value}`;
+                    localStorage.removeItem('piID');
+                    localStorage.removeItem('piCS');
                     break;
+                // piID and piCS local storage is removed in payment-redirect.vue for paynow payment method
                 case 'paynow':
                     reference.value = charge.value.id.slice(3) as string || '';
                     paymentType.value = 'PayNow';
+                    // clear the local storage for piID and piCS if they exist
+                    // this is to prevent the user from being able to access the payment-redirect page again with the same piID and piCS
+                    // in the event that payment-redirect page is not loaded
+                    if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
+                        localStorage.removeItem('piID');
+                        localStorage.removeItem('piCS');
+                    }
                     break;
             }
 

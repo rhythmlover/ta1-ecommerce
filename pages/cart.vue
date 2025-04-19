@@ -38,7 +38,8 @@
                         </strong>
                     </div>
 
-                    <UiButton @click="goToCheckout" class="text-lg" :disabled="isEmpty || totalCost === '0.00'">
+                    <UiButton @click="goToCheckout" class="text-lg"
+                        :disabled="isEmpty || totalCost === '0.00' || updating">
                         Checkout
                     </UiButton>
                 </div>
@@ -55,23 +56,35 @@ import { IconShoppingCart } from "@tabler/icons-vue";
 import type { Cart, CartItem } from "~/types/types";
 import debounce from "lodash/debounce";
 
-const cartData = ref<Cart | null>(null);
-const isEmpty = computed(() => !cartData.value || cartData.value.items.length === 0);
-const totalCost = ref("0.00");
-
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
 
-onMounted(async () => {
-    const userId = userStore.getUserId;
+const cartData = ref<Cart | null>(null);
+const isEmpty = computed(() => !cartData.value || cartData.value.items.length === 0);
+const updating = ref(false);
+const totalCost = ref<string>("0.00");
+const userId = userStore.getUserId;
+
+const paymentIntentCS = ref<string>('');
+const paymentIntentId = ref<string>('');
+
+async function initializeUserCart() {
     if (userId) {
         cartData.value = await getUserCart(userId);
-        calculateTotal();
+    } else {
+        navigateTo("/login");
     }
+}
+
+await initializeUserCart();
+
+onMounted(() => {
+    calculateTotal();
 });
 
 function updateCartItem(updatedItem: CartItem) {
+    updating.value = true;
     const index = cartData.value?.items.findIndex(item => item.id === updatedItem.id);
     if (index !== undefined && index !== -1) {
         cartData.value!.items[index] = updatedItem;
@@ -95,10 +108,49 @@ const calculateTotal = debounce(async () => {
             .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
             .toFixed(2);
         await updateTotalCost(cartData.value.id, parseFloat(totalCost.value));
+        updating.value = false;
     }
 }, 500);
 
-function goToCheckout() {
+async function goToCheckout() {
+    // Check if there is an existing payment intent created previously
+    const existingPaymentIntentId = localStorage.getItem("piID");
+    const existingPaymentIntentCS = localStorage.getItem("piCS");
+
+    if (existingPaymentIntentId && existingPaymentIntentCS) {
+        const existingPaymentIntent = await getPaymentIntent(existingPaymentIntentId);
+        // Check if the payment intent's amount is the same as the current total cost so we don't create a new one unnecessarily
+        if (existingPaymentIntent && existingPaymentIntent.amount !== parseInt((parseFloat(totalCost.value) * 100).toFixed(0))) {
+            const response = await createPaymentIntent(parseInt((parseFloat(totalCost.value) * 100).toFixed(0)));
+            if (response) {
+                paymentIntentCS.value = response.client_secret || '';
+                paymentIntentId.value = response.id;
+                localStorage.setItem("piID", paymentIntentId.value);
+                localStorage.setItem("piCS", paymentIntentCS.value);
+            } else {
+                alertStore.showAlert("Checkout Error. Please refresh the page and try again.", "error");
+                console.error("Error creating payment intent");
+                return;
+            }
+        } else {
+            // If the payment intent exists and the amount is the same, we can use it directly without creating a new one
+            paymentIntentCS.value = existingPaymentIntentCS || '';
+            paymentIntentId.value = existingPaymentIntentId || '';
+        }
+    } else {
+        // If no payment intent exists, create a new one
+        const response = await createPaymentIntent(parseInt((parseFloat(totalCost.value) * 100).toFixed(0)));
+        if (response) {
+            paymentIntentCS.value = response.client_secret || '';
+            paymentIntentId.value = response.id;
+            localStorage.setItem("piID", paymentIntentId.value);
+            localStorage.setItem("piCS", paymentIntentCS.value);
+        } else {
+            alertStore.showAlert("Checkout Error. Please refresh the page and try again.", "error");
+            console.error("Error creating payment intent");
+            return;
+        }
+    }
     navigateTo("/checkout");
 }
 

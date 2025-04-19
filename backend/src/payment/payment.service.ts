@@ -77,7 +77,6 @@ export class PaymentService {
 
     async handleStripeWebhook(signature: string, req: RawBodyRequest<Request>, res: Response): Promise<void> {
         const endpointSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET");
-        const webUrl = this.configService.get<string>("WEB_URL");
         const event = this.stripe.webhooks.constructEvent(req.rawBody, signature, endpointSecret);
         console.log("Received event: ", event.type);
         if (event.type === "payment_intent.succeeded") {
@@ -123,7 +122,7 @@ export class PaymentService {
         } else if (event.type === "payment_intent.payment_failed") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             res.status(400).send("Payment failed with ID: " + paymentIntent.id);
-            console.log("PaymentIntent failed: ", paymentIntent.id);
+            console.warn("PaymentIntent failed: ", paymentIntent.id);
         } else {
             console.warn("Unhandled event type: ", event.type);
         }

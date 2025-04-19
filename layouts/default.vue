@@ -157,18 +157,27 @@ const navigationItems = [
     { name: 'Explore', path: '/' },
 ]
 
-onMounted(async () => {
-    if (!userLoggedIn.value) {
-        cartStore.clearCartQty();
-    } else {
-        cartData.value = await getUserCart(userStore.getUserId);
-        cartStore.setCartQty(cartData.value?.items.length || 0);
+async function initializeUserData() {
+    try {
+        if (!userLoggedIn.value) {
+            cartStore.clearCartQty();
+        } else {
+            cartData.value = await getUserCart(userStore.getUserId);
+            cartStore.setCartQty(cartData.value?.items.length || 0);
 
-        const userDetails = await getUserDetails(userStore.getUserId);
-        if (userDetails && userDetails.role === 'admin') {
-            isAdmin.value = true;
+            const userDetails = await getUserDetails(userStore.getUserId);
+            if (userDetails && userDetails.role === 'admin') {
+                isAdmin.value = true;
+            }
         }
+    } catch (error) {
+        console.error('Error initializing user data:', error);
     }
+}
+
+await initializeUserData();
+
+onMounted(async () => {
     if ((await getAnnouncement()).content !== '') {
         announcement.value = (await getAnnouncement()).content;
     }

@@ -73,6 +73,8 @@ import Stripe from "stripe";
 import { loadStripe } from '@stripe/stripe-js';
 import type { Stripe as StripeJSType } from '@stripe/stripe-js';
 
+const cartStore = useCartStore();
+
 const config = useRuntimeConfig();
 const pid = ref<string>('');
 const charge = ref<Stripe.Charge>({} as Stripe.Charge);
@@ -84,20 +86,28 @@ const finishLoading = ref<boolean>(false);
 
 const stripe = ref<StripeJSType | null>(null);
 
-const cartStore = useCartStore();
+const isDevEnv = config.public.ENV === 'development';
 
-onMounted(async () => {
-    const isDevEnv = config.public.ENV === 'development';
-    pid.value = localStorage.getItem('pid') || '';
-
+async function initializeStripe() {
     stripe.value = await loadStripe(isDevEnv ? config.public.STRIPE_KEY_TEST : config.public.STRIPE_KEY_LIVE);
 
     if (!stripe.value) {
         console.error('Failed to load Stripe');
         return;
     }
+}
+
+await initializeStripe();
+
+onMounted(async () => {
+    pid.value = localStorage.getItem('piID') || '';
 
     try {
+        // if user refreshes the page, it will not show an error message of payment failed
+        if (finishLoading.value) {
+            return;
+        }
+
         const paymentIntent = await getPaymentIntent(pid.value);
         if (!paymentIntent) {
             console.error('Payment intent not found');
@@ -108,21 +118,22 @@ onMounted(async () => {
         total.value = charge.value.amount ? (charge.value.amount / 100).toFixed(2) : '--';
         paymentSuccess.value = charge.value.status === 'succeeded';
 
-        if (paymentSuccess.value) {
-            cartStore.clearCartQty();
-        }
-
         switch (charge.value.payment_method_details?.type) {
             case 'paynow':
                 reference.value = charge.value.id.slice(3) as string || '';
                 paymentType.value = 'PayNow';
                 break;
         }
+
+        if (paymentSuccess.value) {
+            localStorage.removeItem('piID');
+            localStorage.removeItem('piCS');
+            cartStore.clearCartQty();
+        }
     } catch (error) {
         console.error('Error fetching payment intent or charge:', error);
     } finally {
         finishLoading.value = true;
-        localStorage.removeItem('pid');
     }
 });
 
