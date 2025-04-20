@@ -8,7 +8,7 @@
         <div v-show="pageIsLoaded" class="grid md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4 bg-slate-50 rounded-lg p-8">
                 <h2 class="text-2xl font-semibold">Express Checkout</h2>
-                <div id="express-checkout-element" class="w-full mt-2" />
+                <div id="express-checkout-element" class="mt-2" />
                 <div class="flex items-center justify-center mt-3">
                     <div class="flex-grow border-b border-gray-200"></div>
                     <span class="mx-4 text-gray-500 text-sm">or continue below</span>
@@ -271,8 +271,8 @@ async function initializeStripe() {
 
     expressCheckoutElement.value = elementsObj.value.create('expressCheckout', {
         layout: {
-            maxRows: 1,
-        }
+            overflow: 'never',
+        },
     });
 }
 
