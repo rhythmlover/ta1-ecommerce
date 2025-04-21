@@ -232,7 +232,7 @@ onMounted(async () => {
                 name: name.value,
                 email: email.value,
                 phone: phoneCountryCode.value + phone.value,
-                address: address.value + apartment.value || '',
+                address: address.value + ' ' + apartment.value || '',
                 postalCode: postalCode.value || '',
                 items: orderItems,
             };
