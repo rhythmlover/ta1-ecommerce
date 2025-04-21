@@ -5,6 +5,8 @@ export type ReceiptData = {
     address: string;
     postalCode: string;
     purchaseDate: string;
+    paymentMethod: string;
+    paymentDate: string;
     receiptId: string;
     totalCost: number;
     receiptItems: ReceiptItem[];

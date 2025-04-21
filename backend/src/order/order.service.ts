@@ -114,9 +114,12 @@ export class OrderService {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
+                hour12: false,
             }),
             receiptId: order.id.toUpperCase(),
             totalCost: order.totalCost,
+            paymentMethod: "",
+            paymentDate: "",
             receiptItems: await Promise.all(
                 order.items.map(async (item) => ({
                     price:

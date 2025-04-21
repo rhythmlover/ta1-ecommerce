@@ -149,9 +149,8 @@ const orderDate = new Date(props.modelValue.createdAt ?? '').toLocaleString(
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-    hour12: true,
-}
-)
+    hour12: false,
+})
 const orderFulfilled = ref(props.modelValue.orderFulfilled)
 const orderError = ref(false)
 const orderCost = props.modelValue.totalCost

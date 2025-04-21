@@ -83,6 +83,33 @@ export class PaymentService {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log("Payment Intent: ", paymentIntent);
             const order = await this.orderService.getOrder(paymentIntent.id, 10, 5000);
+            const charge = await this.getCharge(paymentIntent.latest_charge as string);
+
+            let paymentMethod = '';
+            const paymentDate = new Date(charge.created * 1000).toLocaleString("en-SG", {
+                timeZone: "Asia/Singapore",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false,
+            });
+
+            switch (charge.payment_method_details?.type) {
+                case 'card':
+                    let brand = charge.payment_method_details?.card?.brand || '--';
+                    brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
+
+                    let last4 = charge.payment_method_details?.card?.last4 || '--';
+                    paymentMethod = `${brand} ending in ${last4}`;
+                    break;
+                case 'paynow':
+                    paymentMethod = 'PayNow';
+                    break;
+            }
+
             console.log("Order: ", order);
             if (!order) {
                 console.error("Order not found");
@@ -105,8 +132,10 @@ export class PaymentService {
                     day: "numeric",
                     hour: "numeric",
                     minute: "2-digit",
-                    hour12: true,
+                    hour12: false,
                 }),
+                paymentMethod: paymentMethod,
+                paymentDate: paymentDate,
                 receiptId: order.id,
                 totalCost: order.totalCost,
                 receiptItems: await Promise.all(order.items.map(async (item) => ({
@@ -197,6 +226,8 @@ export class PaymentService {
             .replace(/{{purchase_date}}/g, receiptData.purchaseDate)
             .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
+            .replace(/{{payment_method}}/g, receiptData.paymentMethod)
+            .replace(/{{payment_date}}/g, receiptData.paymentDate)
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
                     .map((detail: any) => {

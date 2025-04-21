@@ -548,7 +548,6 @@
                                                     </td>
                                                 </tr>
                                             </table>
-                                            <!-- New section for contact information -->
                                             <table class="attributes" width="100%" cellpadding="0" cellspacing="0"
                                                 role="presentation">
                                                 <tr>
@@ -563,10 +562,10 @@
                                                                 </th>
                                                             </tr>
                                                             <tr>
-                                                                <td width="20%" class="shipping_details">
+                                                                <td width="30%" class="shipping_details" style="padding-top: 10px;">
                                                                     <span class="f-fallback">Address</span>
                                                                 </td>
-                                                                <td class="align-right" width="80%"
+                                                                <td class="align-right" width="70%"
                                                                     class="shipping_details">
                                                                     <span
                                                                         class="f-fallback shipping_details_right">{{address}}
@@ -580,7 +579,7 @@
                                                                 <td class="align-right" width="80%"
                                                                     class="shipping_details">
                                                                     <span
-                                                                        class="f-fallback shipping_details_right">+{{phone}}</span>
+                                                                        class="f-fallback shipping_details_right">{{phone}}</span>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -591,6 +590,40 @@
                                                                     class="shipping_details">
                                                                     <span
                                                                         class="f-fallback shipping_details_right">Standard</span>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <table class="purchase_content" width="100%" cellpadding="0"
+                                                            cellspacing="0">
+                                                            <tr>
+                                                                <th class="purchase_heading" align="left">
+                                                                    <p class="f-fallback">
+                                                                        Payment Details
+                                                                    </p>
+                                                                </th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="30%" class="shipping_details" style="padding-top: 10px;">
+                                                                    <span class="f-fallback">Payment Method</span>
+                                                                </td>
+                                                                <td class="align-right" width="80%"
+                                                                    class="shipping_details">
+                                                                    <span
+                                                                        class="f-fallback shipping_details_right">{{payment_method}}</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="20%" class="shipping_details">
+                                                                    <span class="f-fallback">Payment Date</span>
+                                                                </td>
+                                                                <td class="align-right" width="70%"
+                                                                    class="shipping_details">
+                                                                    <span
+                                                                        class="f-fallback shipping_details_right">{{payment_date}}</span>
                                                                 </td>
                                                             </tr>
                                                         </table>
