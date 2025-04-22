@@ -194,19 +194,6 @@ export async function clearCart(cartId: string): Promise<Response> {
     return await response.json();
 }
 
-export async function sendEmailAfterPayment(email: string): Promise<Response> {
-    const config = useRuntimeConfig();
-    const response = await fetch(`${config.public.API_URL}/payment/send-email-after-payment`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-    });
-
-    return await response.json();
-}
-
 export async function getAllOrders(): Promise<Order[]> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/order/get-all`);

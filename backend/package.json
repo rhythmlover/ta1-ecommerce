@@ -51,7 +51,9 @@
     "dependencies": {
         "@nestjs/platform-express": "^10.4.15",
         "@types/nodemailer": "^6.4.17",
+        "cloudinary": "^2.6.0",
         "googleapis": "^144.0.0",
+        "nestjs-html2pdf": "^0.0.2",
         "nodemailer": "^6.9.16",
         "raw-body": "^3.0.0",
         "stripe": "^17.5.0"

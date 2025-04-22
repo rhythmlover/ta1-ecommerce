@@ -23,11 +23,13 @@
                         }) }}</p>
                 <p class="text-gray-600 text-sm" v-else>...</p>
             </div>
-            <a v-if="from === 'history'" @click="goToOrderHistory" class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
+            <a v-if="from === 'history'" @click="goToOrderHistory"
+                class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
                 <span class="max-md:hidden">Back</span>
                 <IconCornerRightUp class="h-6 w-6" />
             </a>
-            <a v-else @click="goBackToHome" class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
+            <a v-else @click="goBackToHome"
+                class="text-gray-700 hover:text-gray-900 flex items-center gap-2 cursor-pointer">
                 <span class="max-md:hidden">Continue shopping</span>
                 <IconCornerRightUp class="h-6 w-6" />
             </a>
@@ -52,7 +54,8 @@
                             </div>
                             <div>
                                 <span class="font-light">Address</span>
-                                <p v-if="finishLoading">{{ address }}, {{ apartment }}<br />S{{ postalCode }}, Singapore</p>
+                                <p v-if="finishLoading">{{ address }}, {{ apartment }}<br />S{{ postalCode }}, Singapore
+                                </p>
                                 <p v-else>--</p>
                             </div>
                             <div>
@@ -259,6 +262,14 @@ onMounted(async () => {
                     // clear the local storage for piID and piCS if they exist
                     // this is to prevent the user from being able to access the payment-redirect page again with the same piID and piCS
                     // in the event that payment-redirect page is not loaded
+                    if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
+                        localStorage.removeItem('piID');
+                        localStorage.removeItem('piCS');
+                    }
+                    break;
+                default:
+                    reference.value = charge.value.id.slice(3) as string || '--';
+                    paymentType.value = charge.value.payment_method_details?.type || '--';
                     if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
                         localStorage.removeItem('piID');
                         localStorage.removeItem('piCS');

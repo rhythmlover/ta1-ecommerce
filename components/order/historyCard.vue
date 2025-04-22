@@ -17,8 +17,8 @@
                 <p v-else class="text-gray-500 text-xs md:text-sm">...</p>
             </div>
             <div class="flex space-x-2 md:space-x-4 text-xs md:text-sm">
-                <!-- <a href="#" class="text-indigo-600 hover:text-indigo-800">Manage order</a>
-                <span class="text-gray-300 hidden sm:inline">|</span> -->
+                <UiLink class="text-indigo-600 hover:text-indigo-800" @click="order.id && downloadInvoice(order.id.slice(0, 13).toUpperCase())">Download Invoice</UiLink>
+                <span class="text-gray-300 hidden sm:inline">|</span>
                 <UiLink class="text-indigo-600 hover:text-indigo-800" @click="goToReceipt">View Receipt</UiLink>
             </div>
         </div>
@@ -42,5 +42,14 @@ const order = props.modelValue;
 
 function goToReceipt() {
     navigateTo(`/receipt?id=${order.paymentId}&from=history`);
+}
+
+function downloadInvoice(id: string) {
+    const url = `https://res.cloudinary.com/dtqcqe0iu/image/upload/fl_attachment:invoice-${id}/invoices/invoice-${id}.pdf`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.click();
+    a.remove();
 }
 </script>

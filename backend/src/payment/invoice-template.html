@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Invoice Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <div class="max-w-4xl mx-auto p-6 bg-white text-slate-500 font-sans">
+        <!-- Header -->
+        <div class="my-8 flex items-center">
+            <div class="flex items-center">
+                <img src="https://res.cloudinary.com/dtqcqe0iu/image/upload/logo_nc9zoq" alt="TA1 Logo"
+                    class="h-20 w-auto mr-4" />
+                <!-- <div class="flex-1">
+                    <p class="text-sm text-slate-500">123 Business Street, City, Country</p>
+                    <p class="text-sm text-slate-500">Phone: (123) 456-7890</p>
+                    <p class="text-sm text-slate-500">Email: contact@company.com</p>
+                </div> -->
+            </div>
+            <h1 class="text-4xl font-semibold text-black uppercase flex-1 text-right">Invoice</h1>
+        </div>
+
+        <div class="pb-4 mb-4 flex items-start">
+            <!-- Customer Information -->
+            <div class="mb-4">
+                <h2 class="font-semibold text-slate-700">Bill To:</h2>
+                <p class="text-slate-600">{{name}}</p>
+                <p class="text-sm text-slate-500">{{address}}</p>
+                <p class="text-sm text-slate-500">S{{postal_code}}</p>
+                <p class="text-sm text-slate-500">Phone: {{phone}}</p>
+                <p class="text-sm text-slate-500">Email: {{email}}</p>
+            </div>
+
+            <!-- Invoice Information -->
+            <div class="mb-4 text-right flex-1">
+                <p class="text-sm text-slate-500">Invoice #: {{receipt_id}}</p>
+                <p class="text-sm text-slate-500">Date: {{purchase_date}}</p>
+                <p class="text-sm text-slate-500">Due Date: {{purchase_date}}</p>
+            </div>
+        </div>
+
+        <!-- Invoice Table -->
+        <table class="min-w-full table-auto mb-24">
+            <thead>
+                <tr class="bg-slate-100">
+                    <th colspan="6" class="px-4 py-2 text-left">Description</th>
+                    <th colspan="2" class="px-4 py-2 text-left">Qty</th>
+                    <th colspan="2" class="px-4 py-2 text-left">Unit Price</th>
+                    <th colspan="2" class="px-4 py-2 text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each invoice_details}}
+                <tr>
+                    <td colspan="6" class="border px-4 py-2">{{description}}</td>
+                    <td colspan="2" class="border px-4 py-2">{{quantity}}</td>
+                    <td colspan="2" class="border px-4 py-2">${{price}}</td>
+                    <td colspan="2" class="border px-4 py-2 text-right">${{item_total}}</td>
+                </tr>
+                {{/each}}
+                <tr>
+                    <td colspan="10" class="border px-4 py-2 text-right">Subtotal</td>
+                    <td class="border px-4 py-2 text-right">${{subtotal}}</td>
+                </tr>
+                <tr>
+                    <td colspan="10" class="border px-4 py-2 text-right">Shipping</td>
+                    <td class="border px-4 py-2 text-right">${{shipping_fee}}</td>
+                </tr>
+                <tr class="font-bold">
+                    <td colspan="10" class="border px-4 py-2 text-right">Total Due</td>
+                    <td class="border px-4 py-2 text-right">SGD ${{total}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mb-6"></div>
+
+        <!-- Footer -->
+        <div class="text-sm text-slate-500 border-t pt-8 mt-8">
+            <p>For any questions regarding this invoice, please contact us at: info@ta1-shop.com</p>
+        </div>
+    </div>
+</body>
+
+</html>
