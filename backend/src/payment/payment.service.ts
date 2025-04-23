@@ -81,7 +81,7 @@ export class PaymentService {
 
         const browser = await puppeteer.launch({
             headless: true,
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/render/project/src/.cache/puppeteer/chrome/linux-135.0.7049.95/chrome-linux64/chrome',
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
 
@@ -123,7 +123,7 @@ export class PaymentService {
 
             const result = await cloudinary.uploader.upload(filePath, {
                 resource_type: "auto",
-                public_id: "invoice-" + invoice_id,
+                public_id: "invoice-" + invoice_id.slice(0, 13).toUpperCase(),
                 unique_filename: true,
                 folder: "invoices",
                 format: "pdf",
