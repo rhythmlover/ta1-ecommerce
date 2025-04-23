@@ -159,8 +159,15 @@ export class PaymentService {
     }
 
     async handleStripeWebhook(signature: string, req: RawBodyRequest<Request>, res: Response): Promise<void> {
-        const endpointSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET");
-        const event = this.stripe.webhooks.constructEvent(req.rawBody, signature, endpointSecret);
+        let stripeWebhookSecret = "";
+        if (this.configService.get<string>("ENV") === 'development') {
+            stripeWebhookSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET_TEST");
+            console.log("Using Testing Webhook Secret")
+        } else {
+            stripeWebhookSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET_LIVE");
+            console.log("Using Live Webhook Secret")
+        }
+        const event = this.stripe.webhooks.constructEvent(req.rawBody, signature, stripeWebhookSecret);
         console.log("Received event: ", event.type);
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
@@ -229,9 +236,9 @@ export class PaymentService {
                 }))),
             };
             console.log("Receipt Data: ", receiptData);
-            await this.sendEmailReceipt(order.email, receiptData);
-            await this.createInvoice(receiptData);
-            await this.uploadInvoiceToCloudinary(receiptData.receiptId);
+            // await this.sendEmailReceipt(order.email, receiptData);
+            // await this.createInvoice(receiptData);
+            // await this.uploadInvoiceToCloudinary(receiptData.receiptId);
             res.status(201).send("Payment succeeded with ID: " + paymentIntent.id);
             console.log("PaymentIntent was successful: ", paymentIntent.id);
         } else if (event.type === "payment_intent.payment_failed") {
