@@ -53,7 +53,7 @@ export class PaymentService {
     async createInvoice(receiptData: ReceiptData): Promise<void> {
         const templatePath = "src/payment/invoice-template.html";
         let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
-    
+
         htmlTemplate = htmlTemplate
             .replace(/{{email}}/g, receiptData.email)
             .replace(/{{address}}/g, receiptData.address)
@@ -78,16 +78,17 @@ export class PaymentService {
                     })
                     .join("");
             });
-    
+
         const browser = await puppeteer.launch({
             headless: true,
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/opt/render/.cache/puppeteer/chrome/linux-135.0.7049.95/chrome-linux64/chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
-    
+
         try {
             const page = await browser.newPage();
             await page.setContent(htmlTemplate, { waitUntil: 'load' });
-    
+
             const pdfPath = "src/payment/invoice.pdf";
             await page.pdf({
                 path: pdfPath,
@@ -100,7 +101,7 @@ export class PaymentService {
                 },
                 printBackground: true,
             });
-    
+
             console.log("PDF invoice created successfully for receipt ID: ", receiptData.receiptId);
         } catch (error) {
             console.error("Error generating PDF invoice:", error);
