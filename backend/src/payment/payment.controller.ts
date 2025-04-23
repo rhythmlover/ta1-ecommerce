@@ -1,6 +1,7 @@
 import { Controller, Body, Post, Headers, Req, Res, RawBodyRequest } from "@nestjs/common";
 import { Request, Response } from 'express';
 import { PaymentService } from "./payment.service";
+// import { ReceiptData } from "src/types";
 
 @Controller("payment")
 export class PaymentController {
@@ -29,4 +30,10 @@ export class PaymentController {
         await this.paymentService.handleStripeWebhook(signature, req, res);
         return { received: true };
     }
+
+    // @Post('test-invoice')
+    // async testInvoice(@Body() body: { receiptData: ReceiptData }) {
+    //     const res_Obj = await this.paymentService.testInvoice(body.receiptData);
+    //     return res_Obj;
+    // }
 }

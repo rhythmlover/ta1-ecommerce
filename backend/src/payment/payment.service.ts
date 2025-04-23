@@ -11,7 +11,7 @@ import Stripe from "stripe";
 import * as fs from "fs";
 import { Auth } from "googleapis";
 import { v2 as cloudinary } from "cloudinary";
-import { PdfService, PdfFileOptions } from 'nestjs-html2pdf'
+import * as puppeteer from "puppeteer";
 
 @Injectable()
 export class PaymentService {
@@ -52,9 +52,8 @@ export class PaymentService {
 
     async createInvoice(receiptData: ReceiptData): Promise<void> {
         const templatePath = "src/payment/invoice-template.html";
-        const pdfService = new PdfService();
         let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
-
+    
         htmlTemplate = htmlTemplate
             .replace(/{{email}}/g, receiptData.email)
             .replace(/{{address}}/g, receiptData.address)
@@ -79,10 +78,19 @@ export class PaymentService {
                     })
                     .join("");
             });
-        const options: PdfFileOptions = {
-            html: htmlTemplate,
-            pdfOptions: {
-                path: "src/payment/invoice.pdf",
+    
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        });
+    
+        try {
+            const page = await browser.newPage();
+            await page.setContent(htmlTemplate, { waitUntil: 'load' });
+    
+            const pdfPath = "src/payment/invoice.pdf";
+            await page.pdf({
+                path: pdfPath,
                 format: "A4",
                 margin: {
                     top: "0.5in",
@@ -91,11 +99,15 @@ export class PaymentService {
                     left: "0.5in",
                 },
                 printBackground: true,
-            },
+            });
+    
+            console.log("PDF invoice created successfully for receipt ID: ", receiptData.receiptId);
+        } catch (error) {
+            console.error("Error generating PDF invoice:", error);
+            throw new Error("Failed to generate PDF invoice");
+        } finally {
+            await browser.close();
         }
-
-        await pdfService.createPdf(options);
-        console.log("PDF invoice created successfully for receipt ID: ", receiptData.receiptId);
     }
 
     async uploadInvoiceToCloudinary(invoice_id: string): Promise<string> {
@@ -125,6 +137,12 @@ export class PaymentService {
             throw new Error("Failed to upload invoice to Cloudinary");
         }
     }
+
+    // async testInvoice(receiptData: ReceiptData): Promise<void> {
+    //     await this.createInvoice(receiptData);
+    //     const invoiceUrl = await this.uploadInvoiceToCloudinary(receiptData.receiptId);
+    //     console.log("Invoice URL: ", invoiceUrl);
+    // }
 
     async getPayment(paymentId: string): Promise<Stripe.PaymentIntent> {
         try {
