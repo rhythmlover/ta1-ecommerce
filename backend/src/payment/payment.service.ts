@@ -29,6 +29,11 @@ export class PaymentService {
         private productService: ProductService) {
         const isDevEnv = this.configService.get<string>("ENV") === 'development';
         const stripeSecretKey = isDevEnv ? this.configService.get<string>("STRIPE_SECRET_KEY_TEST") : this.configService.get<string>("STRIPE_SECRET_KEY_LIVE");
+        if (isDevEnv) {
+            console.log("Using Testing Stripe Secret Key")
+        } else {
+            console.log("Using Live Stripe Secret Key")
+        }
         if (!stripeSecretKey) {
             throw new Error("STRIPE_SECRET_KEY (TEST/LIVE) is not defined in the environment variables");
         }
@@ -236,9 +241,9 @@ export class PaymentService {
                 }))),
             };
             console.log("Receipt Data: ", receiptData);
-            // await this.sendEmailReceipt(order.email, receiptData);
-            // await this.createInvoice(receiptData);
-            // await this.uploadInvoiceToCloudinary(receiptData.receiptId);
+            await this.sendEmailReceipt(order.email, receiptData);
+            await this.createInvoice(receiptData);
+            await this.uploadInvoiceToCloudinary(receiptData.receiptId);
             res.status(201).send("Payment succeeded with ID: " + paymentIntent.id);
             console.log("PaymentIntent was successful: ", paymentIntent.id);
         } else if (event.type === "payment_intent.payment_failed") {
