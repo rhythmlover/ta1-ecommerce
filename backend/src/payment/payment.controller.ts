@@ -18,6 +18,12 @@ export class PaymentController {
         const res_Obj = await this.paymentService.createPayment(body.amount);
         return res_Obj;
     }
+
+    @Post('get-payment-method')
+    async getPaymentMethod(@Body() body: { paymentMethodId: string }) {
+        const res_Obj = await this.paymentService.getPaymentMethod(body.paymentMethodId);
+        return res_Obj;
+    }
     
     @Post('get-charge')
     async getCharge(@Body() body: { chargeId: string }) {

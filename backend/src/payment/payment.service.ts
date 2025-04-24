@@ -172,6 +172,16 @@ export class PaymentService {
         }
     }
 
+    async getPaymentMethod(paymentMethodId: string): Promise<Stripe.PaymentMethod> {
+        try {
+            const paymentMethod = await this.stripe.paymentMethods.retrieve(paymentMethodId);
+            return paymentMethod;
+        } catch (error) {
+            console.error("Error retrieving payment method:", error);
+            throw new Error("Failed to retrieve payment method");
+        }
+    }
+
     async getCharge(chargeId: string): Promise<Stripe.Charge> {
         try {
             const charge = await this.stripe.charges.retrieve(chargeId);

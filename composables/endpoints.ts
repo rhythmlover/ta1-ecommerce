@@ -172,6 +172,19 @@ export async function createPaymentIntent(amount: number): Promise<Stripe.Paymen
     return await response.json();
 }
 
+export async function getPaymentMethod(paymentMethodId: string): Promise<Stripe.PaymentMethod> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/payment/get-payment-method`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paymentMethodId }),
+    });
+
+    return await response.json();
+}
+
 export async function getCharge(chargeId: string): Promise<Stripe.Charge> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/payment/get-charge`, {

@@ -208,6 +208,19 @@ onMounted(async () => {
         }
 
         const details = await getPaymentIntent(pid);
+        if (!details.shipping && !details.receipt_email) {
+            const detailsPaymentMethod = await getPaymentMethod(details.payment_method as string);
+            console.log('Payment Method Details: ', detailsPaymentMethod);
+            if (detailsPaymentMethod) {
+                details.shipping = {
+                    ...detailsPaymentMethod.billing_details,
+                    name: detailsPaymentMethod.billing_details.name ?? undefined,
+                    address: detailsPaymentMethod.billing_details.address ?? undefined,
+                };
+                details.receipt_email = detailsPaymentMethod.billing_details.email;
+            }
+        }
+        
         console.log('Payment Intent Details: ', details);
         if (details) {
             name.value = details.shipping?.name || '--';
