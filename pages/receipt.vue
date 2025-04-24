@@ -208,6 +208,7 @@ onMounted(async () => {
         }
 
         const details = await getPaymentIntent(pid);
+        console.log('Payment Intent Details: ', details);
         if (details) {
             name.value = details.shipping?.name || '--';
             email.value = details.receipt_email || '--';

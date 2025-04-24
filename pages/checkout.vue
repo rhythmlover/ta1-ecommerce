@@ -188,6 +188,7 @@ const paymentIntentId = ref<string>('');
 const loading = ref<boolean>(false);
 const pageIsLoaded = ref<boolean>(false);
 const userId = userStore.getUserId;
+const redirectUrl = `${config.public.WEB_URL}/payment-redirect`;
 
 const deliveryOptions = [
     {
@@ -297,6 +298,39 @@ onMounted(async () => {
 
     paymentElementObj.value?.mount('#payment-element');
     expressCheckoutElement.value?.mount('#express-checkout-element');
+
+    expressCheckoutElement.value?.on('confirm', async (event) => {
+        try {
+            if (!elements.value || !stripe.value) {
+                console.error('Stripe elements or stripe object is not loaded');
+                return;
+            }
+
+            const result = await stripe.value!.confirmPayment({
+                elements: elements.value,
+                clientSecret: paymentIntentCS.value,
+                confirmParams: {
+                    return_url: `${config.public.WEB_URL}/payment-redirect`,
+                },
+                redirect: 'if_required',
+            });
+
+            if (result.error) {
+                console.error('Express Checkout Payment Error:', result.error.message);
+                alertStore.showAlert(result.error.message || 'An error occurred during payment.', 'error');
+
+                event.paymentFailed({ reason: 'fail' });
+            } else {
+                alertStore.showAlert('Payment succeeded! Redirecting...', 'success');
+                navigateTo(`/receipt?id=${paymentIntentId.value}&from=checkout`);
+            }
+        } catch (error) {
+            console.error('Error during Express Checkout Payment:', error);
+            alertStore.showAlert('An error occurred during payment. Please try again.', 'error');
+
+            event.paymentFailed({ reason: 'fail' });
+        }
+    });
 });
 
 async function confirmPayment() {
@@ -327,8 +361,6 @@ async function confirmPayment() {
             console.error(elementSubmit.error);
             return;
         }
-
-        const redirectUrl = `${config.public.WEB_URL}/payment-redirect`;
 
         const paymentConfirmation = await stripe.value!.confirmPayment({
             elements: elements.value,
