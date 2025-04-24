@@ -10,7 +10,7 @@
         />
         <div class="flex-1">
             <h3 class="font-semibold">{{ modelValue.product.name }}</h3>
-            <p class="text-sm text-gray-600">Type: [{{ modelValue.option.name }}]</p>
+            <p class="text-sm text-gray-600">Option: {{ modelValue.option.name }}</p>
             <p class="text-sm text-gray-600">Qty: {{ modelValue.quantity }}</p>
         </div>
         <p class="font-sans">S${{ accumulatedPrice.toFixed(2) }}</p>
