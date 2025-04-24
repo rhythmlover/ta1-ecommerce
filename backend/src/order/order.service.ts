@@ -89,7 +89,7 @@ export class OrderService {
             });
 
             await this.sendOrderToInHouseEmail(dto.paymentId);
-            
+
             return order;
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
@@ -114,6 +114,15 @@ export class OrderService {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
+                hour12: false,
+            }),
+            purchaseDateAndTime: new Date().toLocaleString("en-SG", {
+                timeZone: "Asia/Singapore",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
                 hour12: false,
             }),
             receiptId: order.id.toUpperCase(),
@@ -169,7 +178,7 @@ export class OrderService {
             .replace(/{{phone}}/g, receiptData.phone)
             .replace(/{{postal_code}}/g, receiptData.postalCode)
             .replace(/{{name}}/g, receiptData.name)
-            .replace(/{{purchase_date}}/g, receiptData.purchaseDate)
+            .replace(/{{purchase_date}}/g, receiptData.purchaseDateAndTime)
             .replace(/{{mail_by}}/g, mailBy.toLocaleString("en-SG", {
                 timeZone: "Asia/Singapore",
                 year: "numeric",

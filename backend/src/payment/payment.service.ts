@@ -245,6 +245,13 @@ export class PaymentService {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
+                    hour12: false,
+                }),
+                purchaseDateAndTime: new Date().toLocaleString("en-SG", {
+                    timeZone: "Asia/Singapore",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
                     hour: "numeric",
                     minute: "2-digit",
                     hour12: false,
@@ -340,7 +347,7 @@ export class PaymentService {
             .replace(/{{phone}}/g, receiptData.phone)
             .replace(/{{postal_code}}/g, receiptData.postalCode)
             .replace(/{{name}}/g, receiptData.name)
-            .replace(/{{purchase_date}}/g, receiptData.purchaseDate)
+            .replace(/{{purchase_date}}/g, receiptData.purchaseDateAndTime)
             .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
             .replace(/{{payment_method}}/g, receiptData.paymentMethod)
