@@ -7,13 +7,6 @@
 
         <div v-show="pageIsLoaded" class="grid md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-4 bg-slate-50 rounded-lg p-8">
-                <h2 class="text-2xl font-semibold">Express Checkout</h2>
-                <div id="express-checkout-element" class="mt-2" />
-                <div class="flex items-center justify-center mt-3">
-                    <div class="flex-grow border-b border-gray-200"></div>
-                    <span class="mx-4 text-gray-500 text-sm">or continue below</span>
-                    <div class="flex-grow border-b border-gray-200"></div>
-                </div>
                 <div class="space-y-6">
                     <!-- Contact Section -->
                     <div class="space-y-4">
@@ -131,6 +124,12 @@
                     <!-- Payment Section -->
                     <div class="flex flex-col gap-4">
                         <h2 class="text-2xl font-semibold">Payment</h2>
+                        <div id="express-checkout-element" />
+                        <div class="flex items-center justify-center">
+                            <div class="flex-grow border-b border-gray-200"></div>
+                            <span class="mx-4 text-gray-500 text-sm">or</span>
+                            <div class="flex-grow border-b border-gray-200"></div>
+                        </div>
                         <div id="payment-element" class="w-full" />
                         <UiButton class="text-lg mt-3" @click="confirmPayment">
                             <span v-if="loading"><img :src="Loading" alt="Loading" class="w-7 h-7" /></span>
@@ -299,6 +298,25 @@ onMounted(async () => {
     paymentElementObj.value?.mount('#payment-element');
     expressCheckoutElement.value?.mount('#express-checkout-element');
 
+    expressCheckoutElement.value?.on('click', (event) => {
+        emailError.value = !email.value;
+        firstNameError.value = !firstName.value;
+        lastNameError.value = !lastName.value;
+        addressError.value = !address.value;
+        apartmentError.value = !apartment.value;
+        postalCodeError.value = !postalCode.value;
+        phoneNumberError.value = !phoneNumber.value;
+
+        const isFormValid = email.value && firstName.value && lastName.value && address.value && apartment.value && postalCode.value && phoneNumber.value;
+
+        if (!isFormValid) {
+            alertStore.showAlert('Please fill in all fields.', 'error');
+            return;
+        }
+
+        event.resolve();
+    });
+
     expressCheckoutElement.value?.on('confirm', async (event) => {
         try {
             if (!elements.value || !stripe.value) {
@@ -310,7 +328,20 @@ onMounted(async () => {
                 elements: elements.value,
                 clientSecret: paymentIntentCS.value,
                 confirmParams: {
-                    return_url: `${config.public.WEB_URL}/payment-redirect`,
+                    receipt_email: email.value,
+                    shipping: {
+                        address: {
+                            line1: address.value,
+                            line2: apartment.value,
+                            postal_code: postalCode.value,
+                            city: 'Singapore',
+                            state: 'Singapore',
+                            country: 'SG',
+                        },
+                        name: `${firstName.value} ${lastName.value}`,
+                        phone: `${phoneCountryCode.value}${phoneNumber.value}`,
+                    },
+                    return_url: redirectUrl,
                 },
                 redirect: 'if_required',
             });

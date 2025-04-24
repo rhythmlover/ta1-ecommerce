@@ -139,12 +139,6 @@ export class PaymentService {
         }
     }
 
-    // async testInvoice(receiptData: ReceiptData): Promise<void> {
-    //     await this.createInvoice(receiptData);
-    //     const invoiceUrl = await this.uploadInvoiceToCloudinary(receiptData.receiptId);
-    //     console.log("Invoice URL: ", invoiceUrl);
-    // }
-
     async getPayment(paymentId: string): Promise<Stripe.PaymentIntent> {
         try {
             const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentId);
