@@ -178,7 +178,7 @@ export class OrderService {
             .replace(/{{phone}}/g, receiptData.phone)
             .replace(/{{postal_code}}/g, receiptData.postalCode)
             .replace(/{{name}}/g, receiptData.name)
-            .replace(/{{purchase_date}}/g, receiptData.purchaseDateAndTime)
+            .replace(/{{purchase_date}}/g, receiptData.purchaseDate)
             .replace(/{{mail_by}}/g, mailBy.toLocaleString("en-SG", {
                 timeZone: "Asia/Singapore",
                 year: "numeric",
