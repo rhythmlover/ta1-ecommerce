@@ -25,7 +25,7 @@
                 <div class="sm:text-left">
                     <h3 class="text-base font-semibold text-gray-900">{{ productDetails?.name }}</h3>
                     <p class="mt-1 text-sm text-gray-500">
-                        Option: [{{ optionName }}]
+                        Option: {{ optionName }}
                     </p>
                     <p class="mt-1 text-sm text-gray-500">
                         Qty: {{ item.quantity }}

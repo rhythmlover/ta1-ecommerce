@@ -16,10 +16,10 @@
                 </p>
                 <p v-else class="text-gray-500 text-xs md:text-sm">...</p>
             </div>
-            <div class="flex space-x-2 md:space-x-4 text-xs md:text-sm">
-                <UiLink class="text-indigo-600 hover:text-indigo-800" @click="order.id && downloadInvoice(order.id.slice(0, 13).toUpperCase())">Download Invoice</UiLink>
+            <div class="flex space-x-2 md:space-x-4">
+                <UiLink class="text-xs md:text-sm text-indigo-600 hover:text-indigo-800" @click="order.id && downloadInvoice(order.id.slice(0, 13).toUpperCase())">Download Invoice</UiLink>
                 <span class="text-gray-300 hidden sm:inline">|</span>
-                <UiLink class="text-indigo-600 hover:text-indigo-800" @click="goToReceipt">View Receipt</UiLink>
+                <UiLink class="text-xs md:text-sm text-indigo-600 hover:text-indigo-800" @click="goToReceipt">View Receipt</UiLink>
             </div>
         </div>
 
