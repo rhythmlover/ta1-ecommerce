@@ -255,7 +255,7 @@ export class PaymentService {
                 totalCost: order.totalCost,
                 receiptItems: await Promise.all(order.items.map(async (item) => ({
                     price: (await this.productService.getProduct(item.productId)).price * item.quantity,
-                    description: (await this.productService.getProduct(item.productId)).name + "【" + (await this.productService.getProduct(item.productId)).options.find(option => option.id === item.optionId).name + "】",
+                    description: (await this.productService.getProduct(item.productId)).name + " [" + (await this.productService.getProduct(item.productId)).options.find(option => option.id === item.optionId).name + "]",
                     quantity: item.quantity,
                 }))),
             };

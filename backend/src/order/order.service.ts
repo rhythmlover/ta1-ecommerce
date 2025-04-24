@@ -127,11 +127,11 @@ export class OrderService {
                         item.quantity,
                     description:
                         (await this.productService.getProduct(item.productId)).name +
-                        "【" +
+                        " [" +
                         (
                             await this.productService.getProduct(item.productId)
                         ).options.find((option) => option.id === item.optionId).name +
-                        "】",
+                        "] ",
                     quantity: item.quantity,
                 }))
             ),
