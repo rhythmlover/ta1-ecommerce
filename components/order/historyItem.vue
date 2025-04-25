@@ -4,7 +4,7 @@
         <!-- Mobile view: Horizontal layout for image and details -->
         <div class="flex sm:block">
             <NuxtImg :src="option?.imageUrl + '.jpg'" :alt="productDetails?.name" @load="imageLoaded = true"
-                class="object-center object-cover h-24 w-24 sm:h-32 sm:w-32 bg-gray-100 rounded-md overflow-hidden flex-shrink-0" />
+                class="object-center object-cover h-24 w-24 sm:h-32 sm:w-32 bg-gray-100 shadow-md rounded-lg overflow-hidden flex-shrink-0" />
 
             <div class="ml-4 sm:ml-0 sm:mt-0 flex-1 flex flex-col">
                 <div class="sm:hidden">

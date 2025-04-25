@@ -37,7 +37,24 @@ import type { Product } from '~/types/types';
 const products = ref<Product[]>([]);
 
 onMounted(async () => {
-    products.value = await getAllProducts();
+    const allProducts = await getAllProducts();
+
+    // Sort products by priority (1 being the highest priority)
+    products.value = allProducts.sort((a, b) => {
+        if (a.priority !== null && b.priority !== null) {
+            // Both products have a priority, sort by ascending priority
+            return (a.priority ?? Infinity) - (b.priority ?? Infinity);
+        } else if (a.priority !== null) {
+            // Only `a` has a priority, it comes first
+            return -1;
+        } else if (b.priority !== null) {
+            // Only `b` has a priority, it comes first
+            return 1;
+        } else {
+            // Neither has a priority, maintain their original order
+            return 0;
+        }
+    });
 });
 
 useSeoMeta({

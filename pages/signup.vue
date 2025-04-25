@@ -14,7 +14,7 @@
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div class="bg-white py-8 px-4 shadow-md sm:rounded-lg sm:px-10">
                 <div class="mt-6">
                     <label for="email" class="block text-sm leading-5 text-gray-900 mb-2">
                         Email address

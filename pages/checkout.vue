@@ -19,8 +19,8 @@
                                     :class="['w-full bg-white px-3 py-2 rounded-md border focus:outline-none focus:ring-2', emailError ? 'border-red-500 focus:ring-red-500 border-2' : 'border-gray-300 focus:ring-blue-500']"
                                     v-model="email" />
                                 <p v-if="emailError" class="text-red-500 text-xs italic">Please enter your email.</p>
-                                <label class="block pt-2 text-sm text-gray-700">A receipt will be sent to the
-                                    email</label>
+                                <p class="block pt-2 text-sm text-gray-700">A receipt will be sent to the
+                                    email</p>
                             </div>
                         </div>
                     </div>
@@ -123,7 +123,10 @@
 
                     <!-- Payment Section -->
                     <div class="flex flex-col gap-4">
-                        <h2 class="text-2xl font-semibold">Payment</h2>
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-2xl font-semibold">Payment</h2>
+                            <p class="text-sm text-gray-700">PayNow is preferred</p>
+                        </div>
                         <div id="express-checkout-element" />
                         <div class="flex items-center justify-center">
                             <div class="flex-grow border-b border-gray-200"></div>

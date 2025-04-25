@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-start gap-6">
         <NuxtImg :src="modelValue.option.imageUrl + '.jpg'" :alt="modelValue.product.name"
-            :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="180" height="180" />
+            :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="180" height="180" class="shadow-md rounded-lg"/>
 
         <div class="flex flex-col items-start gap-2">
             <UiLink class="text-xl" :to="productUrl">

@@ -7,6 +7,7 @@
             layout="responsive" 
             width="70" 
             height="70"
+            class="shadow-md rounded-lg"
         />
         <div class="flex-1">
             <h3 class="font-semibold">{{ modelValue.product.name }}</h3>

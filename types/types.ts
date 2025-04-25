@@ -15,6 +15,7 @@ export type Product = {
     description?: string;
     price: number;
     imageUrl?: string;
+    priority?: number;
     createdAt: Date;
     updatedAt: Date;
     options: Option[];

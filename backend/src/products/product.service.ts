@@ -7,7 +7,12 @@ export class ProductService {
     constructor(private prisma: PrismaService) { }
 
     getProducts() {
-        return this.prisma.product.findMany();
+        return this.prisma.product.findMany({
+            orderBy: [
+                { priority: 'asc' }, // Sort by priority first (lower numbers first)
+                { createdAt: 'desc' }, // Sort by creation date for products without priority
+            ],
+        });
     }
 
     async addProduct(dto: ProductDto) {

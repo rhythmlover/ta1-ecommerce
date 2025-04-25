@@ -61,7 +61,7 @@
                 <div
                     class="flex flex-col lg:flex-row items-start lg:items-center py-4 lg:py-6 px-4 lg:px-10 border-b border-gray-200 gap-4 lg:gap-6 w-full">
                     <NuxtImg :src="item.option.imageUrl + '.jpg'" :alt="item.product.name"
-                        class="aspect-square w-full max-w-[100px] lg:max-w-[140px] rounded-xl object-cover" />
+                        class="aspect-square w-full max-w-[100px] lg:max-w-[140px] shadow-md rounded-lg object-cover" />
                     <div class="flex flex-col lg:flex-row items-start lg:items-center w-full">
                         <div class="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 lg:gap-0">
                             <div class="flex flex-col">

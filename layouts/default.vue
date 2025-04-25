@@ -30,14 +30,14 @@
             </UiButton>
 
             <UiButton v-if="!userLoggedIn" variant="text"
-                class="flex items-center gap-1 bg-white rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 relative sm:py-1.5 sm:gap-2 text-sm"
+                class="flex items-center gap-1 bg-white rounded-full py-1 px-2 relative sm:py-2 sm:gap-2 text-sm"
                 aria-label="Login" to="/login">
                 <IconUserCircle class="w-7 h-7" />
             </UiButton>
 
             <Menu v-else as="div" class="relative inline-block text-left">
                 <MenuButton
-                    class="flex items-center gap-1 bg-white border border-slate-200 rounded-full py-1 px-2 hover:bg-slate-50 active:bg-slate-100 relative sm:py-2 sm:px-3 sm:gap-2">
+                    class="flex items-center gap-1 bg-white border border-slate-200 rounded-full py-1 px-2 hover:bg-slate-100 relative sm:py-2 sm:px-3 sm:gap-2">
                     <IconMenu2 class="w-4 h-6 sm:w-5 sm:h-7" />
                     <IconUserCircle class="w-7 h-7" />
                 </MenuButton>
@@ -56,12 +56,12 @@
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
                             <button @click="goToOrderHistory"
-                                :class="[active ? 'bg-gray-100 text-black-900 outline-none' : 'text-black-900', 'block w-full px-4 py-2 text-left text-sm']">Order
+                                :class="[active ? 'bg-slate-200 text-black-900 outline-none' : 'text-black-900', 'block w-full px-4 py-2 text-left text-sm']">Order
                                 History</button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
                             <button @click="logout"
-                                :class="[active ? 'bg-gray-100 text-#FF0000 outline-none' : 'text-#FF0000', 'block w-full px-4 py-2 text-left text-sm rounded-b-md']">Sign
+                                :class="[active ? 'bg-slate-200 text-#FF0000 outline-none' : 'text-#FF0000', 'block w-full px-4 py-2 text-left text-sm rounded-b-md']">Sign
                                 out</button>
                             </MenuItem>
                         </div>
@@ -104,11 +104,11 @@
         </nav>
     </transition>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col bg-slate-50">
         <slot />
     </div>
 
-    <footer class="flex flex-col border-t border-slate-200">
+    <footer class="flex flex-col border-t border-slate-200 bg-slate-100">
         <div class="flex flex-col items-start gap-8 md:gap-12 md:flex-row mx-auto w-full max-w-6xl p-8">
             <div class="flex flex-col gap-2">
                 <h3 class="text-size-2xl font-extrabold mb-5">Help and Support</h3>

@@ -16,6 +16,7 @@
                     width="360"
                     height="360"
                     @load="imageLoaded = true"
+                    class="rounded-lg aspect-square shadow-md transition duration-200 hover:scale-104"
                 />
             </NuxtLink>
 

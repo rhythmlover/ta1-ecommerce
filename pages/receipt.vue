@@ -1,6 +1,6 @@
 <template>
     <UiCenter>
-        <div class="bg-white rounded-lg pt-10 px-10 flex justify-between items-center">
+        <div class="rounded-lg pt-10 px-10 flex justify-between items-center">
             <div>
                 <div class="flex items-center gap-3">
                     <h2 class="text-lg font-bold" v-if="finishLoading && orderId">#{{ orderId.toUpperCase() }}</h2>

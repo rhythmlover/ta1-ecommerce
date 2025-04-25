@@ -17,7 +17,7 @@
                 <div class="flex flex-col gap-4">
                     <NuxtImg provider="cloudinary" :src="currentImageUrl" :alt="product?.name"
                         :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="600" height="600"
-                        @load="imageLoaded = true" />
+                        @load="imageLoaded = true" class="shadow-md rounded-lg" />
 
                     <!-- <NuxtImg :src="currentImageUrl" :alt="product?.name" :modifiers="{ roundCorner: '10:10' }"
                     layout="responsive" @load="imageLoaded = true" /> -->
@@ -46,10 +46,10 @@
                                 <div class="flex flex-col gap-2">
                                     <div class="flex gap-2 flex-wrap">
                                         <UiButton class="text-sm"
-                                            :variant="selectedOptions[option.name] === value ? 'highlight' : 'outline'"
-                                            @click="setOption(value, option)" v-for="value in option.name" :key="value">
+                                            :variant="selectedOptions[option.name] === option.name ? 'highlight' : 'outline'"
+                                            @click="setOption(option.name, option)">
                                             <span class="px-2 font-normal">
-                                                {{ value }}
+                                                {{ option.name }}
                                             </span>
                                         </UiButton>
                                     </div>
@@ -59,8 +59,8 @@
                     </div>
 
                     <div class="flex gap-2 flex-wrap">
-                        <div class="flex items-center border border-slate-200 rounded-lg">
-                            <UiButton variant="text" aria-label="Decrease Product Quantity" @click="changeQuantity(-1)">
+                        <div class="flex bg-white items-center border border-slate-200 rounded-lg">
+                            <UiButton variant="changeQty" aria-label="Decrease Product Quantity" @click="changeQuantity(-1)">
                                 <IconMinus width="20" height="20" />
                             </UiButton>
 
@@ -69,7 +69,7 @@
                                 :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity"
                                 @keydown.enter="submitQuantity" />
 
-                            <UiButton variant="text" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
+                            <UiButton variant="changeQty" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
                                 <IconPlus width="20" height="20" />
                             </UiButton>
                         </div>
