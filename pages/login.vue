@@ -18,7 +18,7 @@
                     <div class="flex items-center justify-between">
                         <label for="password" class="block text-sm/6 text-gray-900">Password</label>
                         <div class="text-sm">
-                            <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500"
+                            <UiLink class="font-semibold text-sm text-indigo-600 hover:text-indigo-500"
                                 to="/forgot-password">
                                 Forgot password?</UiLink>
                         </div>
@@ -38,7 +38,7 @@
             <p class="mt-10 text-center text-sm/6 text-gray-500">
                 Don't have an account?
                 {{ ' ' }}
-                <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500 ml-1" :to="'/signup'">
+                <UiLink class="font-semibold text-sm text-indigo-600 hover:text-indigo-500 ml-1" :to="'/signup'">
                     Sign up</UiLink>
             </p>
 

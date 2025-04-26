@@ -19,7 +19,7 @@
         </div>
 
         <div class="flex items-center">
-            <UiButton variant="text"
+            <UiButton variant="rounded"
                 :class="[userLoggedIn ? 'mr-0 sm:mr-2' : '', 'text-sm flex relative bg-white rounded-full']"
                 aria-label="Shopping Cart" @click="checkIfUserIsLoggedIn">
                 <IconShoppingBag class="w-7 h-7" />
@@ -29,7 +29,7 @@
                 </span>
             </UiButton>
 
-            <UiButton v-if="!userLoggedIn" variant="text"
+            <UiButton v-if="!userLoggedIn" variant="rounded"
                 class="flex items-center gap-1 bg-white rounded-full py-1 px-2 relative sm:py-2 sm:gap-2 text-sm"
                 aria-label="Login" to="/login">
                 <IconUserCircle class="w-7 h-7" />
@@ -108,37 +108,137 @@
         <slot />
     </div>
 
-    <footer class="flex flex-col border-t border-slate-200 bg-slate-100">
-        <div class="flex flex-col items-start gap-8 md:gap-12 md:flex-row mx-auto w-full max-w-6xl p-8">
-            <div class="flex flex-col gap-2">
-                <h3 class="text-size-2xl font-extrabold mb-5">Help and Support</h3>
-                <UiLink to="/contact" class="font-mono w-0">
-                    Contact
-                </UiLink>
-                <UiLink to="/faq" class="font-mono w-0">
-                    FAQ
-                </UiLink>
-                <UiLink to="/terms-conditions" class="font-mono w-40">
-                    Terms and Conditions
-                </UiLink>
-                <UiLink to="/privacy-policy" class="font-mono w-25">
-                    Privacy Policy
-                </UiLink>
-            </div>
-        </div>
+    <footer class="flex flex-col border-t border-slate-200 bg-white py-10">
+        <div class="mx-auto w-full max-w-8xl px-8 md:px-8 xl:px-50">
+            <!-- Main footer content -->
+            <div class="grid grid-cols-2 gap-8 lg:grid-cols-4 lg:gap-12 mb-2 md:mb-10">
+                <!-- Retail Stores -->
+                <!-- <div>
+                    <h3 class="text-lg font-semibold mb-4">Retail Stores</h3>
+                    <ul class="space-y-0.5">
+                        <li>
+                            <UiLink to="/store-exchange" class="text-xs text-gray-600 hover:text-gray-900">Store
+                                Exchange & Refund Policy</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/store-information" class="text-xs text-gray-600 hover:text-gray-900">Store
+                                Information</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/product-availability" class="text-xs text-gray-600 hover:text-gray-900">
+                                Product
+                                Availability in Stores</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/in-store-drop-off" class="text-xs text-gray-600 hover:text-gray-900">In
+                                Stores
+                                Drop Off</UiLink>
+                        </li>
+                    </ul>
+                </div> -->
 
-        <div
-            class="flex gap-2 flex-col md:flex-row items-center justify-between text-sm font-semibold border-t border-slate-200 p-4">
-            <UiButton variant="text" to="/">
-                <span class="px-2"> {{ new Date().getFullYear() }} TOGETHER AS ONE </span>
-            </UiButton>
+                <!-- Help & Support -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Help & Support</h3>
+                    <ul class="space-y-0.5">
+                        <li>
+                            <UiLink to="/contact" class="text-xs text-gray-600 hover:text-gray-900">Contact Us
+                            </UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/faq" class="text-xs text-gray-600 hover:text-gray-900">FAQ</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/privacy-policy" class="text-xs text-gray-600 hover:text-gray-900">Privacy
+                                Policy
+                            </UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/terms-conditions" class="text-xs text-gray-600 hover:text-gray-900">Terms &
+                                Conditions</UiLink>
+                        </li>
+                        <!-- <li>
+                            <UiLink to="/shipping-info" class="text-xs text-gray-600 hover:text-gray-900">Shipping
+                                Info
+                            </UiLink>
+                        </li> -->
+                    </ul>
+                </div>
+
+                <!-- <div>
+                    <h3 class="text-lg font-semibold mb-4">About Us</h3>
+                    <ul class="space-y-0.5">
+                        <li>
+                            <UiLink to="/who-we-are" class="text-xs text-gray-600 hover:text-gray-900">Who We Are
+                            </UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/careers" class="text-xs text-gray-600 hover:text-gray-900">Careers</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/clubhouse" class="text-xs text-gray-600 hover:text-gray-900">TTR Clubhouse
+                            </UiLink>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick links</h3>
+                    <ul class="space-y-0.5">
+                        <li>
+                            <UiLink to="/reward-points" class="text-xs text-gray-600 hover:text-gray-900">Reward
+                                Points</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/gift-cards" class="text-xs text-gray-600 hover:text-gray-900">Gift Cards
+                            </UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/customer-care" class="text-xs text-gray-600 hover:text-gray-900">Customer
+                                Care</UiLink>
+                        </li>
+                        <li>
+                            <UiLink to="/sizing-guide" class="text-xs text-gray-600 hover:text-gray-900">Sizing
+                                Guide</UiLink>
+                        </li>
+                    </ul>
+                </div> -->
+            </div>
+
+            <!-- Copyright and social media -->
+            <div class="border-t border-black pt-3 flex flex-row justify-between items-center">
+                <div class="text-xs text-black">
+                    {{ new Date().getFullYear() }} TOGETHER AS ONE
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <!-- Social media icons -->
+                    <div class="flex gap-4">
+                        <a href="https://shopee.sg/shop/838203846" target="_blank" class="text-gray-600 hover:text-gray-900">
+                            <IconBrandShopee class="w-5 h-5" />
+                        </a>
+                        <!-- <a href="#" class="text-gray-600 hover:text-gray-900">
+                            <IconInstagram class="w-5 h-5" />
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">
+                            <IconBrandTiktok class="w-5 h-5" />
+                        </a> -->
+                    </div>
+                </div>
+
+                <!-- Back to top -->
+                <a href="#" class="flex items-center text-sm text-gray-600 hover:text-gray-900">
+                    Back to Top
+                    <IconArrowNarrowUp class="w-4 h-4 ml-1" />
+                </a>
+            </div>
         </div>
     </footer>
     <SpeedInsights />
 </template>
 
 <script setup lang="ts">
-import { IconMenu2, IconShoppingBag, IconUserCircle, IconX } from "@tabler/icons-vue";
+import { IconArrowNarrowUp, IconBrandShopee, IconMenu2, IconShoppingBag, IconUserCircle, IconX } from "@tabler/icons-vue";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { SpeedInsights } from '@vercel/speed-insights/vue';
 import type { Cart } from "~/types/types";

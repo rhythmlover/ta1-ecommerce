@@ -25,8 +25,8 @@
                     <IconTrash width="20" height="20" />
                 </UiButton>
 
-                <div class="flex items-center border border-slate-200 rounded-lg">
-                    <UiButton variant="text" aria-label="Increase Product Quantity" @click="changeQuantity(-1)">
+                <div class="flex bg-white items-center border border-slate-200 rounded-lg">
+                    <UiButton variant="changeQty" aria-label="Increase Product Quantity" @click="changeQuantity(-1)">
                         <IconMinus width="20" height="20" />
                     </UiButton>
 
@@ -34,7 +34,7 @@
                         class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
                         :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
 
-                    <UiButton variant="text" aria-label="Decrease Product Quantity" @click="changeQuantity(1)">
+                    <UiButton variant="changeQty" aria-label="Decrease Product Quantity" @click="changeQuantity(1)">
                         <IconPlus width="20" height="20" />
                     </UiButton>
                 </div>

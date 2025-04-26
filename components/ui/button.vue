@@ -14,7 +14,7 @@
 import { NuxtLink } from "#components";
 import { type Component } from "vue";
 
-type Variant = "primary" | "outline" | "highlight" | "text" | "changeQty";
+type Variant = "primary" | "outline" | "highlight" | "text" | "rounded" | "changeQty";
 
 withDefaults(
     defineProps<{
@@ -38,7 +38,8 @@ const variants: Record<Variant, string> = {
     "outline": "bg-white hover:bg-gray-50 active:bg-gray-100 border border-gray-300 rounded-md",
     "highlight":
         "bg-white text-indigo-500 hover:bg-slate-50 active:bg-slate-100 border border-indigo-500 rounded-md",
-    "text": "hover:bg-slate-100 rounded-full",
+    "text": "border border-transparent",
+    "rounded": "hover:bg-slate-200 rounded-full",
     "changeQty": "hover:bg-slate-100 rounded-lg" // just for the increment and decrement buttons
 };
 </script>   

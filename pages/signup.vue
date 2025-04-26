@@ -4,12 +4,11 @@
             <h2 class="mt-6 text-center text-3xl leading-9 font-bold text-gray-900">
                 Create a new account
             </h2>
-            <p class="text-center text-sm leading-5 text-gray-500 max-w">
+            <p class="mt-2 text-center text-sm/6 text-gray-500">
                 Or
-                <UiButton variant="text" :to="'/login'"
-                    class="text-indigo-600 hover:text-indigo-500 font-semibold focus:outline-none focus:underline transition ease-in-out duration-150">
-                    login to your account
-                </UiButton>
+                {{ ' ' }}
+                <UiLink class="font-semibold text-size-sm text-indigo-600 hover:text-indigo-500 ml-1" :to="'/login'">
+                    login to your account</UiLink>
             </p>
         </div>
 
@@ -73,6 +72,10 @@
                             Create account
                         </UiButton>
                     </span>
+                    <!-- By registering, I agree to the Terms & Conditions and the Privacy Policy. -->
+                    <p class="mt-3 mb-6 text-xs text-black">
+                        By registering, I agree to the Terms & Conditions and the Privacy Policy.
+                    </p>
                 </div>
 
                 <UiAlertError />
