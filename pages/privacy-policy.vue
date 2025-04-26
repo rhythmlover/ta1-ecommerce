@@ -3,11 +3,11 @@
         <UiHeading>Privacy Policy</UiHeading>
         <UiParagraph>
             <span class="font-bold" style="color: black">1. We respect your privacy</span><br>
-            <span class="italic">Business Name</span> (TOGETHERASONE Pte Ltd), the owner and operator of this website, respects your right to privacy and this policy sets out how we collect and treat your personal information. 
-            “Personal information” is information we hold which is identifiable as being about you.</UiParagraph>
+            <span class="italic">Business Name</span> (TOGETHERASONE Pte Ltd, UEN 202512228Z), the owner and operator of this website, respects your right to privacy and this policy sets out how we collect and treat your personal information. 
+            <span class="italic">Personal information</span> is information we hold which is identifiable as being about you.</UiParagraph>
         <UiParagraph>
             <span class="font-bold" style="color: black">2. What personal information we collect</span><br>
-            We may collect the following types of personal information from you:<br>
+            We may collect the following types of <span class="italic">Personal information</span> from you:<br>
             • Name<br>
             • Shipping address<br>
             • Phone number<br>
@@ -20,9 +20,11 @@
             <span class="font-bold" style="color: black">3. Use of your personal information</span><br>
             We use your information to provide our service to you. Depending on the product you have acquired, 
             it may be necessary to keep a record of the transaction for business purposes or to enable us to respond to your concerns.
-            We may hold Personal Information for the following purposes:<br>
+            We may hold <span class="italic">Personal information</span> for the following purposes:<br>
             • Internal accounting and administration.<br>
-            • To respond to inquiries.
+            • To respond to inquiries.<br>
+            • To process refunds.
+
         </UiParagraph>
         <UiParagraph>
             <span class="font-bold" style="color: black">4. Changes to our Privacy Policy</span><br>

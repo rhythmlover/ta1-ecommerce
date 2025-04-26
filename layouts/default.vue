@@ -111,7 +111,7 @@
     <footer class="flex flex-col border-t border-slate-200 bg-white py-10">
         <div class="mx-auto w-full max-w-8xl px-8 md:px-8 xl:px-50">
             <!-- Main footer content -->
-            <div class="grid grid-cols-2 gap-8 lg:grid-cols-4 lg:gap-12 mb-2 md:mb-10">
+            <div class="grid grid-cols-2 gap-8 lg:grid-cols-4 lg:gap-12 mb-10">
                 <!-- Retail Stores -->
                 <!-- <div>
                     <h3 class="text-lg font-semibold mb-4">Retail Stores</h3>
