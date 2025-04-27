@@ -356,6 +356,7 @@ export class PaymentService {
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
             .replace(/{{payment_method}}/g, receiptData.paymentMethod)
             .replace(/{{payment_date}}/g, receiptData.paymentDate)
+            .replace(/{{shipping_fee}}/g, "0.00") // Hard-coded for shipping fee to be free of charge as for now
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
                     .map((detail: any) => {
