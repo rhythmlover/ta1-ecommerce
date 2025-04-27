@@ -6,7 +6,7 @@
         </div>
 
         <div v-show="pageIsLoaded" class="grid md:grid-cols-2 gap-8">
-            <div class="flex flex-col gap-4 bg-slate-50 rounded-lg p-8">
+            <div class="flex flex-col gap-4 bg-white rounded-lg p-8 border shadow-md">
                 <div class="space-y-6">
                     <!-- Contact Section -->
                     <div class="space-y-4">
@@ -143,7 +143,7 @@
             </div>
 
             <div>
-                <div class="flex flex-col gap-4 bg-slate-50 p-8 rounded-lg">
+                <div class="flex flex-col gap-4 bg-white p-8 rounded-lg border shadow-md">
                     <CheckoutLine v-for="item in cartData?.items" :key="item.id" :cartItem="item" />
 
                     <div class="flex items-center justify-between">

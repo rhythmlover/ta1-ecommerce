@@ -1,5 +1,5 @@
 <template>
-    <div class="border border-gray-300 rounded-xl max-w-xl mx-auto lg:max-w-full mb-3">
+    <div class="border border-gray-300 bg-white rounded-xl max-w-xl mx-auto lg:max-w-full mb-3">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between p-4 lg:p-6 border-gray-200 cursor-pointer"
             @click="toggleDropdown">
             <div class="data mb-4 lg:mb-0">

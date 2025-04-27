@@ -4,7 +4,7 @@
 
         <div class="grid md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-8">
-                <div class="flex flex-col gap-4 items-center bg-slate-50 rounded-lg p-8" v-if="isEmpty">
+                <div class="flex flex-col gap-4 items-center bg-white border rounded-lg p-8 rounded shadow-md" v-if="isEmpty">
                     <IconShoppingCart width="48" height="48" />
 
                     <p class="text-xl">Your cart is empty.</p>
@@ -15,7 +15,7 @@
             </div>
 
             <div>
-                <div class="flex flex-col gap-4 bg-slate-50 p-8 rounded-lg">
+                <div class="flex flex-col gap-4 bg-white border p-8 rounded-lg rounded shadow-md">
                     <!-- <div class="flex items-center justify-between">
                         <UiParagraph> Taxes </UiParagraph>
 
