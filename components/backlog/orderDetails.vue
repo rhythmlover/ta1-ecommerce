@@ -43,7 +43,7 @@
                             Email: <span class="text-indigo-600">{{ orderCustomerEmail }}</span>
                         </p>
                         <p class="font-medium text-sm lg:text-base leading-6 lg:leading-7 text-black mb-2 lg:mb-3">
-                            Phone Number: <span class="text-indigo-600">{{ orderPhoneNumber.slice(2) }}</span>
+                            Phone Number: <span class="text-indigo-600">{{ orderPhoneNumber }}</span>
                         </p>
                     </div>
                     <div class="w-auto flex-auto">
