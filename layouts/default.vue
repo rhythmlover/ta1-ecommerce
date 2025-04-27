@@ -207,7 +207,7 @@
 
             <!-- Copyright and social media -->
             <div class="border-t border-black pt-3 flex flex-row justify-between items-center">
-                <div class="text-xs text-black">
+                <div class="text-xs text-black font-semibold">
                     {{ new Date().getFullYear() }} TOGETHER AS ONE
                 </div>
 
