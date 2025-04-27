@@ -187,6 +187,8 @@ export class OrderService {
             }))
             .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
+            .replace(/{{shipping_fee}}/g, "0.00") // Hard-coded for shipping fee to be free of charge as for now
+            .replace(/{{payment_method}}/g, receiptData.paymentMethod)
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
                     .map((detail: any) => {

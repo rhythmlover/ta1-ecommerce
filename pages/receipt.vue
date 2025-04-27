@@ -132,8 +132,8 @@
                             </div>
                             <p class="font-medium">$50.00</p>
                         </div> -->
-                        <CheckoutLine v-if="cartItems" v-for="item in cartItems?.items" :key="item.id" :cartItem="item" />
-                        <CheckoutLine v-if="orderItems" v-for="item in orderItems?.items" :key="`${item.productId}-${item.optionId}`" :orderItem="item" />
+                        <CheckoutLine v-if="cartItems && finishLoading" v-for="item in cartItems?.items" :key="item.id" :cartItem="item" />
+                        <CheckoutLine v-if="orderItems && finishLoading" v-for="item in orderItems?.items" :key="`${item.productId}-${item.optionId}`" :orderItem="item" />
                     </div>
 
                     <!-- Order Total -->
