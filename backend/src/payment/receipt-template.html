@@ -520,11 +520,10 @@
                               {{#each receipt_details}}
                               <tr>
                                 <td width="80%" class="purchase_item">
-                                  <span class="f-fallback">{{description}}x
-                                    {{quantity}}</span>
+                                  <span class="f-fallback">{{description}} x {{quantity}}</span>
                                 </td>
                                 <td class="align-right" width="20%" class="purchase_item">
-                                  <span class="f-fallback">${{price}}</span>
+                                  <span class="f-fallback">S${{price}}</span>
                                 </td>
                               </tr>
                               {{/each}}
@@ -533,7 +532,7 @@
                                   <span class="f-fallback">Shipping Fee</span>
                                 </td>
                                 <td width="20%" class="align-right" class="purchase_item">
-                                  <span class="f-fallback">${{shipping_fee}}</span>
+                                  <span class="f-fallback">S${{shipping_fee}}</span>
                                 </td>
                               </tr>
                               <tr>
@@ -544,7 +543,7 @@
                                 </td>
                                 <td width="20%" class="purchase_footer" valign="middle">
                                   <p class="f-fallback purchase_total">
-                                    ${{total}}
+                                    S${{total}}
                                   </p>
                                 </td>
                               </tr>

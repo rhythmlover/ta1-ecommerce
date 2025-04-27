@@ -132,7 +132,8 @@
                             </div>
                             <p class="font-medium">$50.00</p>
                         </div> -->
-                        <CheckoutLine v-for="item in cartData?.items" :key="item.id" :modelValue="item" />
+                        <CheckoutLine v-if="cartItems" v-for="item in cartItems?.items" :key="item.id" :cartItem="item" />
+                        <CheckoutLine v-if="orderItems" v-for="item in orderItems?.items" :key="`${item.productId}-${item.optionId}`" :orderItem="item" />
                     </div>
 
                     <!-- Order Total -->
@@ -144,7 +145,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Shipping</span>
-                            <span>{{ shippingCost === "0.00" ? "Free" : shippingCost }}</span>
+                            <span>S${{ shippingCost === "0.00" ? "0.00" : shippingCost }}</span>
                         </div>
                         <div class="h-px bg-gray-300 my-4"></div>
                         <div class="flex justify-between text-lg font-bold">
@@ -169,7 +170,8 @@ const route = useRoute();
 const userStore = useUserStore();
 const cartStore = useCartStore();
 
-const cartData = ref<Cart | null>(null);
+const cartItems = ref<Cart | null>(null);
+const orderItems = ref<Order | null>(null);
 const orderId = ref<string | null>(null);
 const orderTime = ref<string | null>(null);
 const charge = ref<Stripe.Charge>({} as Stripe.Charge);
@@ -196,19 +198,18 @@ onMounted(async () => {
     try {
         if (userId) {
             // make sure it is redirected only from checkout or order history to load the items
-            if (from) {
-                cartData.value = await getUserCart(userId);
+            if (from === 'checkout') {
+                cartItems.value = await getUserCart(userId);
+                cartStore.clearCartQty();
+            } else if (from === 'history') {
+                orderItems.value = await getOrder(pid);
             }
         } else {
             navigateTo('/login');
         }
 
-        if (from !== 'history') {
-            cartStore.clearCartQty();
-        }
-
         const details = await getPaymentIntent(pid);
-        
+
         if (details) {
             name.value = details.shipping?.name || '--';
             email.value = details.receipt_email || '--';
@@ -220,8 +221,45 @@ onMounted(async () => {
             subTotal.value = (details.amount_received / 100).toFixed(2) + '';
         }
 
-        if (cartData.value) {
-            const orderItems: OrderItem[] = cartData.value.items.map((item) => {
+        const chargeId = details.latest_charge as string;
+        charge.value = await getCharge(chargeId);
+
+        switch (charge.value.payment_method_details?.type) {
+            case 'card':
+                reference.value = charge.value.id.slice(3) as string || '--';
+
+                let brand = charge.value.payment_method_details?.card?.brand || '--';
+                brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
+
+                last4.value = charge.value.payment_method_details?.card?.last4 || '--';
+                paymentType.value = `${brand} ending in ${last4.value}`;
+                localStorage.removeItem('piID');
+                localStorage.removeItem('piCS');
+                break;
+            // piID and piCS local storage is removed in payment-redirect.vue for paynow payment method
+            case 'paynow':
+                reference.value = charge.value.id.slice(3) as string || '';
+                paymentType.value = 'PayNow';
+                // clear the local storage for piID and piCS if they exist
+                // this is to prevent the user from being able to access the payment-redirect page again with the same piID and piCS
+                // in the event that payment-redirect page is not loaded
+                if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
+                    localStorage.removeItem('piID');
+                    localStorage.removeItem('piCS');
+                }
+                break;
+            default:
+                reference.value = charge.value.id.slice(3) as string || '--';
+                paymentType.value = charge.value.payment_method_details?.type || '--';
+                if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
+                    localStorage.removeItem('piID');
+                    localStorage.removeItem('piCS');
+                }
+                break;
+        }
+
+        if (cartItems.value && from === 'checkout') {
+            const orderItems: OrderItem[] = cartItems.value.items.map((item) => {
                 return {
                     productId: item.product.id,
                     quantity: item.quantity,
@@ -229,10 +267,11 @@ onMounted(async () => {
                 };
             });
 
+
             const order: Order = {
                 userId: userId ?? '',
                 paymentId: pid,
-                totalCost: cartData.value.totalCost,
+                totalCost: cartItems.value.totalCost,
                 name: name.value,
                 email: email.value,
                 phone: phoneCountryCode.value + phone.value,
@@ -241,52 +280,16 @@ onMounted(async () => {
                 items: orderItems,
             };
 
-            const chargeId = details.latest_charge as string;
-            charge.value = await getCharge(chargeId);
-
-            switch (charge.value.payment_method_details?.type) {
-                case 'card':
-                    reference.value = charge.value.id.slice(3) as string || '--';
-
-                    let brand = charge.value.payment_method_details?.card?.brand || '--';
-                    brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
-
-                    last4.value = charge.value.payment_method_details?.card?.last4 || '--';
-                    paymentType.value = `${brand} ending in ${last4.value}`;
-                    localStorage.removeItem('piID');
-                    localStorage.removeItem('piCS');
-                    break;
-                // piID and piCS local storage is removed in payment-redirect.vue for paynow payment method
-                case 'paynow':
-                    reference.value = charge.value.id.slice(3) as string || '';
-                    paymentType.value = 'PayNow';
-                    // clear the local storage for piID and piCS if they exist
-                    // this is to prevent the user from being able to access the payment-redirect page again with the same piID and piCS
-                    // in the event that payment-redirect page is not loaded
-                    if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
-                        localStorage.removeItem('piID');
-                        localStorage.removeItem('piCS');
-                    }
-                    break;
-                default:
-                    reference.value = charge.value.id.slice(3) as string || '--';
-                    paymentType.value = charge.value.payment_method_details?.type || '--';
-                    if (localStorage.getItem('piID') && localStorage.getItem('piCS')) {
-                        localStorage.removeItem('piID');
-                        localStorage.removeItem('piCS');
-                    }
-                    break;
-            }
-
             await createOrder(order);
 
             orderId.value = await getOrderId(pid).then((res) => res.id).then((id) => id.slice(0, 13));
             orderTime.value = await getOrderTimestamp(pid).then((res) => res.createdAt);
 
-            await clearCart(cartData.value.id);
-            await updateTotalCost(cartData.value.id, 0);
-        } else {
-            console.error('Cart is empty');
+            await clearCart(cartItems.value.id);
+            await updateTotalCost(cartItems.value.id, 0);
+        } else if (orderItems.value && from === 'history') {
+            orderId.value = await getOrderId(pid).then((res) => res.id).then((id) => id.slice(0, 13));
+            orderTime.value = await getOrderTimestamp(pid).then((res) => res.createdAt);
         }
     } catch (error) {
         console.error('Error fetching payment intent or charge: ', error);

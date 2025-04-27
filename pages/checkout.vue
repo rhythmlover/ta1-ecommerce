@@ -144,7 +144,7 @@
 
             <div>
                 <div class="flex flex-col gap-4 bg-slate-50 p-8 rounded-lg">
-                    <CheckoutLine v-for="item in cartData?.items" :key="item.id" :modelValue="item" />
+                    <CheckoutLine v-for="item in cartData?.items" :key="item.id" :cartItem="item" />
 
                     <div class="flex items-center justify-between">
                         <UiParagraph> Subtotal </UiParagraph>
