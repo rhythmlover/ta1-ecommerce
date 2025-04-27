@@ -32,7 +32,7 @@ onMounted(async () => {
         accumulatedPrice.value = props.cartItem.product.price * quantity.value;
         productName.value = props.cartItem.product.name;
         optionName.value = props.cartItem.option.name;
-        productImageUrl.value = props.cartItem.product.imageUrl ?? "";
+        productImageUrl.value = props.cartItem.option.imageUrl ?? props.cartItem.product.imageUrl ?? "";
     } else if (props.orderItem) {
         quantity.value = props.orderItem.quantity;
         await getProduct(props.orderItem.productId).then((product) => {
