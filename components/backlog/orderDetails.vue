@@ -80,18 +80,16 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 lg:mt-0">
-                                <div class="col-span-1 lg:col-span-2 flex flex-col">
-                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Price
-                                    </p>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2 lg:mt-0">
+                                <div class="col-span-1 lg:col-span-2 lg:p-2 flex flex-col">
+                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Price</p>
                                     <p
                                         class="font-medium text-sm lg:text-base leading-5 lg:leading-6 text-indigo-600 mt-1">
                                         ${{ (item.product.price * item.quantity).toFixed(2) }}
                                     </p>
                                 </div>
-                                <div class="col-span-1 lg:col-span-2 flex flex-col">
-                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Deliver
-                                        By</p>
+                                <div class="col-span-1 lg:col-span-2 lg:p-2 flex flex-col">
+                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Deliver By</p>
                                     <p
                                         class="font-medium text-sm lg:text-base leading-5 lg:leading-6 text-emerald-600 mt-1">
                                         {{ formattedOrderMailBy }}
