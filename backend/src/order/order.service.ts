@@ -35,6 +35,7 @@ export class OrderService {
             select: {
                 id: true,
                 totalCost: true,
+                shippingFee: true,
                 paymentId: true,
                 userId: true,
                 name: true,
@@ -71,6 +72,7 @@ export class OrderService {
             const order = await this.prisma.order.create({
                 data: {
                     totalCost: dto.totalCost,
+                    shippingFee: dto.shippingFee,
                     userId: dto.userId,
                     paymentId: dto.paymentId,
                     name: dto.name,
@@ -127,6 +129,7 @@ export class OrderService {
             }),
             receiptId: order.id.toUpperCase(),
             totalCost: order.totalCost,
+            shippingFee: order.shippingFee,
             paymentMethod: "",
             paymentDate: "",
             receiptItems: await Promise.all(
@@ -187,7 +190,7 @@ export class OrderService {
             }))
             .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
-            .replace(/{{shipping_fee}}/g, "0.00") // Hard-coded for shipping fee to be free of charge as for now
+            .replace(/{{shipping_fee}}/g, receiptData.shippingFee.toFixed(2))
             .replace(/{{payment_method}}/g, receiptData.paymentMethod)
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
@@ -227,6 +230,7 @@ export class OrderService {
                 select: {
                     id: true,
                     totalCost: true,
+                    shippingFee: true,
                     userId: true,
                     name: true,
                     email: true,

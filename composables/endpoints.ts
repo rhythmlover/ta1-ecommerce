@@ -234,6 +234,7 @@ export async function createOrder(orderInfo: Order): Promise<Response> {
             paymentId: orderInfo.paymentId,
             userId: orderInfo.userId,
             totalCost: orderInfo.totalCost,
+            shippingFee: orderInfo.shippingFee,
             name: orderInfo.name,
             email: orderInfo.email,
             phone: orderInfo.phone,

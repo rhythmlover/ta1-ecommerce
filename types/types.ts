@@ -71,6 +71,7 @@ export type Order = {
     userId: string;
     paymentId: string;
     totalCost: number;
+    shippingFee: number;
     name: string;
     email: string;
     phone: string;

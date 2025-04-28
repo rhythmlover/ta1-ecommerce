@@ -10,6 +10,7 @@ export type ReceiptData = {
     paymentDate: string;
     receiptId: string;
     totalCost: number;
+    shippingFee: number;
     receiptItems: ReceiptItem[];
 };
 

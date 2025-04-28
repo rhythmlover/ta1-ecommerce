@@ -105,7 +105,7 @@
             <div
                 class="w-full border-t border-gray-200 p-4 lg:p-6 flex flex-col lg:flex-row items-center justify-between">
                 <p class="font-semibold text-base lg:text-lg text-black mb-4 lg:mb-0">
-                    Total Price: <span class="text-indigo-600"> ${{ orderCost.toFixed(2) }} </span>
+                    Total Price: <span class="text-indigo-600"> ${{ orderTotal.toFixed(2) }} </span> <span class="ml-2 text-gray-500"> (Order Cost: ${{ orderCost.toFixed(2) }} + Shipping Fee: ${{ orderShippingFee.toFixed(2) }}) </span>
                 </p>
                 <div class="flex flex-col sm:flex-row items-center w-full lg:w-auto">
                     <button v-if="orderFulfilled === false" @click="changeOrderStatus"
@@ -153,7 +153,9 @@ const orderDate = new Date(props.modelValue.createdAt ?? '').toLocaleString(
 })
 const orderFulfilled = ref(props.modelValue.orderFulfilled)
 const orderError = ref(false)
+const orderShippingFee = props.modelValue.shippingFee
 const orderCost = props.modelValue.totalCost
+const orderTotal = props.modelValue.totalCost + props.modelValue.shippingFee
 const orderMailBy = new Date(props.modelValue.createdAt ?? '')
 orderMailBy.setDate(orderMailBy.getDate() + 3)
 const formattedOrderMailBy = orderMailBy.toLocaleString("en-SG", {

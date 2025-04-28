@@ -66,7 +66,7 @@ export class PaymentService {
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
             .replace(/{{payment_method}}/g, receiptData.paymentMethod)
             .replace(/{{payment_date}}/g, receiptData.paymentDate)
-            .replace(/{{shipping_fee}}/g, "0.00") // Hard-coded for shipping fee to be free of charge as for now
+            .replace(/{{shipping_fee}}/g, receiptData.shippingFee.toFixed(2))
             .replace(/{{#each invoice_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
                     .map((detail: any) => {
@@ -264,6 +264,7 @@ export class PaymentService {
                 paymentDate: paymentDate,
                 receiptId: order.id,
                 totalCost: order.totalCost,
+                shippingFee: order.shippingFee,
                 receiptItems: await Promise.all(order.items.map(async (item) => ({
                     price: (await this.productService.getProduct(item.productId)).price * item.quantity,
                     description: (await this.productService.getProduct(item.productId)).name + " [" + (await this.productService.getProduct(item.productId)).options.find(option => option.id === item.optionId).name + "]",
@@ -356,7 +357,7 @@ export class PaymentService {
             .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
             .replace(/{{payment_method}}/g, receiptData.paymentMethod)
             .replace(/{{payment_date}}/g, receiptData.paymentDate)
-            .replace(/{{shipping_fee}}/g, "0.00") // Hard-coded for shipping fee to be free of charge as for now
+            .replace(/{{shipping_fee}}/g, receiptData.shippingFee.toFixed(2))
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
                 return receiptData.receiptItems
                     .map((detail: any) => {

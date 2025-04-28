@@ -1,6 +1,6 @@
 <template>
     <UiCenter>
-        <div class="rounded-lg pt-10 px-2 xl:px-10 flex justify-between items-center">
+        <div class="rounded-lg pt-10 px-2 lg:px-10 flex justify-between items-center">
             <div>
                 <div class="flex items-center gap-3">
                     <h2 class="text-lg font-bold" v-if="finishLoading && orderId">#{{ orderId.toUpperCase() }}</h2>
@@ -132,12 +132,14 @@
                             </div>
                             <p class="font-medium">$50.00</p>
                         </div> -->
-                        <CheckoutLine v-if="cartItems && finishLoading" v-for="item in cartItems?.items" :key="item.id" :cartItem="item" />
-                        <CheckoutLine v-if="orderItems && finishLoading" v-for="item in orderItems?.items" :key="`${item.productId}-${item.optionId}`" :orderItem="item" />
+                        <CheckoutLine v-if="cartItems && finishLoading" v-for="item in cartItems?.items" :key="item.id"
+                            :cartItem="item" />
+                        <CheckoutLine v-if="orderItems && finishLoading" v-for="item in orderItems?.items"
+                            :key="`${item.productId}-${item.optionId}`" :orderItem="item" />
                     </div>
 
                     <!-- Order Total -->
-                    <div class="space-y-2 text-sm">
+                    <div class="space-y-3 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Sub Total</span>
                             <span v-if="finishLoading">S${{ subTotal }}</span>
@@ -145,15 +147,15 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Shipping</span>
-                            <span>S${{ shippingCost === "0.00" ? "0.00" : shippingCost }}</span>
+                            <span>S${{ shippingFee === "0.00" ? "0.00" : shippingFee }}</span>
                         </div>
-                        <div class="h-px bg-gray-300 my-4"></div>
-                        <div class="flex justify-between text-lg font-bold">
-                            <span>Order Total</span>
-                            <span v-if="finishLoading">S${{ shippingCost === "0.00" ? subTotal : (parseFloat(subTotal) +
-                                parseFloat(shippingCost)).toFixed(2) }}</span>
-                            <span v-else>--</span>
-                        </div>
+                        <div class="h-px bg-gray-300" />
+                    </div>
+                    <div class="flex justify-between text-lg font-bold mt-2">
+                        <span>Order Total</span>
+                        <span v-if="finishLoading">S${{ shippingFee === "0.00" ? subTotal : (parseFloat(subTotal) +
+                            parseFloat(shippingFee)).toFixed(2) }}</span>
+                        <span v-else>--</span>
                     </div>
                 </div>
             </div>
@@ -190,7 +192,7 @@ const apartment = ref<string>('--');
 const postalCode = ref<string>('--');
 const subTotal = ref<string>('0.00');
 
-const shippingCost = ref<string>('0.00');
+const shippingFee = ref<string>('0.00');
 const userId = userStore.getUserId;
 const finishLoading = ref<boolean>(false);
 
@@ -272,6 +274,7 @@ onMounted(async () => {
                 userId: userId ?? '',
                 paymentId: pid,
                 totalCost: cartItems.value.totalCost,
+                shippingFee: parseFloat(shippingFee.value),
                 name: name.value,
                 email: email.value,
                 phone: phoneCountryCode.value + phone.value,
