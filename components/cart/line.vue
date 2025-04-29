@@ -76,8 +76,8 @@ function changeQuantity(amount: number) {
     if (quantity.value + amount < 1) {
         alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
         return;
-    } else if (quantity.value + amount > 10) {
-        alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
+    } else if (quantity.value + amount > 30) {
+        alertStore.showAlert('You can only purchase a maximum quantity of 30.', 'error');
         return;
     }
     displayedQuantity.value += amount;
@@ -111,9 +111,9 @@ function validateQuantity() {
     } else if (displayedQuantity.value < 1) {
         displayedQuantity.value = 1;
         alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
-    } else if (displayedQuantity.value > 10) {
-        displayedQuantity.value = 10;
-        alertStore.showAlert('You can only purchase a maximum quantity of 10.', 'error');
+    } else if (displayedQuantity.value > 30) {
+        displayedQuantity.value = 30;
+        alertStore.showAlert('You can only purchase a maximum quantity of 30.', 'error');
     }
 
     quantity.value = displayedQuantity.value;

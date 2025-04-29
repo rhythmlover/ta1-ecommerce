@@ -2,13 +2,15 @@
     <div class="flex items-center justify-center relative">
         <img alt="Banner" class="object-cover object-top h-100 w-full select-none" :src="Banner" />
 
-        <div class="flex flex-col items-start gap-4 absolute w-full max-w-6xl p-8">
+        <div class="flex flex-col items-start gap-2 absolute w-full max-w-6xl p-8">
             <UiHeading class="text-white">
-                Jibbitz <br />
-                Collection
+                HOT &<br />
+                TRENDING PICKS
             </UiHeading>
 
-            <h2 class="text-slate-200">Show off your style & customize your Crocs with Jibbitz shoe charms!</h2>
+            <div class="w-10 h-1 bg-white rounded-full" />
+            <h1 class="text-white text-2xl sm:text-3xl md:text-4xl font-semibold"> Jibbitz Shoe Charms </h1>
+            <h2 class="text-slate-200 text-xs sm:text-sm md:text-md font-medium">Free shipping with no minimum spend. </h2>
 
             <!-- <UiButton variant="primary" class="text-lg" to="/collections/featured">
                 <span class="px-2"> Shop now </span>
@@ -30,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import Banner from "~/assets/crocs_banner.webp";
+import Banner from "~/assets/crocs_banner.png";
 import type { Product } from '~/types/types';
 
 //const { data } = await useCollection("featured", 6);
