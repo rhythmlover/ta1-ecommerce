@@ -189,7 +189,8 @@ export class OrderService {
                 day: "numeric",
             }))
             .replace(/{{receipt_id}}/g, receiptData.receiptId.slice(0, 13).toUpperCase())
-            .replace(/{{total}}/g, receiptData.totalCost.toFixed(2))
+            .replace(/{{subtotal}}/g, receiptData.totalCost.toFixed(2))
+            .replace(/{{total}}/g, (receiptData.totalCost + receiptData.shippingFee).toFixed(2))
             .replace(/{{shipping_fee}}/g, receiptData.shippingFee.toFixed(2))
             .replace(/{{payment_method}}/g, receiptData.paymentMethod)
             .replace(/{{#each receipt_details}}([\s\S]*?){{\/each}}/g, (match, content) => {
