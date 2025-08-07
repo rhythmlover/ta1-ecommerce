@@ -154,8 +154,23 @@ const orderError = ref(false)
 const orderShippingFee = props.modelValue.shippingFee
 const orderCost = props.modelValue.totalCost
 const orderTotal = props.modelValue.totalCost + props.modelValue.shippingFee
-const orderMailBy = new Date(props.modelValue.createdAt ?? '')
-orderMailBy.setDate(orderMailBy.getDate() + 3)
+
+const addWorkingDays = (date: Date, workingDays: number): Date => {
+    const result = new Date(date);
+    let daysAdded = 0;
+    
+    while (daysAdded < workingDays) {
+        result.setDate(result.getDate() + 1);
+        // Skip weekends (Saturday = 6, Sunday = 0)
+        if (result.getDay() !== 0 && result.getDay() !== 6) {
+            daysAdded++;
+        }
+    }
+    
+    return result;
+};
+
+const orderMailBy = addWorkingDays(new Date(props.modelValue.createdAt ?? ''), 3)
 const formattedOrderMailBy = orderMailBy.toLocaleString("en-SG", {
     timeZone: "Asia/Singapore",
     year: "numeric",

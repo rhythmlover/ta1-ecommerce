@@ -171,8 +171,23 @@ export class OrderService {
 
         const templatePath = "src/order/order-template.html";
         let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
-        const mailBy = new Date(receiptData.purchaseDate);
-        mailBy.setDate(mailBy.getDate() + 3);
+
+        const addWorkingDays = (date: Date, workingDays: number): Date => {
+            const result = new Date(date);
+            let daysAdded = 0;
+            
+            while (daysAdded < workingDays) {
+                result.setDate(result.getDate() + 1);
+                // Skip weekends (Saturday = 6, Sunday = 0)
+                if (result.getDay() !== 0 && result.getDay() !== 6) {
+                    daysAdded++;
+                }
+            }
+            
+            return result;
+        };
+
+        const mailBy = addWorkingDays(new Date(receiptData.purchaseDate), 3);
 
         htmlTemplate = htmlTemplate
             .replace(/{{orderId}}/g, receiptData.receiptId)
