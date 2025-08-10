@@ -68,7 +68,8 @@ export type User = {
 
 export type Order = {
     id?: string;
-    userId: string;
+    userId?: string;
+    sessionId?: string;
     paymentId: string;
     totalCost: number;
     shippingFee: number;

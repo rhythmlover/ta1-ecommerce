@@ -275,7 +275,8 @@ onMounted(async () => {
             });
 
             const order: Order = {
-                userId: userId || sessionId,
+                userId: userId || undefined,
+                sessionId: sessionId || undefined,
                 paymentId: pid,
                 totalCost: cartItems.value.totalCost,
                 shippingFee: parseFloat(shippingFee.value),

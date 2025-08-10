@@ -260,28 +260,52 @@ export async function updateOrderToFulfilled(orderId: string): Promise<Response>
     return await response.json();
 }
 
-export async function createOrder(orderInfo: Order): Promise<Response> {
+export async function createOrder(orderInfo: Order): Promise<any> {
     const config = useRuntimeConfig();
-    const response = await fetch(`${config.public.API_URL}/order/create`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            paymentId: orderInfo.paymentId,
-            userId: orderInfo.userId,
-            totalCost: orderInfo.totalCost,
-            shippingFee: orderInfo.shippingFee,
-            name: orderInfo.name,
-            email: orderInfo.email,
-            phone: orderInfo.phone,
-            address: orderInfo.address,
-            postalCode: orderInfo.postalCode,
-            items: orderInfo.items,
-        }),
-    });
+    
+    try {
+        const response = await fetch(`${config.public.API_URL}/order/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                paymentId: orderInfo.paymentId,
+                userId: orderInfo.userId,
+                sessionId: orderInfo.sessionId,
+                totalCost: orderInfo.totalCost,
+                shippingFee: orderInfo.shippingFee,
+                name: orderInfo.name,
+                email: orderInfo.email,
+                phone: orderInfo.phone,
+                address: orderInfo.address,
+                postalCode: orderInfo.postalCode,
+                items: orderInfo.items,
+            }),
+        });
 
-    return await response.json();
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server error response:', errorText);
+            throw new Error(`Order creation failed: ${response.status} ${response.statusText}. ${errorText}`);
+        }
+
+        const text = await response.text();
+        if (!text) {
+            throw new Error('Empty response from server - order creation may have failed');
+        }
+
+        try {
+            return JSON.parse(text);
+        } catch (parseError) {
+            console.error('Failed to parse JSON response:', text);
+            throw new Error(`Invalid JSON response from server: ${text}`);
+        }
+    } catch (fetchError) {
+        console.error('Network or request error:', fetchError);
+        const errorMessage = fetchError instanceof Error ? fetchError.message : String(fetchError);
+        throw new Error(`Failed to communicate with server: ${errorMessage}`);
+    }
 }
 
 export async function getOrder(paymentId: string): Promise<Order> {

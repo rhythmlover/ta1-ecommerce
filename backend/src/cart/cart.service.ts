@@ -75,6 +75,19 @@ export class CartService {
     }
 
     async createCart(userId: string) {
+        // Check if a cart already exists for this user
+        const existingCart = await this.prisma.cart.findFirst({
+            where: {
+                userId,
+            },
+        });
+
+        if (existingCart) {
+            // Return existing cart if found
+            return existingCart;
+        }
+
+        // Create new cart if none exists
         const cart = await this.prisma.cart.create({
             data: {
                 userId,
@@ -85,6 +98,19 @@ export class CartService {
     }
 
     async createSessionCart(sessionId: string) {
+        // Check if a cart already exists for this session
+        const existingCart = await this.prisma.cart.findFirst({
+            where: {
+                sessionId,
+            },
+        });
+
+        if (existingCart) {
+            // Return existing cart if found
+            return existingCart;
+        }
+
+        // Create new cart if none exists
         const cart = await this.prisma.cart.create({
             data: {
                 sessionId,

@@ -2,8 +2,12 @@ import { IsString, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
 export class OrderDto {
     @IsString()
-    @IsNotEmpty()
-    userId: string;
+    @IsOptional()
+    userId?: string;
+
+    @IsString()
+    @IsOptional()
+    sessionId?: string;
 
     @IsString()
     @IsNotEmpty()

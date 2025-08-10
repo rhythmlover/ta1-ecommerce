@@ -106,9 +106,9 @@ async function login() {
         userStore.setUserId(userDetails.id);
 
         if (wasGuest && sessionId) {
-            // if user have items in cart
+            // if user have more than 1 item in cart
             const sessionCart = await getSessionCart(sessionId);
-            if (sessionCart) {
+            if (sessionCart && sessionCart.items.length > 0) {
                 await mergeSessionCartToUserCart(sessionId, userDetails.id);
                 // Update cart quantity after merge
                 const updatedCart = await getUserCart(userDetails.id);

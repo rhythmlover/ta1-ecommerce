@@ -69,11 +69,18 @@ export class OrderService {
 
     async createOrder(dto: OrderDto) {
         try {
+            this.logger.log("Creating order with data:", dto);
+            // Validate that either userId or sessionId is provided
+            if (!dto.userId && !dto.sessionId) {
+                throw new Error("Either userId or sessionId must be provided");
+            }
+
             const order = await this.prisma.order.create({
                 data: {
                     totalCost: dto.totalCost,
                     shippingFee: dto.shippingFee,
-                    userId: dto.userId,
+                    userId: dto.userId || null,
+                    sessionId: dto.sessionId || null,
                     paymentId: dto.paymentId,
                     name: dto.name,
                     email: dto.email,
@@ -100,6 +107,10 @@ export class OrderService {
                     throw new ForbiddenException("Order already exists.");
                 }
             }
+            
+            // Handle any other errors
+            this.logger.error("Failed to create order:", error);
+            throw new Error("Failed to create order: " + error.message);
         }
     }
 
