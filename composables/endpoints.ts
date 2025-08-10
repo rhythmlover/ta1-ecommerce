@@ -84,10 +84,47 @@ export async function getUserCart(userId: string): Promise<Cart | null> {
     return JSON.parse(text);
 }
 
+export async function getSessionCart(sessionId: string): Promise<Cart | null> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/cart/get-session/${sessionId}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch session cart');
+    }
+
+    const text = await response.text();
+    if (!text) {
+        return null;
+    }
+
+    return JSON.parse(text);
+}
+
 export async function createCart(userId: string): Promise<Cart> {
     const config = useRuntimeConfig();
     const response = await fetch(`${config.public.API_URL}/cart/create/${userId}`, {
         method: "POST",
+    });
+
+    return await response.json();
+}
+
+export async function createSessionCart(sessionId: string): Promise<Cart> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/cart/create-session/${sessionId}`, {
+        method: "POST",
+    });
+
+    return await response.json();
+}
+
+export async function mergeSessionCartToUserCart(sessionId: string, userId: string): Promise<Response> {
+    const config = useRuntimeConfig();
+    const response = await fetch(`${config.public.API_URL}/cart/merge-session-cart`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sessionId, userId }),
     });
 
     return await response.json();

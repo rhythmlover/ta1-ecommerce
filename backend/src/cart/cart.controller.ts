@@ -1,19 +1,38 @@
 import { Controller, Get, Post, Body, Param, Delete } from "@nestjs/common";
 import { CartService } from "./cart.service";
 import { CartItemDto } from "./dto";
+import { CartCleanupService } from "./cart-cleanup.service";
 
 @Controller("cart")
 export class CartController {
-    constructor(private cartService: CartService) {}
+    constructor(
+        private cartService: CartService,
+        private cartCleanupService: CartCleanupService
+    ) {}
 
     @Get("get/:userId")
     displayUserCart(@Param("userId") userId: string) {
         return this.cartService.displayUserCart(userId);
     }
 
+    @Get("get-session/:sessionId")
+    displaySessionCart(@Param("sessionId") sessionId: string) {
+        return this.cartService.displaySessionCart(sessionId);
+    }
+
     @Post("create/:userId")
     createCart(@Param("userId") userId: string) {
         return this.cartService.createCart(userId);
+    }
+
+    @Post("create-session/:sessionId")
+    createSessionCart(@Param("sessionId") sessionId: string) {
+        return this.cartService.createSessionCart(sessionId);
+    }
+
+    @Post("merge-session-cart")
+    mergeSessionCartToUserCart(@Body() body: { sessionId: string, userId: string }) {
+        return this.cartService.mergeSessionCartToUserCart(body.sessionId, body.userId);
     }
 
     @Post("add-item")
@@ -39,5 +58,25 @@ export class CartController {
     @Get("clear-cart/:cartId")
     clearCart(@Param("cartId") cartId: string) {
         return this.cartService.clearCart(cartId);
+    }
+
+    @Post("cleanup-inactive")
+    cleanupInactiveCarts(@Body("daysOld") daysOld?: number) {
+        return this.cartService.cleanupInactiveCarts(daysOld || 7);
+    }
+
+    @Post("cleanup-empty")
+    cleanupEmptyCarts() {
+        return this.cartService.cleanupEmptyCarts();
+    }
+
+    @Post("manual-cleanup")
+    runManualCleanup(@Body("daysOld") daysOld?: number) {
+        return this.cartCleanupService.runManualCleanup(daysOld || 7);
+    }
+
+    @Post("manual-guest-cleanup")
+    runManualGuestCleanup() {
+        return this.cartCleanupService.runManualGuestCleanup();
     }
 }

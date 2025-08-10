@@ -21,7 +21,7 @@
         <div class="flex items-center">
             <UiButton variant="rounded"
                 :class="[userLoggedIn ? 'mr-0 sm:mr-2' : '', 'text-sm flex relative bg-white rounded-full']"
-                aria-label="Shopping Cart" @click="checkIfUserIsLoggedIn">
+                aria-label="Shopping Cart" @click="navigateToCart">
                 <IconShoppingBag class="w-7 h-7" />
                 <span v-if="cartQuantity > 0"
                     class="absolute bottom-1 md:bottom-0 right-1.5 sm:right-0.5 inline-flex items-center justify-center px-1.5 py-1 text-[8px] font-bold leading-none text-white bg-indigo-500 rounded-full sm:px-2 sm:py-0.75 sm:text-xs">
@@ -214,7 +214,8 @@
                 <div class="flex items-center gap-6">
                     <!-- Social media icons -->
                     <div class="flex gap-4">
-                        <a href="https://shopee.sg/shop/838203846" target="_blank" class="text-gray-600 hover:text-gray-900">
+                        <a href="https://shopee.sg/shop/838203846" target="_blank"
+                            class="text-gray-600 hover:text-gray-900">
                             <IconBrandShopee class="w-5 h-5" />
                         </a>
                         <!-- <a href="#" class="text-gray-600 hover:text-gray-900">
@@ -249,7 +250,7 @@ const userStore = useUserStore();
 const isAdmin = ref(false);
 const isMenuOpen = ref(false);
 const cartQuantity = computed(() => cartStore.getCartQty);
-const userLoggedIn = computed(() => userStore.getUserId !== '');
+const userLoggedIn = computed(() => userStore.getUserId !== '' && !userStore.getIsGuest);
 const cartData = ref<Cart | null>(null);
 const announcement = ref('');
 
@@ -257,11 +258,45 @@ const navigationItems = [
     { name: 'Explore', path: '/' },
 ]
 
+function generateSessionId(): string {
+    return "guest_" + Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+function getOrCreateGuestSession(): string {
+    // Check if we already have a session ID in the store
+    let sessionId = userStore.getSessionId;
+
+    if (!sessionId) {
+        // Generate new session ID and store it in Pinia
+        sessionId = generateSessionId();
+        userStore.setSessionId(sessionId);
+    }
+    return sessionId;
+}
+
+async function setupAutomaticGuestSession() {
+    try {
+        const sessionId = getOrCreateGuestSession();
+
+        userStore.setSessionId(sessionId);
+        await createSessionCart(sessionId);
+        cartStore.setCartQty(0);
+    } catch (error) {
+        console.error('Failed to setup automatic guest session:', error);
+        cartStore.clearCartQty();
+    }
+}
+
 async function initializeUserData() {
     try {
-        if (!userLoggedIn.value) {
-            cartStore.clearCartQty();
-        } else {
+        // Wait a bit for store hydration in case of SSR
+        await nextTick();
+
+        const isLoggedIn = userStore.getUserId !== '' && !userStore.getIsGuest;
+        const isGuest = userStore.getIsGuest;
+        const sessionId = userStore.getSessionId;
+
+        if (isLoggedIn) {
             cartData.value = await getUserCart(userStore.getUserId);
             cartStore.setCartQty(cartData.value?.items.length || 0);
 
@@ -269,26 +304,33 @@ async function initializeUserData() {
             if (userDetails && userDetails.role === 'admin') {
                 isAdmin.value = true;
             }
+        } else if (isGuest && sessionId) {
+            try {
+                cartData.value = await getSessionCart(sessionId);
+                cartStore.setCartQty(cartData.value?.items.length || 0);
+            } catch (error) {
+                console.warn('Failed to fetch session cart:', error);
+                cartStore.clearCartQty();
+            }
+        } else {
+            // User is not logged in and not a guest - automatically set up as guest
+            await setupAutomaticGuestSession();
         }
     } catch (error) {
         console.error('Error initializing user data:', error);
     }
 }
 
-await initializeUserData();
-
 onMounted(async () => {
+    await initializeUserData();
+
     if ((await getAnnouncement()).content !== '') {
         announcement.value = (await getAnnouncement()).content;
     }
 });
 
-async function checkIfUserIsLoggedIn() {
-    if (userLoggedIn.value) {
-        navigateTo("/cart");
-    } else {
-        navigateTo("/login");
-    }
+async function navigateToCart() {
+    navigateTo("/cart");
 }
 
 async function logout() {

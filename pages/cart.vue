@@ -4,7 +4,8 @@
 
         <div class="grid md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-8">
-                <div class="flex flex-col gap-4 items-center bg-white border rounded-lg p-8 rounded shadow-md" v-if="isEmpty">
+                <div class="flex flex-col gap-4 items-center bg-white border rounded-lg p-8 rounded shadow-md"
+                    v-if="isEmpty">
                     <IconShoppingCart width="48" height="48" />
 
                     <p class="text-xl">Your cart is empty.</p>
@@ -65,15 +66,21 @@ const isEmpty = computed(() => !cartData.value || cartData.value.items.length ==
 const updating = ref(false);
 const totalCost = ref<string>("0.00");
 const userId = userStore.getUserId;
+const sessionId = userStore.getSessionId;
 
 const paymentIntentCS = ref<string>('');
 const paymentIntentId = ref<string>('');
 
 async function initializeUserCart() {
-    if (userId) {
+    const isLoggedIn = userId !== '';
+    if (isLoggedIn) {
         cartData.value = await getUserCart(userId);
     } else {
-        navigateTo("/login");
+        if (sessionId) {
+            cartData.value = await getSessionCart(sessionId);
+        } else {
+            navigateTo("/login");
+        }
     }
 }
 

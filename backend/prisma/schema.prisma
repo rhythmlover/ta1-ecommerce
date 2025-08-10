@@ -46,8 +46,9 @@ model Option {
 
 model Cart {
     id        String     @id @default(cuid())
-    user      User       @relation(fields: [userId], references: [id])
-    userId    String     @unique
+    user      User?      @relation(fields: [userId], references: [id])
+    userId    String?    @unique
+    sessionId String?    @unique
     items     CartItem[]
     totalCost Float
     createdAt DateTime   @default(now())

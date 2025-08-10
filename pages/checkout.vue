@@ -280,11 +280,13 @@ async function initializeStripe() {
 }
 
 async function initializeUserData() {
+    if (!userId && !userStore.getIsGuest) {
+        navigateTo('/login');
+    }
+
     if (userId) {
         const userDetails = await getUserDetails(userId);
         email.value = userDetails.email;
-    } else {
-        navigateTo('/login');
     }
 }
 
@@ -294,7 +296,11 @@ await initializeUserData();
 onMounted(async () => {
     alertStore.clearAlert();
 
-    cartData.value = await getUserCart(userId);
+    if (userId) {
+        cartData.value = await getUserCart(userId);
+    } else if (userStore.getIsGuest) {
+        cartData.value = await getSessionCart(userStore.getSessionId);
+    }
 
     pageIsLoaded.value = true;
 

@@ -27,17 +27,32 @@ export const useCartStore = defineStore("cart-store", {
 export const useUserStore = defineStore("user-store", {
     state: () => ({
         userId: '',
+        isGuest: false,
+        sessionId: '',
     }),
     actions: {
         setUserId(userId: string) {
             this.userId = userId;
+            this.isGuest = false; // When setting a real user ID, they're not a guest
         },
         clearUserId() {
             this.userId = "";
+            this.isGuest = false;
+        },
+        setSessionId(sessionId: string) {
+            this.sessionId = sessionId;
+            this.isGuest = true; // When setting session ID, mark as guest
+        },
+        clearSession() {
+            this.sessionId = "";
+            this.isGuest = false;
         },
     },
     getters: {
         getUserId: (state) => state.userId,
+        getIsGuest: (state) => state.isGuest,
+        getSessionId: (state) => state.sessionId,
+        isLoggedIn: (state) => state.userId !== '' && !state.isGuest,
     },
     persist: true,
 });

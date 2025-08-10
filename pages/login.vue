@@ -59,6 +59,9 @@ const cartStore = useCartStore();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
 
+const wasGuest = userStore.getIsGuest;
+const sessionId = userStore.getSessionId;
+
 onMounted(() => {
     alertStore.clearAlert();
 });
@@ -102,17 +105,32 @@ async function login() {
         }
         userStore.setUserId(userDetails.id);
 
+        if (wasGuest && sessionId) {
+            // if user have items in cart
+            const sessionCart = await getSessionCart(sessionId);
+            if (sessionCart) {
+                await mergeSessionCartToUserCart(sessionId, userDetails.id);
+                // Update cart quantity after merge
+                const updatedCart = await getUserCart(userDetails.id);
+                if (updatedCart) {
+                    cartStore.setCartQty(updatedCart.items.length);
+                }
+            }
+            // Clear guest session after successful login
+            userStore.clearSession();
+        }
+
         alertStore.clearAlert();
         window.location.href = '/';
     } catch (error) {
         console.error(error);
-        alertStore.showAlert('An error occurred. Please try again.', 'error');
+        alertStore.showAlert("An error occurred. Please try again.", "error");
     }
 }
 
 useSeoMeta({
-    title: 'Login - Together as One Store',
-    description: 'Login to your account',
-    keywords: 'login, together as one store, ecommerce, online shopping',
+    title: "Login - Together as One Store",
+    description: "Login to your account",
+    keywords: "login, together as one store, ecommerce, online shopping",
 });
 </script>

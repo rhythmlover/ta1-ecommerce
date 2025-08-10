@@ -194,6 +194,7 @@ const subTotal = ref<string>('0.00');
 
 const shippingFee = ref<string>('0.00');
 const userId = userStore.getUserId;
+const sessionId = userStore.getSessionId;
 const finishLoading = ref<boolean>(false);
 
 onMounted(async () => {
@@ -207,7 +208,11 @@ onMounted(async () => {
                 orderItems.value = await getOrder(pid);
             }
         } else {
-            navigateTo('/login');
+            if (sessionId) {
+                cartItems.value = await getSessionCart(sessionId);
+            } else {
+                navigateTo('/login');
+            }
         }
 
         const details = await getPaymentIntent(pid);
@@ -269,9 +274,8 @@ onMounted(async () => {
                 };
             });
 
-
             const order: Order = {
-                userId: userId ?? '',
+                userId: userId || sessionId,
                 paymentId: pid,
                 totalCost: cartItems.value.totalCost,
                 shippingFee: parseFloat(shippingFee.value),

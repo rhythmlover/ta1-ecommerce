@@ -1,7 +1,8 @@
 <template>
     <div class="flex items-start gap-6">
         <NuxtImg :src="modelValue.option.imageUrl + '.jpg'" :alt="modelValue.product.name"
-            :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="180" height="180" class="shadow-md rounded-lg"/>
+            :modifiers="{ roundCorner: '10:10' }" layout="responsive" width="180" height="180"
+            class="shadow-md rounded-lg" />
 
         <div class="flex flex-col items-start gap-2">
             <UiLink class="text-xl" :to="productUrl">
@@ -26,15 +27,15 @@
                 </UiButton>
 
                 <div class="flex bg-white items-center border border-slate-200 rounded-lg">
-                    <UiButton variant="changeQty" aria-label="Increase Product Quantity" @click="changeQuantity(-1)">
+                    <UiButton variant="changeQty" aria-label="Decrease Product Quantity" @click="changeQuantity(-1)">
                         <IconMinus width="20" height="20" />
                     </UiButton>
 
                     <input type="number" v-model.number="displayedQuantity"
                         class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
-                        :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
+                        @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
 
-                    <UiButton variant="changeQty" aria-label="Decrease Product Quantity" @click="changeQuantity(1)">
+                    <UiButton variant="changeQty" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
                         <IconPlus width="20" height="20" />
                     </UiButton>
                 </div>

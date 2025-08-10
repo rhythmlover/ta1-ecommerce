@@ -60,16 +60,17 @@
 
                     <div class="flex gap-2 flex-wrap">
                         <div class="flex bg-white items-center border border-slate-200 rounded-lg">
-                            <UiButton variant="changeQty" aria-label="Decrease Product Quantity" @click="changeQuantity(-1)">
+                            <UiButton variant="changeQty" aria-label="Decrease Product Quantity"
+                                @click="changeQuantity(-1)">
                                 <IconMinus width="20" height="20" />
                             </UiButton>
 
                             <input type="number" v-model.number="quantity"
                                 class="w-8 text-center border-none outline-none text-sm [&::-webkit-inner-spin-button]:appearance-none"
-                                :min="1" :max="10" @input="sanitizeQuantity" @blur="validateQuantity"
-                                @keydown.enter="submitQuantity" />
+                                @input="sanitizeQuantity" @blur="validateQuantity" @keydown.enter="submitQuantity" />
 
-                            <UiButton variant="changeQty" aria-label="Increase Product Quantity" @click="changeQuantity(1)">
+                            <UiButton variant="changeQty" aria-label="Increase Product Quantity"
+                                @click="changeQuantity(1)">
                                 <IconPlus width="20" height="20" />
                             </UiButton>
                         </div>
@@ -97,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Product, Option } from "~/types/types";
+import type { Product, Option, Cart, CartItem } from "~/types/types";
 import { IconMinus, IconPaperBagOff, IconPlus } from "@tabler/icons-vue";
 
 const route = useRoute();
@@ -158,15 +159,14 @@ function updateImageUrl() {
 
 
 function changeQuantity(amount: number) {
-    if (quantity.value + amount > 0 && quantity.value + amount <= 10) {
-        quantity.value += amount;
-    } else if (quantity.value + amount < 1) {
-        quantity.value = 1;
+    if (quantity.value + amount < 1) {
         alertStore.showAlert('Minimum purchase quantity is 1.', 'error');
+        return;
     } else if (quantity.value + amount > 30) {
-        quantity.value = 30;
         alertStore.showAlert('You can only purchase a maximum quantity of 30.', 'error');
+        return;
     }
+    quantity.value += amount;
 }
 
 function sanitizeQuantity(event: Event) {
@@ -182,7 +182,7 @@ function sanitizeQuantity(event: Event) {
 
     // Allow the input to remain blank temporarily
     if (input.value === '') {
-        quantity.value = 0; // Temporarily set quantity to 0
+        quantity.value = 0;
         return;
     }
 
@@ -213,38 +213,45 @@ function submitQuantity(event: KeyboardEvent) {
 async function addItemToCart() {
     alertStore.clearAlert();
 
-    const userId = userStore.getUserId;
+    const isLoggedIn = userStore.getUserId !== '';
 
-    if (userId === '') {
-        navigateTo("/login");
+    const optionId = Object.keys(selectedOptions).map(optionName => {
+        const option = product.value?.options.find(opt => opt.name === optionName);
+        return option?.id;
+    })[0];
+
+    if (!optionId) {
+        alertStore.showAlert('Please select an option.', 'error');
+        console.error('No option selected.');
+        return;
     }
 
-    if (userId) {
-        const optionId = Object.keys(selectedOptions).map(optionName => {
-            const option = product.value?.options.find(opt => opt.name === optionName);
-            return option?.id;
-        })[0];
+    let cart: Cart | null = null;
 
-        if (!optionId) {
-            alertStore.showAlert('Please select an option.', 'error');
-            console.error('No option selected.');
-            return;
+    if (isLoggedIn) {
+        cart = await getUserCart(userStore.getUserId);
+    } else {
+        const sessionId = userStore.getSessionId;
+        if (sessionId) {
+            cart = await getSessionCart(sessionId);
+            if (!cart) {
+                // Create session cart if it doesn't exist
+                cart = await createSessionCart(sessionId);
+            }
         }
-
-        const cart = await getUserCart(userId);
-
-        if (cart && cart.items.some(item => item.option.id === optionId)) {
-            alertStore.showAlert('Item already in cart.', 'error');
-            return;
-        }
-
-        if (cart && product.value) {
-            await addItemToUserCart(cart.id, product.value.id, optionId, quantity.value);
-            cartStore.incrementCartQty();
-        }
-
-        alertStore.showAlert('Item added to cart.', 'addToCart');
     }
+
+    if (cart && cart.items.some((item: CartItem) => item.option.id === optionId)) {
+        alertStore.showAlert('Item already in cart.', 'error');
+        return;
+    }
+
+    if (cart && product.value) {
+        await addItemToUserCart(cart.id, product.value.id, optionId, quantity.value);
+        cartStore.incrementCartQty();
+    }
+
+    alertStore.showAlert('Item added to cart.', 'addToCart');
 }
 
 function goToHome() {
