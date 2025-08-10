@@ -210,6 +210,7 @@ onMounted(async () => {
         } else {
             if (sessionId) {
                 cartItems.value = await getSessionCart(sessionId);
+                cartStore.clearCartQty();
             } else {
                 navigateTo('/login');
             }
