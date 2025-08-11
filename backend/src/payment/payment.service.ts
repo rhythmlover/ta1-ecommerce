@@ -38,7 +38,7 @@ export class PaymentService {
             throw new Error("STRIPE_SECRET_KEY (TEST/LIVE) is not defined in the environment variables");
         }
         this.stripe = new Stripe(stripeSecretKey, {
-            apiVersion: "2025-03-31.basil" as any,
+            apiVersion: "2025-07-30.basil" as any,
         });
         this.oAuth2Client = new Auth.OAuth2Client({
             clientId: this.configService.get<string>("CLIENT_ID"),
@@ -272,9 +272,12 @@ export class PaymentService {
                 }))),
             };
             console.log("Receipt Data: ", receiptData);
-            await this.sendEmailReceipt(order.email, receiptData);
+            
+            // Create invoice first, then send email with attachment, then upload to cloud
             await this.createInvoice(receiptData);
+            await this.sendEmailReceipt(order.email, receiptData);
             await this.uploadInvoiceToCloudinary(receiptData.receiptId);
+            
             res.status(201).send("Payment succeeded with ID: " + paymentIntent.id);
             console.log("PaymentIntent was successful: ", paymentIntent.id);
         } else if (event.type === "payment_intent.payment_failed") {
@@ -369,19 +372,39 @@ export class PaymentService {
                     .join("");
             });
 
-        transporter.sendMail(
-            {
-                from: infoEmailUser,
-                to: emailToSend,
-                subject: "TA1 E-Receipt",
-                html: htmlTemplate,
-            } as nodemailer.SendMailOptions,
-            (err, info) => {
-                if (err) {
-                    console.error(err);
+        // Check if the PDF invoice exists before sending email
+        const pdfPath = "src/payment/invoice.pdf";
+        const pdfExists = fs.existsSync(pdfPath);
+        
+        const mailOptions: nodemailer.SendMailOptions = {
+            from: infoEmailUser,
+            to: emailToSend,
+            subject: "TA1 E-Receipt",
+            html: htmlTemplate,
+        };
+
+        // Add PDF attachment if it exists
+        if (pdfExists) {
+            mailOptions.attachments = [
+                {
+                    filename: `invoice-${receiptData.receiptId.slice(0, 13).toUpperCase()}.pdf`,
+                    path: pdfPath,
+                    contentType: 'application/pdf'
                 }
+            ];
+        }
+
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error("Error sending email receipt:", err);
+            } else {
                 console.log("Email receipt sent successfully", info.response);
+                if (pdfExists) {
+                    console.log("PDF invoice attached to email");
+                } else {
+                    console.warn("PDF invoice not found, email sent without attachment");
+                }
             }
-        );
+        });
     }
 }
