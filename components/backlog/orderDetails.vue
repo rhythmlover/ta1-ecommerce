@@ -28,7 +28,8 @@
             </div>
         </div>
         <div class="transition-all duration-300 ease-in-out overflow-hidden"
-            :class="isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'">
+            :class="isOpen ? 'opacity-100' : 'max-h-0 opacity-0'"
+            style="transition-property: max-height, opacity;">
             <!-- name, email, address and postal code -->
             <div class="flex flex-col justify-start items-start p-4 lg:p-6 border-b border-gray-200 gap-4 lg:gap-6">
                 <h2 class="font-semibold text-lg lg:text-xl leading-7 lg:leading-8 text-black mb-2 lg:mb-3">
@@ -82,14 +83,16 @@
                             </div>
                             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-2 lg:mt-0">
                                 <div class="col-span-1 lg:col-span-2 lg:p-2 flex flex-col">
-                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Price</p>
+                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Price
+                                    </p>
                                     <p
                                         class="font-medium text-sm lg:text-base leading-5 lg:leading-6 text-indigo-600 mt-1">
                                         ${{ (item.product.price * item.quantity).toFixed(2) }}
                                     </p>
                                 </div>
                                 <div class="col-span-1 lg:col-span-2 lg:p-2 flex flex-col">
-                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Deliver By</p>
+                                    <p class="font-medium text-xs lg:text-sm leading-5 lg:leading-6 text-black">Deliver
+                                        By</p>
                                     <p
                                         class="font-medium text-sm lg:text-base leading-5 lg:leading-6 text-emerald-600 mt-1">
                                         {{ formattedOrderMailBy }}
@@ -103,7 +106,9 @@
             <div
                 class="w-full border-t border-gray-200 p-4 lg:p-6 flex flex-col lg:flex-row items-center justify-between">
                 <p class="font-semibold text-base lg:text-lg text-black mb-4 lg:mb-0">
-                    Total Price: <span class="text-indigo-600"> ${{ orderTotal.toFixed(2) }} </span> <span class="ml-2 text-gray-500"> (Order Cost: ${{ orderCost.toFixed(2) }} + Shipping Fee: ${{ orderShippingFee.toFixed(2) }}) </span>
+                    Total Price: <span class="text-indigo-600"> ${{ orderTotal.toFixed(2) }} </span> <span
+                        class="ml-2 text-gray-500"> (Order Cost: ${{ orderCost.toFixed(2) }} + Shipping Fee: ${{
+                        orderShippingFee.toFixed(2) }}) </span>
                 </p>
                 <div class="flex flex-col sm:flex-row items-center w-full lg:w-auto">
                     <button v-if="orderFulfilled === false" @click="changeOrderStatus"
@@ -158,7 +163,7 @@ const orderTotal = props.modelValue.totalCost + props.modelValue.shippingFee
 const addWorkingDays = (date: Date, workingDays: number): Date => {
     const result = new Date(date);
     let daysAdded = 0;
-    
+
     while (daysAdded < workingDays) {
         result.setDate(result.getDate() + 1);
         // Skip weekends (Saturday = 6, Sunday = 0)
@@ -166,7 +171,7 @@ const addWorkingDays = (date: Date, workingDays: number): Date => {
             daysAdded++;
         }
     }
-    
+
     return result;
 };
 
