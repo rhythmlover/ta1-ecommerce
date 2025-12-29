@@ -3,7 +3,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { ProductService } from "../products/product.service";
 import { OrderDto } from "./dto";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import { Auth } from "googleapis";
@@ -101,7 +101,7 @@ export class OrderService {
 
             return order;
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
                     this.logger.error("Order already exists.");
                     throw new ForbiddenException("Order already exists.");

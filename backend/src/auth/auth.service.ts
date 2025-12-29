@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { AuthDto, ResetPasswordDto } from "./dto";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import * as nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import * as argon from "argon2";
@@ -45,7 +45,7 @@ export class AuthService {
 
             return user;
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
                     this.logger.error("Sign up email: " + dto.email.toLowerCase() + ", Email already in use.");
                     throw new ForbiddenException("Email already in use.");
