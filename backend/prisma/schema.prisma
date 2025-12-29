@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
 }
 
 model Product {
@@ -84,7 +83,7 @@ model Order {
     paymentId      String      @unique
     user           User?       @relation(fields: [userId], references: [id])
     userId         String?
-    sessionId      String?     // For guest orders
+    sessionId      String? // For guest orders
     name           String
     email          String
     address        String
