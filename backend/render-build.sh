@@ -4,6 +4,13 @@ set -o errexit
 
 # Install dependencies
 npm install
+
+# Generate Prisma Client
+npx prisma generate
+
+# Run database migrations
+npx prisma migrate deploy
+
 # Uncomment this line if you need to build your project
 npm run build
 
