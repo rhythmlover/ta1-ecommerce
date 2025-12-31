@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import { AuthDto, ResetPasswordDto } from "./dto";
 import { Prisma } from "@prisma/client";
 import * as nodemailer from "nodemailer";
@@ -14,7 +15,11 @@ export class AuthService {
     private oAuth2Client: Auth.OAuth2Client;
     private logger = new Logger("AuthService");
 
-    constructor(private prisma: PrismaService, private configService: ConfigService) {
+    constructor(
+        private prisma: PrismaService, 
+        private configService: ConfigService,
+        private jwt: JwtService,
+    ) {
         this.oAuth2Client = new Auth.OAuth2Client({
             clientId: this.configService.get<string>("CLIENT_ID"),
             clientSecret: this.configService.get<string>("CLIENT_SECRET"),
@@ -43,7 +48,14 @@ export class AuthService {
 
             await this.requestEmailVerification(user.email);
 
-            return user;
+            return {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    createdAt: user.createdAt,
+                },
+                access_token: await this.signToken(user.id, user.email, 'USER'),
+            };
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
@@ -80,7 +92,14 @@ export class AuthService {
         }
 
         delete user.password;
-        return user;
+        return {
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+            },
+            access_token: await this.signToken(user.id, user.email, user.role),
+        };
     }
 
     async getUserDetails(id: string) {
@@ -331,5 +350,22 @@ export class AuthService {
         });
 
         return { message: "Password reset successful" };
+    }
+
+    async signToken(userId: string, email: string, role: string): Promise<string> {
+        const payload = {
+            sub: userId,
+            email,
+            role,
+        };
+
+        const secret = this.configService.get('JWT_SECRET');
+
+        const token = await this.jwt.signAsync(payload, {
+            expiresIn: '7d',
+            secret: secret,
+        });
+
+        return token;
     }
 }

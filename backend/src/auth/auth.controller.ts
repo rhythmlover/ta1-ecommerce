@@ -1,6 +1,7 @@
-import { Controller, Param, Body, Post, Get } from "@nestjs/common";
+import { Controller, Param, Body, Post, Get, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto, ResetPasswordDto } from "./dto";
+import { JwtGuard } from "./guard/jwt.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -41,6 +42,7 @@ export class AuthController {
         return this.authService.verifyEmail(body.id, body.email);
     }
 
+    @UseGuards(JwtGuard)
     @Get('get-user-details/:id')
     getUserDetails(@Param("id") id: string) {
         return this.authService.getUserDetails(id);

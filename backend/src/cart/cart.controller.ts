@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Delete, UseGuards } from "@nestjs/common";
 import { CartService } from "./cart.service";
 import { CartItemDto } from "./dto";
 import { CartCleanupService } from "./cart-cleanup.service";
+import { JwtGuard } from "src/auth/guard/jwt.guard";
+import { AdminGuard } from "src/auth/guard/admin.guard";
 
 @Controller("cart")
 export class CartController {
@@ -10,6 +12,7 @@ export class CartController {
         private cartCleanupService: CartCleanupService
     ) {}
 
+    @UseGuards(JwtGuard)
     @Get("get/:userId")
     displayUserCart(@Param("userId") userId: string) {
         return this.cartService.displayUserCart(userId);
@@ -20,6 +23,7 @@ export class CartController {
         return this.cartService.displaySessionCart(sessionId);
     }
 
+    @UseGuards(JwtGuard)
     @Post("create/:userId")
     createCart(@Param("userId") userId: string) {
         return this.cartService.createCart(userId);
@@ -30,6 +34,7 @@ export class CartController {
         return this.cartService.createSessionCart(sessionId);
     }
 
+    @UseGuards(JwtGuard)
     @Post("merge-session-cart")
     mergeSessionCartToUserCart(@Body() body: { sessionId: string, userId: string }) {
         return this.cartService.mergeSessionCartToUserCart(body.sessionId, body.userId);
@@ -60,21 +65,25 @@ export class CartController {
         return this.cartService.clearCart(cartId);
     }
 
+    @UseGuards(JwtGuard, AdminGuard)
     @Post("cleanup-inactive")
     cleanupInactiveCarts(@Body("daysOld") daysOld?: number) {
         return this.cartService.cleanupInactiveCarts(daysOld || 7);
     }
 
+    @UseGuards(JwtGuard, AdminGuard)
     @Post("cleanup-empty")
     cleanupEmptyCarts() {
         return this.cartService.cleanupEmptyCarts();
     }
 
+    @UseGuards(JwtGuard, AdminGuard)
     @Post("manual-cleanup")
     runManualCleanup(@Body("daysOld") daysOld?: number) {
         return this.cartCleanupService.runManualCleanup(daysOld || 7);
     }
 
+    @UseGuards(JwtGuard, AdminGuard)
     @Post("manual-guest-cleanup")
     runManualGuestCleanup() {
         return this.cartCleanupService.runManualGuestCleanup();
